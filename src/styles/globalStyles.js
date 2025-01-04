@@ -2,8 +2,6 @@ import { createGlobalStyle } from 'styled-components';
 import colors from './colors';
 
 const GlobalStyle = createGlobalStyle`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
     :root {
         --vh: 100%;
         --font-family: 'Inter', sans-serif;
@@ -103,6 +101,13 @@ const GlobalStyle = createGlobalStyle`
             font-size: 30%;
         }
     }
+
+    @media screen and (max-width:374px) {
+        /* 모바일 */
+        html{
+            font-size: 25%;
+        }
+    }
     
     ul, li {
         padding-left: 0rem;
@@ -118,6 +123,7 @@ const GlobalStyle = createGlobalStyle`
         outline: none; 
         border: none;
         background-color: transparent;
+        font-family: var(--font-family);
     }
     button {
         cursor: pointer;
