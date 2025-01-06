@@ -14,6 +14,8 @@ import MyPagePostsPage from "../pages/auth/mypage/posts";
 import MyPageFriendsPage from "../pages/auth/mypage/friends";
 import NotFoundPage from "../pages/notFound/notFound";
 
+import TravelPost from "../components/travelPost/travel-post";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -27,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage />,
+      },
+      {
+        path: "travelpost",
+        element: <TravelPost />,
       },
 
       {
