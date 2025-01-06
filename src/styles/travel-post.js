@@ -76,12 +76,18 @@ export const Button = styled.button`
 
 export const SliderWrapper = styled.div`
     .slick-list {
-        overflow: hidden; /* 이미지가 슬라이더를 벗어나지 않도록 설정 */
+        // display: flex !important;
+        overflow: hidden;
+    }
+
+    .slick-track {
+        display: flex !important; /* 수평 레이아웃 유지 */
+        flex-wrap: nowrap; /* 슬라이드가 한 줄로 유지되도록 설정 */
     }
 
      .slick-slide {
         width: 400px !important; /* 슬라이드 항목 너비 강제 설정 */
-        padding-right: 8px;
+        margin-right: 8px;
     }
 
     .slick-prev::before,
