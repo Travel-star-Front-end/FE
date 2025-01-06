@@ -13,8 +13,8 @@ const ItemContainer = styled.div`
 `
 
 const ItemImg = styled.img`
-    width: ${(props) => props.width || '2.5rem'};
-    height: ${(props) => props.height || '3rem'};
+    width: ${(props) => props.width || '2.8rem'};
+    height: ${(props) => props.height || '2.9rem'};
 `
 
 const ItemP = styled.p`
