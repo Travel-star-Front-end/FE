@@ -7,9 +7,9 @@ const ListContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 17.4rem;
-    padding-left: 3.9rem;
-    gap: 4.8rem;
+    margin-top: 18.3rem;
+    padding-left: 7.4rem;
+    gap: 4.1rem;
 `;
 
 const ListSideBar = () => {
@@ -29,10 +29,6 @@ const ListSideBar = () => {
                     link={item.link} 
                     logo={item.logo} 
                     logoClick={item.logoClick}
-                    width={item.width}
-                    height={item.height}
-                    padding={item.padding}
-                    gap={item.gap}
                 />
             ))}
         </ListContainer>

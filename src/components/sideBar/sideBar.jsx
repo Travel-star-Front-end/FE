@@ -20,8 +20,6 @@ const LogoContainer = styled.div`
     align-items: center;
     gap: 0.9rem;
     margin-top: 7.4rem;
-    width: 100%;
-    padding-left: 3.9rem;
     cursor: pointer;
 `
 

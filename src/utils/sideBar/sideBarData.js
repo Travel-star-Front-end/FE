@@ -1,6 +1,5 @@
 import { images } from "./loadImages";
 
-// 다시 수정 해..
 const SideBarData = [
     { 
         "id": 1, 
@@ -8,11 +7,6 @@ const SideBarData = [
         "link": "/posts",
         "logo": images["posts"],
         "logoClick": images["postsClick"],
-
-        "width": "2.8rem",
-        "height": "2.9rem",
-        "padding": "3.2rem",
-        "gap": "2rem",
     },
     { 
         "id": 2, 
@@ -20,23 +14,13 @@ const SideBarData = [
         "link": "/planet",
         "logo": images["planet"],
         "logoClick": images["planetClick"],
-
-        "width": "3.2rem",
-        "height": "2.7rem",
-        "padding": "3.1rem",
-        "gap": "2.2rem",
     },
     { 
         "id": 3, 
         "name": "별자리 랭킹", 
         "link": "/ranking",
         "logo": images["ranking"],
-        "logoClick": images["ranking"],
-
-        "width": "2.2rem",
-        "height": "3rem",
-        "padding": "3.6rem",
-        "gap": "2.2rem",
+        "logoClick": images["rankingClick"],
     },
     { 
         "id": 4, 
@@ -44,11 +28,6 @@ const SideBarData = [
         "link": "/calender",
         "logo": images["calender"],
         "logoClick": images["calenderClick"],
-
-        "width": "3rem",
-        "height": "3rem",
-        "padding": "3.2rem",
-        "gap": "1.8rem",
     },
     { 
         "id": 5, 
@@ -56,11 +35,6 @@ const SideBarData = [
         "link": "/mypage",
         "logo": images["mypage"],
         "logoClick": images["mypageClick"],
-
-        "width": "2.7rem",
-        "height": "2.7rem",
-        "padding": "3.4rem",
-        "gap": "1.9rem",
     },
 ]
 

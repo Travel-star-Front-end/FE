@@ -5,7 +5,7 @@ import useFetch from "../../hooks/useFetch";
 
 const ProfileContainer = styled.div`
     width: 25.6rem;
-    height: 24.9rem;
+    height: 23.9rem;
     border: none;
     border-radius: 1.5rem;
     background: ${colors.sideBarGray};
@@ -14,7 +14,7 @@ const ProfileContainer = styled.div`
     align-items: center;
     margin-top: 5.9rem;
     padding-top: 4.3rem;
-    gap: 3.3rem;
+    gap: 1.6rem;
 `
 
 const ProfileImgContainer = styled.div`
@@ -29,8 +29,8 @@ const ProfileImgContainer = styled.div`
 `
 
 const ProfileImg = styled.img`
-    width: 6.7rem;
-    height: 5.5rem;
+    width: 4.8rem;
+    height: 5.9rem;
 `
 
 const PContainer = styled.div`
