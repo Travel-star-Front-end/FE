@@ -6,11 +6,23 @@ const RootContainer = styled.div`
     display: flex;
 `
 
+const SideBarContainer = styled.div`
+    width: 15vw;
+`
+
+const OutletContainer = styled.div`
+    width: 100%;
+`
+
 const RootLayout = () => {
     return (
         <RootContainer>
-            <SideBar />
-            <Outlet />
+            <SideBarContainer>
+                <SideBar />
+            </SideBarContainer>
+            <OutletContainer>
+                <Outlet />
+            </OutletContainer>
         </RootContainer>
     )
 }
