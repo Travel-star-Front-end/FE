@@ -4,22 +4,22 @@ import ProfilePng from "../../assets/images/sideBar/profile.png";
 import useFetch from "../../hooks/useFetch";
 
 const ProfileContainer = styled.div`
-    width: 25.6rem;
-    height: 23.9rem;
+    width: 12.8vw;
+    height: 11.95vw;
     border: none;
-    border-radius: 1.5rem;
+    border-radius: 0.75vw;
     background: ${colors.sideBarGray};
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 5.9rem;
-    padding-top: 4.3rem;
-    gap: 1.6rem;
+    margin-top: 2.95vw;
+    padding-top: 2.15vw;
+    gap: 0.8vw;
 `
 
 const ProfileImgContainer = styled.div`
-    width: 10.1rem;
-    height: 10.1rem;
+    width: 5.05vw;
+    height: 5.05vw;
     background: ${colors.white};
     border: none;
     border-radius: 50%;
@@ -29,8 +29,8 @@ const ProfileImgContainer = styled.div`
 `
 
 const ProfileImg = styled.img`
-    width: 4.8rem;
-    height: 5.9rem;
+    width: 2.4vw;
+    height: 2.95vw;
 `
 
 const PContainer = styled.div`
@@ -41,7 +41,7 @@ const PContainer = styled.div`
 
 const ProfileP = styled.p`
     text-align: center;
-    font-size: ${(props) => props.size || '1.4rem'};
+    font-size: ${(props) => props.size || '0.7vw'};
     font-weight: ${(props) => props.weight || '300'};
     color: ${colors.black};
 `
@@ -57,7 +57,7 @@ const Profile = () => {
             </ProfileImgContainer>
             
             <PContainer>
-                <ProfileP size="2rem" weight="400">{loading ? "Loading..." : data?.name}</ProfileP>
+                <ProfileP size="1vw" weight="400">{loading ? "Loading..." : data?.name}</ProfileP>
                 <ProfileP>{loading ? "Loading..." : data?.username}</ProfileP>
             </PContainer>
         </ProfileContainer>
