@@ -7,9 +7,9 @@ const ListContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 18.3rem;
-    padding-left: 7.4rem;
-    gap: 4.1rem;
+    margin-top: 9.15vw;
+    padding-left: 3.7vw;
+    gap: 2.05vw;
 `;
 
 const ListSideBar = () => {

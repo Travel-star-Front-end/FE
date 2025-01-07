@@ -6,17 +6,17 @@ const ItemContainer = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 1.4rem;
+    gap: 0.7vw;
     cursor: pointer;
 `
 
 const ItemImg = styled.img`
-    width: 3.1rem;
-    height: 3.1rem;
+    width: 1.55vw;
+    height: 1.55vw;
 `
 
 const ItemP = styled.p`
-    font-size: 2rem;
+    font-size: 1vw;
     font-weight: 400;
     color: ${(props) => (props.active === "true" ? colors.main : colors.sideBarGray2)};
 
