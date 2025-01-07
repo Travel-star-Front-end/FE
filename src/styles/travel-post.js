@@ -74,6 +74,29 @@ export const Button = styled.button`
     font-size: 16px;
 `;
 
+export const EditBtnContainer= styled.div`
+    display: flex;
+    gap: 9px;
+
+    .share-icon {
+        width: 31px;
+        height: 31px;
+    }
+`;
+
+export const EditButton = styled.button`
+    width: 122px;
+    height: 33px;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    background-color: white;
+
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16.94px;
+    color: rgba(0, 0, 0, 0.49);
+`;
+
 export const SliderWrapper = styled.div`
     .slick-list {
         // display: flex !important;

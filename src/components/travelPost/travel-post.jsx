@@ -3,13 +3,15 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import locationPin from '../../assets/images/locationPin.png';
-import img from '../../assets/images/logo.png';
+import share from '../../assets/images/share.png';
 
-//예시 이미지지
+//예시 이미지
+import img from '../../assets/images/logo.png';
 import image1 from '../../assets/images/image 1.png';
 import image2 from '../../assets/images/image 2.png';
 import image3 from '../../assets/images/image 3.png';
 
+//slick setting
 const settings = {
     rows: 1,
     slidesPerRow: 1,  
@@ -38,7 +40,7 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({profileSrc, nickname, date, location, travelImages}) => {
+const TravelPost = ({profileSrc, nickname, date, location, travelImages, quickReview, buttonType}) => {
     return (
         <S.Container>
             <S.InfoWrapper>
@@ -48,16 +50,25 @@ const TravelPost = ({profileSrc, nickname, date, location, travelImages}) => {
                     </S.ProfileImg>
                     <S.DetailInfo>
                         <S.TitleDateWrapper>
-                            <div className='nickname'>여행별 일지 콩콩</div>
-                            <div className='date'>2024.09.15</div>
+                            <div className='nickname'>{nickname}</div>
+                            <div className='date'>{date}</div>
                         </S.TitleDateWrapper>
                         <S.LocationWrapper>
                             <S.LocPin src={locationPin} alt="위치" />
-                            <div>일본, 오사카</div>
+                            <div>{location}</div>
                         </S.LocationWrapper>
                     </S.DetailInfo>
                 </S.Info>
-                <S.Button type="button">+ 친구 추가</S.Button>
+
+                {buttonType === 'friend' && (
+                    <S.Button type="button">+ 친구 추가</S.Button>
+                )}
+                {buttonType === 'edit' && (
+                    <S.EditBtnContainer>
+                        <img src={share} alt='share' className='share-icon'/>
+                        <S.EditButton type="button">수정하기</S.EditButton>
+                    </S.EditBtnContainer>
+                )}
             </S.InfoWrapper>
 
             <S.SliderWrapper>
@@ -83,7 +94,7 @@ const TravelPost = ({profileSrc, nickname, date, location, travelImages}) => {
                 </Slider>
             </S.SliderWrapper>
 
-            <S.QuickReview>일본 오사카에서 행복했던 여행</S.QuickReview>
+            <S.QuickReview>{quickReview}</S.QuickReview>
 
             <S.Hr/>
 
