@@ -3,13 +3,13 @@ import colors from "../../../../styles/colors";
 
 const ButtonContainer = styled.button`
     width: 100%;
-    height: 6.1rem;
+    height: 3.55vw;
     background: ${props => props.btncolor || colors.loginGray};
     border: none;
     border-radius: 0.75vw;
     color: ${colors.white};
     font-weight: 800;
-    font-size: 2.2rem;
+    font-size: 1.1vw;
     cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
 `
 
