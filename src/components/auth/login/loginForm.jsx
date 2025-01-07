@@ -12,16 +12,16 @@ import LoginInput from "./input/loginInput";
 import LoginButton from "./button/loginButton";
 
 const FormContainer = styled.form`
-    width: 71.6rem;
-    height: 76.9rem;
+    width: 35.8vw;
+    height: 38.45vw;
     background: ${colors.white};
     border: none;
     border-radius: 0.75vw;
-    margin-top: 8rem;
+    margin-top: 4vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2.6rem 0;
+    padding: 1.3vw 0;
     z-index: 9999;
 `
 
@@ -29,43 +29,43 @@ const LogoContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.4rem;
+    gap: 0.7vw;
 `
 
 const LogoImg = styled.img`
-    width: ${(props) => props.width || '6.9rem'};
-    height: ${(props) => props.height || '6.9rem'};
+    width: ${(props) => props.width || '3.45vw'};
+    height: ${(props) => props.height || '3.45vw'};
 `
 
 const LoginP = styled.p`
-    font-size: 4.8rem;
+    font-size: 2.4vw;
     font-weight: 600;
     color: ${colors.loginP};
-    margin: 2.9rem 0 3.9rem 0;
-    border-bottom: 0.6rem solid ${colors.loginGreen};
+    margin: 1.45vw 0 1.95vw 0;
+    border-bottom: 0.03vw solid ${colors.loginGreen};
     cursor: default;
 `
 
 const InputContainer = styled.div`
-    width: 52rem;
+    width: 26vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4rem;
-    margin-bottom: 7.38rem;
+    gap: 2vw;
+    margin-bottom: 3.69vw;
 `
 
 const ButtonContainer = styled(InputContainer)`
-    gap: 1.2rem;
-    margin: 0 0 3.2rem 0;
+    gap: 0.6vw;
+    margin: 0 0 1.6vw 0;
 `
 
 const LoginP2 = styled.p`
-    font-size: ${(props) => props.size || '1.5rem'};
+    font-size: ${(props) => props.size || '0.75vw'};
     font-weight: 300;
     color: ${(props) => props.color || colors.loginP2};
     cursor: pointer;
-    margin-top: 0.5rem;
+    margin-top: 0.25vw;
 `
 
 const LoginForm = () => {
@@ -109,7 +109,7 @@ const LoginForm = () => {
         <FormContainer onSubmit={handleSubmit(onSubmit)}>
             <LogoContainer>
                 <LogoImg src={Logo} alt="logo" />
-                <LogoImg src={LogoP} width="7.5rem" height="2.9rem" alt="logoP" />
+                <LogoImg src={LogoP} width="3.75vw" height="1.45vw" alt="logoP" />
             </LogoContainer>
 
             <LoginP>Login</LoginP>
@@ -125,7 +125,7 @@ const LoginForm = () => {
                 <LoginP2>아이디 찾기 / 비밀번호 찾기</LoginP2>
             </ButtonContainer>
 
-            <LoginP2 size="1.3rem" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</LoginP2>
+            <LoginP2 size="0.65vw" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</LoginP2>
         </FormContainer>
     )
 }
