@@ -12,6 +12,7 @@ const colors = {
     writeGray: "#D9D9D9",
     writeGray2: "#ECECEC",
     writeGray3: "#B3B3B3",
+    writeRed: "#FF4F4F",
     black: "#000000",
     white: "#FFFFFF",
 };

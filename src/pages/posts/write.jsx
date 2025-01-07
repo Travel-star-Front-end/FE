@@ -15,14 +15,14 @@ const WriteInnerContainer = styled.div`
 `
 
 const WriteP = styled.p`
-    font-size: 2.4rem;
+    font-size: 1.2vw;
     font-weight: 600;
     color: ${colors.sideBarGray2};
 `
 
 const WriteBar = styled.div`
     width: 100%;
-    height: 0.1rem;
+    height: 0.05vw;
     background: ${colors.writeGray};
     margin-top: 0.035vw;
 `
