@@ -94,6 +94,7 @@ export const EditBtnContainer= styled.div`
     .share-icon {
         width: 31px;
         height: 31px;
+        cursor: pointer;
     }
 `;
 
