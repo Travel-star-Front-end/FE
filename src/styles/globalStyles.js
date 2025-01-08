@@ -72,6 +72,8 @@ const GlobalStyle = createGlobalStyle`
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         scroll-behavior: smooth;
         font-size: 62.5%;
+        /* 나중에 삭제할 것 */
+        background: ${colors.homeGray};
     }
     
     @media screen and (max-width:1799px) {
