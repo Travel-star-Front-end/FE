@@ -4,19 +4,19 @@ import colors from "../../../../styles/colors";
 
 const InputContainer = styled.input`
     width: 100%;
-    height: 5.6rem;
+    height: 2.8vw;
     background: ${colors.white};
     border: none;
     outline: none;
-    border-bottom: 0.12rem solid ${colors.loginPurple};
-    font-size: 2rem;
+    border-bottom: 0.06vw solid ${colors.loginPurple};
+    font-size: 1vw;
     font-weight: 300;
     color: ${colors.loginP2};
     cursor: pointer;
     caret-color: ${colors.loginP2};
 
     &::placeholder {
-        font-size: 2rem;
+        font-size: 1vw;
         font-weight: 300;
         color: ${colors.loginP2};
     }
