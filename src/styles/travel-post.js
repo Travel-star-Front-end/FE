@@ -32,11 +32,19 @@ export const TitleDateWrapper = styled.div`
         font-weight: bold;
         font-size: 16px;
         color: #000000;
+
+        @media (max-width: 768px) {
+            font-size: 2.5em;
+        }
     }
     .date {
         font-weight: 100;
         font-size: 13px;
         color: #000000;
+
+        @media (max-width: 768px) {
+            font-size: 2.5em;
+        }
     }    
 `;
 
@@ -72,6 +80,11 @@ export const Button = styled.button`
 
     font-weight: 300;
     font-size: 16px;
+
+    @media (max-width: 768px) {
+        width: 25vw;
+        font-size: 3em;
+    }
 `;
 
 export const EditBtnContainer= styled.div`
@@ -99,7 +112,6 @@ export const EditButton = styled.button`
 
 export const SliderWrapper = styled.div`
     .slick-list {
-        // display: flex !important;
         overflow: hidden;
     }
 
@@ -111,6 +123,9 @@ export const SliderWrapper = styled.div`
      .slick-slide {
         width: 400px !important; /* 슬라이드 항목 너비 강제 설정 */
         margin-right: 8px;
+        @media (max-width: 768px) {
+        width: 3vw;
+    }
     }
 
     .slick-prev::before,
@@ -129,12 +144,20 @@ export const TravelImg = styled.div`
         height: 100%;
         object-fit: cover;
     }
+
+    @media (max-width: 768px) {
+        width: 3vw;
+    }
 `;
 
 export const QuickReview = styled.div`
     font-weight: 100;
     font-size: 20px;
     color: #000000;
+
+    @media (max-width: 768px) {
+        font-size: 3em;
+    }
 `;
 
 export const Hr = styled.hr`

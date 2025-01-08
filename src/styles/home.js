@@ -26,9 +26,15 @@ export const SearchInput = styled.input`
     font-weight: 400;
     font-size: 24px;
     line-height: 29.05px;
+    align-items: center;
 
     &::placeholder {
         color: rgba(0, 0, 0, 0.49);
+    }
+
+    @media (max-width: 768px) {
+        font-size: 3.5vw;
+        height: 4vh;
     }
 `;
 
@@ -40,6 +46,12 @@ export const SearchIcon = styled.img`
     left: 14px;
     bottom: 13px;
     z-index: 2;
+
+    @media (max-width: 768px) {
+        width: 4vw;
+        height: 4vw;
+        margin: auto;
+    }
 `;
 
 export const SearchResultsContainer = styled.div`
@@ -67,8 +79,8 @@ export const SearchResultsContainer = styled.div`
         }
 
         @media (max-width: 768px) {
-            font-size: 3.5vw;
-            top: 2.5vh;
+            font-size: 3.3vw;
+            top: 2vh;
         }
     }
 `;
@@ -78,6 +90,7 @@ export const SuggestionBox = styled.div`
     position: absolute;
     top: 65px;
     left: 5%;
+    bottom: 2%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     align-items:center;
@@ -86,6 +99,10 @@ export const SuggestionBox = styled.div`
 
     @media (max-width: 1024px) {
         top: 7vh;
+    }
+
+    @media (max-width: 768px) {
+        top: 6vh;
     }
 `;
 
@@ -98,8 +115,8 @@ export const SuggestionItem = styled.div`
     color: rgba(0, 0, 0, 0.49);
 
     .arrow {
-        width: 24px;  /* 루트 폰트 크기를 기준으로 설정된 화살표 크기 */
-        height: 24px;  /* 동일하게 높이도 설정 */
+        width: 24px;
+        height: 24px; 
     }
 
 
@@ -123,7 +140,7 @@ export const SuggestionItem = styled.div`
 export const Text = styled.div`
     margin-top: 144px;
     font-weight: 600;
-    font-size: 24px;
+    font-size: 3rem;
     color: #555555;
 `;
 
