@@ -30,21 +30,13 @@ export const TitleDateWrapper = styled.div`
 
     .nickname {
         font-weight: bold;
-        font-size: 16px;
+        font-size: 0.8vw;
         color: #000000;
-
-        @media (max-width: 768px) {
-            font-size: 2.5em;
-        }
     }
     .date {
         font-weight: 100;
-        font-size: 13px;
+        font-size: 0.65vw;
         color: #000000;
-
-        @media (max-width: 768px) {
-            font-size: 2.5em;
-        }
     }    
 `;
 
@@ -52,11 +44,13 @@ export const LocationWrapper = styled.div`
     display: flex;
     gap: 5px;
     color: #555555;
+    font-weight: 500;
+    font-size: 0.55vw;
 `;
 
 export const ProfileImg = styled.div`
-    width: 50px;
-    height: 50px;
+    width: 2.5vw;//50px
+    height: 2.5vw;
     border-radius: 70%;
     overflow: hidden;
 
@@ -68,23 +62,21 @@ export const ProfileImg = styled.div`
 `;
 
 export const LocPin = styled.img`
-    height: 13px;
+    height: 0.65vw;
 `;
 
 export const Button = styled.button`
-    width: 121px;
-    height: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6.05vw;//121px
+    height: 1.7vw;//34px
     border-radius: 15px;
     background-color: #01BCD4;
     color: white;
 
     font-weight: 300;
-    font-size: 16px;
-
-    @media (max-width: 768px) {
-        width: 25vw;
-        font-size: 3em;
-    }
+    font-size: 0.8vw;
 `;
 
 export const EditBtnContainer= styled.div`
@@ -92,21 +84,24 @@ export const EditBtnContainer= styled.div`
     gap: 9px;
 
     .share-icon {
-        width: 31px;
-        height: 31px;
+        width: 1.55vw;//31px
+        height: 1.55vw;
         cursor: pointer;
     }
 `;
 
 export const EditButton = styled.button`
-    width: 122px;
-    height: 33px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6.1vw;//122px
+    height: 1.65vw;//33px
     border: 1px solid #555555;
     border-radius: 5px;
     background-color: white;
 
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.7vw;
     line-height: 16.94px;
     color: rgba(0, 0, 0, 0.49);
 `;
@@ -122,11 +117,8 @@ export const SliderWrapper = styled.div`
     }
 
      .slick-slide {
-        width: 400px !important; /* 슬라이드 항목 너비 강제 설정 */
+        width: 20vw !important; /* 슬라이드 항목 너비 강제 설정 */
         margin-right: 8px;
-        @media (max-width: 768px) {
-        width: 3vw;
-    }
     }
 
     .slick-prev::before,
@@ -136,8 +128,8 @@ export const SliderWrapper = styled.div`
 `;
 
 export const TravelImg = styled.div`
-    width: 400px;
-    height: 333px;
+    width: 20vw;//400px
+    height: 16.65vw;//333px
     overflow: hidden;
 
     .travel-img{
@@ -145,20 +137,12 @@ export const TravelImg = styled.div`
         height: 100%;
         object-fit: cover;
     }
-
-    @media (max-width: 768px) {
-        width: 3vw;
-    }
 `;
 
 export const QuickReview = styled.div`
     font-weight: 100;
-    font-size: 20px;
+    font-size: 1vw;
     color: #000000;
-
-    @media (max-width: 768px) {
-        font-size: 3em;
-    }
 `;
 
 export const Hr = styled.hr`

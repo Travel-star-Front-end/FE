@@ -4,14 +4,14 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    //max-width: 1320px;
+    height: 100vh;
     box-sizing: border-box;
-    gap: 67px;
+    gap: 3.35vw;
 `;
 
 export const BannerContainer = styled.div`
     width: 100%;
-    height: 435px;
+    height: 21.75vw;
     position: relative;
 
     .banner-img {
@@ -31,44 +31,44 @@ export const BannerInfo = styled.div`
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 23px;
+    bottom: 1.15vw;
 `;
 
 export const BannerHeader = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 1.5vw;
     color: white;
 
     .title {
         font-weight: 400;
-        font-size: 36px;
+        font-size: 1.8vw;
         line-height: 43.57px;
     }
 `;
 
 export const InfoContainer = styled.div`
     display: flex;
-    gap: 20px;
-    padding-left: 6px;
+    gap: 1vw;
+    padding-left: 0.3vw;//6px
     align-items:center;
 
     .nickname{
         font-weight: 400;
-        font-size: 20px;
+        font-size: 1vw;
         line-height: 24.86px;
-        margin-bottom: 5px;
+        margin-bottom: 0.25vw;//5px
     }
     .planet-name{
         font-weight: 300;
-        font-size: 14px;
+        font-size: 0.7vw;
         line-height: 21px;
     }
 `;
 
 export const ProfileImg = styled.div`
-    width: 62px;
-    height: 62px;
+    width: 3.1vw;//62px
+    height: 3.1vw;
     border-radius: 70%;
     overflow: hidden;
 
@@ -87,17 +87,17 @@ export const DetailInfo = styled.div`
 export const ToolbarContainer = styled.div`
     display: flex;
     justify-content: space-between;
-    width: 276px;
-    height: 50px;
+    width: 13.8vw;//276px
+    height: 2.5vw;//50px
     border-radius: 36px;
     line-height: 50px;
     background-color: rgba(255, 255, 255, 0.67);
     align-items:center;
-    padding: 0 20px;
+    padding: 0 1vw;
 
     .toolbar-icon{
-        width: 34px;
-        height: 34px;
+        width: 1.7vw;//34px
+        height: 1.7vw;
         cursor: pointer;
     }
 `;
@@ -105,13 +105,13 @@ export const ToolbarContainer = styled.div`
 export const DiaryContainer = styled.div`
     display: flex;
     flex-direction: column;
-    margin: auto;
+    margin: 0 auto;
     width: 95%;
 `;
 
 export const Text = styled.div`
     font-weight: 600;
-    font-size: 24px;
+    font-size: 1.2vw;
     color: #555555;
 `;
 
@@ -123,5 +123,5 @@ export const Hr = styled.hr`
 `;
 
 export const PostWrapper = styled.div`
-    padding: 30px 0;
+    padding: 1.5vw 0;
 `;
