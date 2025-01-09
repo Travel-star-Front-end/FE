@@ -81,11 +81,11 @@ const LoginForm = () => {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (userData) => API.post("/posts", userData),
+        mutationFn: (userData) => API.post("/login", userData),
         onSuccess: (data) => {
             console.log("로그인 성공: ", data);
             // localStorage.setItem('isLoggedIn', 'true');
-            navigate("/home");
+            // navigate("/home");
         },
         onError: (error) => {
             console.error("로그인 오류: ", error.response?.data || error.message);
@@ -93,7 +93,7 @@ const LoginForm = () => {
     });
 
     const onSubmit = (data) => {
-        // console.log('전송된 데이터:', data);
+        console.log('전송된 데이터:', data);
 
         loginMutation.mutate({
             id: data.id,

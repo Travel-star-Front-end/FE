@@ -8,7 +8,7 @@ import ListSideBar from "./list-sideBar";
 
 const SideBarContainer = styled.div`
     width: 15vw;
-    min-height: 100vh;
+    height: 100%;
     background: ${colors.white};
     display: flex;
     flex-direction: column;
