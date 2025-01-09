@@ -135,14 +135,15 @@ const GlobalStyle = createGlobalStyle`
         appearance: none;
         
         &:focus {
-        outline: none;
+            outline: none;
         }
     }
 
     select{
         border: none;
+
         &:focus {
-        outline: none;
+            outline: none;
         }
     }
 
