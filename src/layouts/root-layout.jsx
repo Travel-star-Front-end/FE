@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 const RootContainer = styled.div`
     display: flex;
+    min-height: 100vh;
 `
 
 const SideBarContainer = styled.div`
