@@ -11,7 +11,7 @@ const SideBarContainer = styled.div`
 `
 
 const OutletContainer = styled.div`
-    width: 100%;
+    width: calc(100% - 15vw);
 `
 
 const RootLayout = () => {
