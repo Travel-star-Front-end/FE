@@ -7,8 +7,8 @@ const ListContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 9.15vw;
-    padding-left: 3.7vw;
+    margin-top: 10.7vw;
+    padding-left: 4.2vw;
     gap: 2.05vw;
 `;
 

@@ -1,25 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import colors from "../../styles/colors";
-import Logo from "../../assets/images/logo.png";
-import LogoP from "../../assets/images/logoP.png";
+import Logo from "../../assets/images/auth/login/logo.png";
+import LogoP from "../../assets/images/auth/login/logoP.png";
 import Profile from "./profile";
 import ListSideBar from "./list-sideBar";
 
 const SideBarContainer = styled.div`
-    width: 15vw;
+    width: 16vw;
     height: 100%;
     background: ${colors.white};
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 3.7vw 0;
+    padding: 3.75vw 0;
 `
 
 const LogoContainer = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.45vw;
+    gap: 0.5vw;
     cursor: pointer;
 `
 
@@ -38,7 +38,7 @@ const SideBar = () => {
     return (
         <SideBarContainer>
             <LogoContainer onClick={handleHomeClick}>
-                <LogoImg src={Logo} alt="logo" width="3.05vw" height="3.05vw" />
+                <LogoImg src={Logo} alt="logo" width="2.86vw" height="2.86vw" />
                 <LogoImg src={LogoP} alt="logoP" />
             </LogoContainer>
 

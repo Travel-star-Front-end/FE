@@ -75,7 +75,6 @@ const WriteForm = () => {
             </AIContainer>
 
             <ButtonContainer>
-                <WriteButton>수정하기</WriteButton>
                 <WriteButton btncolor={colors.main}>일지 저장</WriteButton>
             </ButtonContainer>
         </FormContainer>

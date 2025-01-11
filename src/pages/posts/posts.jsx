@@ -7,7 +7,7 @@ import TravelPost from '../../components/travelPost/travel-post';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
-import profile from '../../assets/images/logo.png';
+import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
     return (

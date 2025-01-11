@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import LoginForm from "../../../components/auth/login/loginForm";
-import LoginBackground from "../../../assets/images/loginBackground.png";
+import LoginBackground from "../../../assets/images/auth/login/loginBackground.png";
 
 const LoginContainer = styled.div`
     background: url(${LoginBackground}) no-repeat center center/cover;

@@ -3,6 +3,7 @@ import AuthRouter from "./authRouter";
 import RootLayout from "../layouts/root-layout";
 import HomePage from "../pages/home/home";
 import PostsPage from "../pages/posts/posts";
+import PostsDetailPage from "../pages/posts/detail";
 import PostsWritePage from "../pages/posts/write";
 import PostsEditPage from "../pages/posts/edit";
 import PlanetPage from "../pages/planet/planet";
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
           {
             index: "true",
             element: <PostsPage />,
+          },
+          {
+            path: ":id",
+            element: <PostsDetailPage />,
           },
           {
             path: "write",
