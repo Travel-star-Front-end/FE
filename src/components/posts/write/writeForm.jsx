@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 import WriteInput from "./input/writeInput";
@@ -14,6 +15,7 @@ import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
 import ListLocation from "./list-location";
 import ListMusic from "./list-music";
+import { API } from "../../../apis/axios";
 
 const FormContainer = styled.div`
     width: 100%;
@@ -65,6 +67,10 @@ const WriteForm = () => {
     const [musicQuery, setMusicQuery] = useState("");
     const [selectedMusic, setSelectedMusic] = useState("");
     const { musicResults, loading, error: musicError } = useMusic(musicQuery);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [feeling, setFeeling] = useState("");
+    const navigate = useNavigate();
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
@@ -89,12 +95,14 @@ const WriteForm = () => {
         handleLocationChange(e);
     };
 
+    /*
     useEffect(() => {
         if (latitude !== null && longitude !== null) {
             console.log("선택된 위치 위도:", latitude);
             console.log("선택된 위치 경도:", longitude);
         }
     }, [latitude, longitude]);
+    */
 
     // 음악 검색
     const handleMusicChange = (e) => {
@@ -108,14 +116,41 @@ const WriteForm = () => {
         setMusicQuery("");
     };
 
+    /*
     useEffect(() => {
         // console.log("음악 검색 결과:", musicResults);
     }, [musicResults]);
+    */
+
+    const handleSubmit = async () => {
+        const postData = {
+            title,
+            location: {
+                latitude,
+                longitude,
+                address: selectedLocation || "" 
+            },
+            music: selectedMusic || null,
+            content,
+            feeling
+        };
+
+        try {
+            const response = await API.post("/users", postData);
+            // console.log("게시글 작성 성공.", response.data);
+            alert("일지가 저장되었습니다.");
+            navigate("/posts");
+        } catch (error) {
+            console.error("게시글 작성 실패:", error);
+        }
+    };
+
+    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
         <FormContainer>
             <TitleContainer>
-                <WriteInput width="95%" placeholder="제목" />
+                <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
                 
                 {menu && <Toggle />}
@@ -131,15 +166,15 @@ const WriteForm = () => {
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
             </SearchContainer>
 
-            <WriteTextarea placeholder="글 작성" IconData={IconData} />
+            <WriteTextarea placeholder="글 작성" IconData={IconData} value={content} onChange={(e) => setContent(e.target.value)} />
 
             <AIContainer>
-                <WriteTextarea width="48%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" />
+                <WriteTextarea width="48%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} />
                 <AIButton>분석하기</AIButton>
             </AIContainer>
 
             <ButtonContainer>
-                <WriteButton btncolor={colors.main}>일지 저장</WriteButton>
+                <WriteButton btncolor={colors.main} onClick={handleSubmit} disabled={!isFormValid}>일지 저장</WriteButton>
             </ButtonContainer>
         </FormContainer>
     )

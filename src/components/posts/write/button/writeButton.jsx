@@ -10,12 +10,12 @@ const ButtonContainer = styled.button`
     font-weight: 800;
     color: ${colors.white};
     background: ${props => props.btncolor || colors.writeGray3};
-    cursor: pointer;
+    cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
 `
 
-const WriteButton = ({ children, btncolor }) => {
+const WriteButton = ({ children, btncolor, onClick, disabled }) => {
     return (
-        <ButtonContainer btncolor={btncolor}>
+        <ButtonContainer btncolor={btncolor} onClick={onClick} disabled={disabled}>
             {children}
         </ButtonContainer>
     )

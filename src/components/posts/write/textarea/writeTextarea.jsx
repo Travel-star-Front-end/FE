@@ -36,7 +36,7 @@ const IconImg = styled.img`
     cursor: pointer;
 `;
 
-const WriteTextarea = ({ width, height, placeholder, IconData }) => {
+const WriteTextarea = ({ width, height, placeholder, IconData, value, onChange }) => {
     const validIconData = Array.isArray(IconData) && IconData.length > 0;
 
     return (
@@ -45,6 +45,8 @@ const WriteTextarea = ({ width, height, placeholder, IconData }) => {
                 width={width}
                 height={height}
                 placeholder={placeholder}
+                value={value}
+                onChange={onChange}
             />
 
             {validIconData && (
