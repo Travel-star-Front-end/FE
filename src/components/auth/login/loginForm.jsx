@@ -81,11 +81,17 @@ const LoginForm = () => {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (userData) => API.post("/login", userData),
+        mutationFn: (userData) => API.post("/users", userData),
         onSuccess: (data) => {
             console.log("로그인 성공: ", data);
             // localStorage.setItem('isLoggedIn', 'true');
-            navigate("/home");
+
+            const planetName = localStorage.getItem('planetName');
+            if (planetName) {
+                navigate("/home");
+            } else {
+                navigate("/setting");
+            }
         },
         onError: (error) => {
             console.error("로그인 오류: ", error.response?.data || error.message);
