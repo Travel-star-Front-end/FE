@@ -12,7 +12,7 @@ const ProfileContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 2.95vw;
+    margin-top: 2.1vw;
     padding-top: 2.15vw;
     gap: 0.8vw;
 `
