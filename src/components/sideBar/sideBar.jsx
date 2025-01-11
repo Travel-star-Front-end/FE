@@ -7,25 +7,25 @@ import Profile from "./profile";
 import ListSideBar from "./list-sideBar";
 
 const SideBarContainer = styled.div`
-    width: 31.9rem;
-    min-height: 100vh;
+    width: 15vw;
+    height: 100%;
     background: ${colors.white};
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 3.7vw 0;
 `
 
 const LogoContainer = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.9rem;
-    margin-top: 7.4rem;
+    gap: 0.45vw;
     cursor: pointer;
 `
 
 const LogoImg = styled.img`
-    width: ${(props) => props.width || '11.5rem'};
-    height: ${(props) => props.height || '4.4rem'};
+    width: ${(props) => props.width || '5.75vw'};
+    height: ${(props) => props.height || '2.2vw'};
 `
 
 const SideBar = () => {
@@ -38,7 +38,7 @@ const SideBar = () => {
     return (
         <SideBarContainer>
             <LogoContainer onClick={handleHomeClick}>
-                <LogoImg src={Logo} alt="logo" width="6.1rem" height="6.1rem" />
+                <LogoImg src={Logo} alt="logo" width="3.05vw" height="3.05vw" />
                 <LogoImg src={LogoP} alt="logoP" />
             </LogoContainer>
 
