@@ -12,6 +12,7 @@ import Toggle from "./toggle/toggle";
 import IconData from "../../../utils/posts/iconData";
 import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
+import ListLocation from "./list-location";
 import ListMusic from "./list-music";
 
 const FormContainer = styled.div`
@@ -36,7 +37,7 @@ const MenuImg = styled.img`
     cursor: pointer;
 `
 
-const MusicContainer = styled.div`
+const SearchContainer = styled.div`
     width: 100%;
     position: relative;
 `
@@ -55,18 +56,47 @@ const ButtonContainer = styled.div`
     gap: 1.45vw;
 `
 
-
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
+    const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
+    const [selectedLocation, setSelectedLocation] = useState("");
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
     const [musicQuery, setMusicQuery] = useState("");
     const [selectedMusic, setSelectedMusic] = useState("");
-    const { location, latLng, error: locationError } = useLocation();
     const { musicResults, loading, error: musicError } = useMusic(musicQuery);
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
     }
 
+    // 위치 검색
+    const handleLocationSelect = (location) => {
+        setSelectedLocation(location.formatted_address);
+        setLocationQuery(location.formatted_address);
+        setLatitude(location.geometry.location.lat);
+        setLongitude(location.geometry.location.lng);
+
+        setLocationQuery("");
+    };
+
+    const handleLocationChangeHandler = (e) => {
+        if (selectedLocation) {
+            setSelectedLocation("");
+            setLatitude(null);
+            setLongitude(null);
+        }
+        handleLocationChange(e);
+    };
+
+    useEffect(() => {
+        if (latitude !== null && longitude !== null) {
+            console.log("선택된 위치 위도:", latitude);
+            console.log("선택된 위치 경도:", longitude);
+        }
+    }, [latitude, longitude]);
+
+    // 음악 검색
     const handleMusicChange = (e) => {
         setMusicQuery(e.target.value);
         // console.log("검색어 변경:", e.target.value);
@@ -82,19 +112,6 @@ const WriteForm = () => {
         // console.log("음악 검색 결과:", musicResults);
     }, [musicResults]);
 
-    /*
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        const formData = {
-            locationAddress: location,
-            locationCoordinates: latLng,
-        };
-
-        console.log("폼 제출 데이터:", formData);
-    }
-    */
-
     return (
         <FormContainer>
             <TitleContainer>
@@ -104,12 +121,15 @@ const WriteForm = () => {
                 {menu && <Toggle />}
             </TitleContainer>
 
-            <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={location || locationError || "Loading..."} onChange={() => {}} readOnly />
+            <SearchContainer>
+                <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
+                <ListLocation locationResults={locationResults} handleLocationSelect={handleLocationSelect} locationQuery={locationQuery} />
+            </SearchContainer>
 
-            <MusicContainer>
+            <SearchContainer>
                 <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
-            </MusicContainer>
+            </SearchContainer>
 
             <WriteTextarea placeholder="글 작성" IconData={IconData} />
 

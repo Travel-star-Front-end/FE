@@ -1,47 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
+import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_TOKEN;
-const GEOCODING_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${API_KEY}&latlng=`;
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_TOKEN;
 
 const useLocation = () => {
-    const [location, setLocation] = useState("");
-    const [latLng, setLatLng] = useState({ lat: null, lng: null });
+    const [locationQuery, setLocationQuery] = useState("");
+    const [locationResults, setLocationResults] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setLatLng({ lat: latitude, lng: longitude });
+    const searchLocation = useCallback(async (query) => {
+        if (!query) return;
 
-                    fetch(`${GEOCODING_URL}${latitude},${longitude}`)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.status === "OK") {
-                                const formattedAddress = data.results[0]?.formatted_address;
-                                setLocation(formattedAddress || "주소를 찾을 수 없음");
-                            } else {
-                                setLocation("주소를 찾을 수 없음");
-                            }
-                        })
-                        .catch(() => {
-                            setError("주소를 가져오기 실패");
-                            setLocation("주소를 가져오기 실패");
-                        });
-                },
-                (error) => {
-                    setError(error.message);
-                    setLocation("위치를 가져오기 실패");
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(
+                `https://maps.googleapis.com/maps/api/geocode/json`,
+                {
+                    params: {
+                        address: query,
+                        key: GOOGLE_MAPS_API_KEY,
+                    },
                 }
             );
-        } else {
-            setError("위치 가져오기 실패");
-            setLocation("위치 가져오기 실패");
+            setLoading(false);
+
+            if (response.data.status === "OK") {
+                setLocationResults(response.data.results.slice(0, 5));
+            } else {
+                setError("위치 정보를 찾을 수 없습니다.");
+            }
+        } catch (err) {
+            setLoading(false);
+            setError("위치 정보를 검색하는 데 오류가 발생했습니다.");
         }
     }, []);
 
-    return { location, latLng, error };
+    const handleLocationChange = (e) => {
+        const query = e.target.value;
+        setLocationQuery(query);
+        setLocationResults([]);
+        searchLocation(query);
+    };
+
+    return {
+        locationQuery,
+        setLocationQuery,
+        locationResults,
+        loading,
+        error,
+        handleLocationChange,
+    };
 };
 
 export default useLocation;
