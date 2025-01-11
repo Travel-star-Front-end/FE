@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "../../../styles/colors";
 import WriteInput from "./input/writeInput";
@@ -10,6 +10,8 @@ import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
 import Toggle from "./toggle/toggle";
 import IconData from "../../../utils/posts/iconData";
+import useLocation from "../../../hooks/useLocation";
+import useMusic from "../../../hooks/useMusic";
 
 const FormContainer = styled.div`
     width: 100%;
@@ -47,12 +49,59 @@ const ButtonContainer = styled.div`
     gap: 1.45vw;
 `
 
+const MusicSearchResults = styled.div`
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+`;
+
+const MusicItem = styled.div`
+    padding: 0.5vw;
+    cursor: pointer;
+    &:hover {
+        background-color: ${colors.lightGray};
+    }
+`;
+
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
+    const [musicQuery, setMusicQuery] = useState("");
+    const [selectedMusic, setSelectedMusic] = useState("");
+    const { location, latLng, error: locationError } = useLocation();
+    const { musicResults, loading, error: musicError } = useMusic(musicQuery);
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
     }
+
+    const handleMusicChange = (e) => {
+        setMusicQuery(e.target.value);
+        // console.log("검색어 변경:", e.target.value);
+        setSelectedMusic("");
+    };
+
+    const handleMusicSelect = (track) => {
+        setSelectedMusic(`${track.name} - ${track.artists[0].name}`);
+        setMusicQuery("");
+    };
+
+    useEffect(() => {
+        console.log("음악 검색 결과:", musicResults);
+    }, [musicResults]);
+
+    /*
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            locationAddress: location,
+            locationCoordinates: latLng,
+        };
+
+        console.log("폼 제출 데이터:", formData);
+    }
+    */
 
     return (
         <FormContainer>
@@ -63,9 +112,18 @@ const WriteForm = () => {
                 {menu && <Toggle />}
             </TitleContainer>
 
-            <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} />
+            <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={location || locationError || "Loading..."} onChange={() => {}} readOnly />
 
-            <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} />
+            <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
+            {musicQuery && musicResults.length > 0 && (
+                <MusicSearchResults>
+                    {musicResults.map(track => (
+                        <MusicItem key={track.id} onClick={() => handleMusicSelect(track)}>
+                            {track.name} - {track.artists[0].name}
+                        </MusicItem>
+                    ))}
+                </MusicSearchResults>
+            )}
 
             <WriteTextarea placeholder="글 작성" IconData={IconData} />
 

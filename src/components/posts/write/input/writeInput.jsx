@@ -31,13 +31,15 @@ const IconImg = styled.img`
     height: 2.3vw;
 `;
 
-const WriteInput = ({ width, height, padding, placeholder, icon }) => {
+const WriteInput = ({ width, height, padding, placeholder, icon, value, onChange }) => {
     return (
         <InputWrapper width={width} height={height}>
             {icon && <IconImg src={icon} alt="icon" />}
             <InputContainer 
                 padding={padding}
                 placeholder={placeholder}
+                value={value}
+                onChange={onChange}
             />
         </InputWrapper>
     );
