@@ -12,6 +12,7 @@ import Toggle from "./toggle/toggle";
 import IconData from "../../../utils/posts/iconData";
 import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
+import ListMusic from "./list-music";
 
 const FormContainer = styled.div`
     width: 100%;
@@ -35,6 +36,11 @@ const MenuImg = styled.img`
     cursor: pointer;
 `
 
+const MusicContainer = styled.div`
+    width: 100%;
+    position: relative;
+`
+
 const AIContainer = styled.div`
     display: flex;
     align-items: flex-end;
@@ -49,20 +55,6 @@ const ButtonContainer = styled.div`
     gap: 1.45vw;
 `
 
-const MusicSearchResults = styled.div`
-    width: 100%;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-`;
-
-const MusicItem = styled.div`
-    padding: 0.5vw;
-    cursor: pointer;
-    &:hover {
-        background-color: ${colors.lightGray};
-    }
-`;
 
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
@@ -87,7 +79,7 @@ const WriteForm = () => {
     };
 
     useEffect(() => {
-        console.log("음악 검색 결과:", musicResults);
+        // console.log("음악 검색 결과:", musicResults);
     }, [musicResults]);
 
     /*
@@ -114,16 +106,10 @@ const WriteForm = () => {
 
             <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={location || locationError || "Loading..."} onChange={() => {}} readOnly />
 
-            <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
-            {musicQuery && musicResults.length > 0 && (
-                <MusicSearchResults>
-                    {musicResults.map(track => (
-                        <MusicItem key={track.id} onClick={() => handleMusicSelect(track)}>
-                            {track.name} - {track.artists[0].name}
-                        </MusicItem>
-                    ))}
-                </MusicSearchResults>
-            )}
+            <MusicContainer>
+                <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
+                <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
+            </MusicContainer>
 
             <WriteTextarea placeholder="글 작성" IconData={IconData} />
 
