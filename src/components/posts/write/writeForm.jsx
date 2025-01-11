@@ -10,6 +10,7 @@ import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
 import Toggle from "./toggle/toggle";
 import IconData from "../../../utils/posts/iconData";
+import useLocation from "../../../hooks/useLocation";
 
 const FormContainer = styled.div`
     width: 100%;
@@ -49,10 +50,24 @@ const ButtonContainer = styled.div`
 
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
+    const { location, latLng, error } = useLocation();
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
     }
+
+    /*
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            locationAddress: location,
+            locationCoordinates: latLng,
+        };
+
+        console.log("폼 제출 데이터:", formData);
+    }
+    */
 
     return (
         <FormContainer>
@@ -63,7 +78,7 @@ const WriteForm = () => {
                 {menu && <Toggle />}
             </TitleContainer>
 
-            <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} />
+            <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={location || error || "위치 정보 가져오기 실패"} readOnly/>
 
             <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} />
 
