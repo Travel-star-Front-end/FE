@@ -7,7 +7,7 @@ import Profile from "./profile";
 import ListSideBar from "./list-sideBar";
 
 const SideBarContainer = styled.div`
-    width: 16vw;
+    width: 100%;
     height: 100%;
     background: ${colors.white};
     display: flex;
