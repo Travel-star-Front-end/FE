@@ -1,29 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import styled from "styled-components";
-import colors from "../../styles/colors";
-
-const ItemContainer = styled.div`
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.7vw;
-    cursor: pointer;
-`
-
-const ItemImg = styled.img`
-    width: 1.55vw;
-    height: 1.55vw;
-`
-
-const ItemP = styled.p`
-    font-size: 1vw;
-    font-weight: 400;
-    color: ${(props) => (props.active === "true" ? colors.main : colors.sideBarGray2)};
-
-    &:hover {
-        font-weight: bold;
-    }
-`
+import * as s from "../../styles/common/sidebar/sidebar";
 
 const ItemSideBar = ({ name, link, logo, logoClick }) => {
     const navigate = useNavigate();
@@ -37,10 +13,10 @@ const ItemSideBar = ({ name, link, logo, logoClick }) => {
     const logoImage = active && logoClick ? logoClick : logo;
 
     return (
-        <ItemContainer onClick={handleClick}>
-            <ItemImg src={logoImage} alt="logo" />
-            <ItemP active={active.toString()}>{name}</ItemP>
-        </ItemContainer>
+        <s.ItemContainer onClick={handleClick}>
+            <s.ItemImg src={logoImage} alt="logo" />
+            <s.ItemP active={active.toString()}>{name}</s.ItemP>
+        </s.ItemContainer>
     )
 }
 

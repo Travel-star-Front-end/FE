@@ -1,62 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import colors from "../../../styles/colors";
+import { API } from "../../../apis/axios";
+import * as s from "../../../styles/posts/write/write";
+import colors from "../../../styles/common/colors";
 import WriteInput from "./input/writeInput";
 import WriteTextarea from "./textarea/writeTextarea";
 import AIButton from "./button/AIButton";
 import WriteButton from "./button/writeButton";
+import Toggle from "./toggle/toggle";
+import IconData from "../../../utils/posts/iconData";
+import ListLocation from "./list-location";
+import ListMusic from "./list-music";
+import useLocation from "../../../hooks/useLocation";
+import useMusic from "../../../hooks/useMusic";
 import Menu from "../../../assets/images/posts/write/menu.png";
 import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
-import Toggle from "./toggle/toggle";
-import IconData from "../../../utils/posts/iconData";
-import useLocation from "../../../hooks/useLocation";
-import useMusic from "../../../hooks/useMusic";
-import ListLocation from "./list-location";
-import ListMusic from "./list-music";
-import { API } from "../../../apis/axios";
-
-const FormContainer = styled.div`
-    width: 100%;
-    padding: 0.55vw 0 2.25vw 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.15vw;
-`
-
-const TitleContainer = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-`
-
-const MenuImg = styled.img`
-    width: 1.75vw;
-    height: 1.6vw;
-    cursor: pointer;
-`
-
-const SearchContainer = styled.div`
-    width: 100%;
-    position: relative;
-`
-
-const AIContainer = styled.div`
-    display: flex;
-    align-items: flex-end;
-    gap: 0.9vw;
-    margin-bottom: 0.65vw;
-`
-
-const ButtonContainer = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 1.45vw;
-`
 
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
@@ -148,35 +107,35 @@ const WriteForm = () => {
     const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
-        <FormContainer>
-            <TitleContainer>
+        <s.FormContainer>
+            <s.TitleContainer>
                 <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
-                <MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
+                <s.MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
                 
                 {menu && <Toggle />}
-            </TitleContainer>
+            </s.TitleContainer>
 
-            <SearchContainer>
-                <WriteInput width="18%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
+            <s.SearchContainer>
+                <WriteInput width="100%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
                 <ListLocation locationResults={locationResults} handleLocationSelect={handleLocationSelect} locationQuery={locationQuery} />
-            </SearchContainer>
+            </s.SearchContainer>
 
-            <SearchContainer>
-                <WriteInput width="36%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
+            <s.SearchContainer>
+                <WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
-            </SearchContainer>
+            </s.SearchContainer>
 
             <WriteTextarea placeholder="글 작성" IconData={IconData} value={content} onChange={(e) => setContent(e.target.value)} />
 
-            <AIContainer>
+            <s.AIContainer>
                 <WriteTextarea width="48%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} />
                 <AIButton>분석하기</AIButton>
-            </AIContainer>
+            </s.AIContainer>
 
-            <ButtonContainer>
+            <s.ButtonContainer>
                 <WriteButton btncolor={colors.main} onClick={handleSubmit} disabled={!isFormValid}>일지 저장</WriteButton>
-            </ButtonContainer>
-        </FormContainer>
+            </s.ButtonContainer>
+        </s.FormContainer>
     )
 }
 

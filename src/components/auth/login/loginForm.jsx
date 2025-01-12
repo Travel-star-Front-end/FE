@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { API } from "../../../apis/axios";
 import { useNavigate } from 'react-router-dom';
 import * as s from "../../../styles/auth/login/login";
-import colors from "../../../styles/colors";
+import colors from '../../../styles/common/colors';
 import Logo from "../../../assets/images/auth/login/logo.png";
 import LogoP from "../../../assets/images/auth/login/logoP.png";
 import LoginInput from "./input/loginInput";

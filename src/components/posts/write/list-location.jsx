@@ -1,14 +1,5 @@
-import styled from "styled-components";
-import colors from "../../../styles/colors";
+import * as s from "../../../styles/posts/write/write";
 import ItemLocation from "./item-location";
-
-const ListContainer = styled.div`
-    position: absolute;
-    width: 100%;
-    background-color: ${colors.writeGray};
-    z-index: 10;
-    margin-top: 0.5vw;
-`;
 
 const ListLocation = ({ locationResults, locationQuery, handleLocationSelect }) => {
     if (locationResults.length === 0 || !locationQuery) {
@@ -16,7 +7,7 @@ const ListLocation = ({ locationResults, locationQuery, handleLocationSelect }) 
     }
 
     return (
-        <ListContainer>
+        <s.ListContainer>
             {locationResults.map((location, index) => (
                 <ItemLocation
                     key={index}
@@ -24,7 +15,7 @@ const ListLocation = ({ locationResults, locationQuery, handleLocationSelect }) 
                     onSelect={handleLocationSelect}
                 />
             ))}
-        </ListContainer>
+        </s.ListContainer>
     );
 };
 
