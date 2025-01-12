@@ -103,10 +103,17 @@ const GlobalStyle = createGlobalStyle`
         }
     }
 
-    @media screen and (max-width:374px) {
+    @media screen and (max-width:424px) {
         /* 모바일 */
         html{
             font-size: 25%;
+        }
+    }
+
+    @media screen and (max-width:374px) {
+        /* 모바일 */
+        html{
+            font-size: 20%;
         }
     }
     

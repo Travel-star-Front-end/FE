@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { API } from "../apis/posts/spotifyService"
 
 const useMusic = (query) => {
   const [musicResults, setMusicResults] = useState([]);
@@ -17,21 +17,10 @@ const useMusic = (query) => {
       setError(null);
 
       try {
-        const response = await axios.get("https://api.spotify.com/v1/search", {
-          params: {
-            q: query,
-            type: "track",
-            limit: 5,
-          },
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_SPOTIFY_TOKEN}`,
-          },
-        });
-
-        setMusicResults(response.data.tracks.items);
+        const tracks = await API(query);
+        setMusicResults(tracks);
       } catch (err) {
         setError("검색 실패.");
-        console.error("Spotify API 에러:", err);
       } finally {
         setLoading(false);
       }
