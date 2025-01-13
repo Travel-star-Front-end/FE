@@ -203,7 +203,10 @@ const PlanetPage = () => {
         </TopBar>
 
         {/* 지구본 */}
-        <GlobeContainer ref={globeContainerRef}>
+        <GlobeContainer
+          ref={globeContainerRef}
+          // style={{ justifyContent: 'center', alignItems: 'center' }}
+        >
           <Globe
             ref={globeRef}
             width={dimensions.width}
@@ -243,8 +246,11 @@ const GlobeWrapper = styled.div`
 
 const GlobeContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const TopBar = styled.div`
