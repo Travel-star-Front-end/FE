@@ -69,15 +69,18 @@ export const Button = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 6.05vw;//121px
-    height: 1.7vw;//34px
+    width: 6.05vw; // 121px
+    height: 1.7vw; // 34px
     border-radius: 15px;
-    background-color: #01BCD4;
-    color: white;
-
+    background-color: ${(props) => (props.$isFriend ? "white" : "#01BCD4")};
+    color: ${(props) => (props.$isFriend ? "#01BCD4" : "white")};
+    border: ${(props) => (props.$isFriend ? "1px solid #01BCD4" : "none")};
+    
     font-weight: 300;
     font-size: 0.8vw;
+    cursor: pointer;
 `;
+
 
 export const EditBtnContainer= styled.div`
     display: flex;
