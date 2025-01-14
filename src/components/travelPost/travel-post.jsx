@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as S from '../../styles/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -42,7 +43,14 @@ const settings = {
 
 //추천 게시글 컴포넌트
 const TravelPost = ({profileImg, nickname, date, location, travelImages, quickReview, buttonType}) => {
+
+    const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
+
+    //친구 추가 버튼 상태태
+    const handleButtonClick = () => {
+        setIsFriend((prevState) => !prevState);
+      };
 
     return (
         <S.Container>
@@ -68,14 +76,21 @@ const TravelPost = ({profileImg, nickname, date, location, travelImages, quickRe
                 </S.Info>
 
                 {buttonType === 'friend' && (
-                    <S.Button type="button">+ 친구 추가</S.Button>
+                    <S.Button
+                        type="button"
+                        $isFriend={isFriend} 
+                        onClick={handleButtonClick}
+                    >
+                        {isFriend ? "친구" : "+ 친구 추가"}
+                  </S.Button>
                 )}
                 {buttonType === 'edit' && (
                     <S.EditBtnContainer>
-                        <img src={share} alt='share' className='share-icon'/>
-                        <S.EditButton type="button">수정하기</S.EditButton>
+                        <img src={share} alt="share" className="share-icon" />
+                        <S.EditButton type="button" onClick={() => navigate('edit')}>수정하기</S.EditButton>
                     </S.EditBtnContainer>
                 )}
+
             </S.InfoWrapper>
 
             <S.SliderWrapper>
