@@ -2,11 +2,12 @@ import * as S from '../../styles/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useNavigate } from "react-router-dom";
 import locationPin from '../../assets/images/locationPin.png';
 import share from '../../assets/images/share.png';
+import default_profile_img from '../../assets/images/ProfileImage.png';
 
 //예시 이미지
-import img from '../../assets/images/auth/login/logo.png';
 import image1 from '../../assets/images/image 1.png';
 import image2 from '../../assets/images/image 2.png';
 import image3 from '../../assets/images/image 3.png';
@@ -40,13 +41,19 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({profileSrc, nickname, date, location, travelImages, quickReview, buttonType}) => {
+const TravelPost = ({profileImg, nickname, date, location, travelImages, quickReview, buttonType}) => {
+    const navigate = useNavigate();
+
     return (
         <S.Container>
             <S.InfoWrapper>
                 <S.Info>
                     <S.ProfileImg>
-                        <img src={img} alt="프로필" className='profile-img'/>
+                        {profileImg ? (
+                            <img src={profileImg} alt="프로필" className="profile-img" />
+                        ) : (
+                            <img src={default_profile_img} alt="프로필" className="profile-img" />
+                        )}
                     </S.ProfileImg>
                     <S.DetailInfo>
                         <S.TitleDateWrapper>
