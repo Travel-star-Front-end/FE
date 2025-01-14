@@ -1,7 +1,7 @@
 import * as S from '../../styles/home';
-import searchIcon from '../../assets/images/search.png'
-import upArrow from '../../assets/images/search-up-arrow.png';
-import decreaseArrow from '../../assets/images/search-decrease-arrow.png';
+import searchIcon from '../../assets/images/home/search.png'
+import upArrow from '../../assets/images/home/search-up-arrow.png';
+import decreaseArrow from '../../assets/images/home/search-decrease-arrow.png';
 import TravelPost from '../../components/travelPost/travel-post';
 
 const Home = () => {
