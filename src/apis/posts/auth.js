@@ -2,7 +2,7 @@ import axios from "axios";
 import { Buffer } from "buffer";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
+const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET_ID;
 
 export const getAccessToken = async () => {
   const tokenUrl = "https://accounts.spotify.com/api/token";
@@ -16,7 +16,9 @@ export const getAccessToken = async () => {
       },
     });
 
-    return response.data.access_token;
+    const accessToken = response.data.access_token;
+    // console.log(accessToken)
+    return accessToken;
     
   } catch (err) {
     console.error("Access Token 요청 에러:", err);
