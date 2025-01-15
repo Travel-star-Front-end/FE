@@ -115,29 +115,29 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
     const firstDayOfWeek = firstDayOfMonth.getDay();
     const daysInMonth = lastDayOfMonth.getDate();
 
-    const prevMonthDays = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+    const prevMonthDays = firstDayOfWeek;
     const prevMonthLastDay = new Date(year, month, 0).getDate();
 
     const dates = [];
 
     // 이전 달
     for (let i = prevMonthLastDay - prevMonthDays + 1; i <= prevMonthLastDay; i++) {
-      dates.push({ 
-        day: i, 
-        currentMonth: false, 
-        month: month === 0 ? 12 : month, 
-        year: month === 0 ? year - 1 : year 
-      });
+        dates.push({ 
+            day: i, 
+            currentMonth: false, 
+            month: month === 0 ? 12 : month, 
+            year: month === 0 ? year - 1 : year 
+        });
     }
 
     // 현재 달
     for (let i = 1; i <= daysInMonth; i++) {
-      dates.push({ 
-        day: i, 
-        currentMonth: true, 
-        month: month + 1, 
-        year: year 
-      });
+        dates.push({ 
+            day: i, 
+            currentMonth: true, 
+            month: month + 1, 
+            year: year 
+        });
     }
 
     // 다음 달
@@ -145,16 +145,17 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
     const nextMonthDays = remainingDays === 0 ? 0 : 7 - remainingDays;
 
     for (let i = 1; i <= nextMonthDays; i++) {
-      dates.push({ 
-        day: i, 
-        currentMonth: false, 
-        month: month === 11 ? 1 : month + 2, 
-        year: month === 11 ? year + 1 : year 
-      });
+        dates.push({ 
+            day: i, 
+            currentMonth: false, 
+            month: month === 11 ? 1 : month + 2, 
+            year: month === 11 ? year + 1 : year 
+        });
     }
 
     return dates;
-  };
+};
+
 
   const calendarDates = generateCalendar();
 
