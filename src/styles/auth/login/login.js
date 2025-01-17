@@ -4,7 +4,7 @@ import LoginBackground from "../../../assets/images/auth/login/loginBackground.p
 
 export const LoginContainer = styled.div`
     background: url(${LoginBackground}) no-repeat center center/cover;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     position: relative;
     display: flex;
