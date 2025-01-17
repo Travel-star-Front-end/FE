@@ -1,5 +1,6 @@
 const colors = {
     main: "#01BCD4",
+    subMain: "#AEE0EA",
     loginP: "#211B45",
     loginP2: "#747474",
     loginP3: "#515151",
@@ -17,6 +18,7 @@ const colors = {
     calenderGray: "#E1E1E1",
     calenderGray2: "#F3F3F3",
     calenderGray3: "#ADADAD",
+    calenderGray4: "#565656",
     black: "#000000",
     white: "#FFFFFF",
 };
