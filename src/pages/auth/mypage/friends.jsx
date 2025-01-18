@@ -36,55 +36,66 @@ export default FriendManagement;
 
 const Container = styled.div`
   width: 100%;
-  padding: 40px 60px;
+  padding: 5rem 7.5rem;
   background-color: #f5f5f5;
   box-sizing: border-box;
 `;
 
 const MainTitle = styled.h2`
-  font-size: 24px;
-  margin-bottom: 30px;
+  font-size: 3rem;
+  margin-bottom: 3.75rem;
   color: #333;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 20px;
+  border-bottom: 0.125rem solid #ddd;
+  padding-bottom: 2.5rem;
 `;
 
 const ListTitle = styled.div`
-  font-size: 20px;
-  margin-bottom: 16px;
-  margin-left: 17px;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  margin-left: 2.125rem;
 `;
 
 const FriendRow = styled.div`
   display: flex;
   align-items: center;
-  padding: 12px 20px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border-bottom: 1px solid #ddd;
+  padding: 1.5rem 2.5rem;
+  margin-bottom: 2.5rem;
+  border-radius: 0.5rem;
+  border-bottom: 0.125rem solid #ddd;
 `;
 
 const Avatar = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 5rem;
+  height: 5rem;
   border-radius: 50%;
-  margin-right: 20px;
+  margin-right: 2.5rem;
 `;
 
 const FriendName = styled.div`
   flex: 1;
-  font-size: 16px;
+  font-size: 2rem;
   color: #333;
 `;
 
 const RemoveButton = styled.button`
   background-color: #d9d9d9;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 6px 12px;
+  border: 0.125rem solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
   cursor: pointer;
 
   &:hover {
     background-color: #ddd;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem;
+    align-self: flex-start;
   }
 `;
