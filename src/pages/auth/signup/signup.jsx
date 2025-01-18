@@ -44,9 +44,11 @@ const signUpSchema = z
   });
 
 const signUpFn = async (formData) => {
+  // 실제 회원가입 로직은 서버와의 통신으로 이뤄지며, 여기서는 예시로 localStorage에만 저장
   localStorage.setItem('userId', formData.userId);
   localStorage.setItem('password', formData.password);
 
+  // 서버 통신 지연 시뮬레이션
   await new Promise((resolve) => setTimeout(resolve, 500));
   return { success: true };
 };
@@ -98,7 +100,7 @@ const SignUp = () => {
       alert('아이디를 입력해주세요.');
       return;
     }
-    // 실제로는 서버 중복확인 API를 호출
+    // 실제 중복확인 로직은 서버와 통신
     alert('중복확인에 성공하셨습니다.');
   };
 
@@ -127,13 +129,11 @@ const SignUp = () => {
 
             <FormGroup>
               <Label>비밀번호</Label>
-              <div style={{ flex: 1 }}>
                 <Input
                   type="password"
                   placeholder="비밀번호 입력"
                   {...register('password')}
                 />
-              </div>
             </FormGroup>
             {errors.password && (
               <ErrorText>{errors.password.message}</ErrorText>
@@ -223,33 +223,52 @@ const SignUp = () => {
                   errors.phone3?.message}
               </ErrorText>
             )}
-
-            <FormGroup>
-              <Label>이메일</Label>
-              <EmailInputGroup>
-                <EmailInput
-                  type="text"
-                  placeholder="이메일 아이디"
-                  {...register('emailUser')}
-                />
-                <EmailAt>@</EmailAt>
-                <EmailSelect {...register('emailDomain')}>
-                  <option value="">직접입력 또는 선택</option>
-                  <option value="custom">직접 입력</option>
-                  <option value="naver.com">naver.com</option>
-                  <option value="hanmail.net">hanmail.net</option>
-                  <option value="gmail.com">gmail.com</option>
-                  <option value="daum.net">daum.net</option>
-                </EmailSelect>
-                {watch('emailDomain') === 'custom' && (
-                  <EmailInput
-                    type="text"
-                    placeholder="직접 입력 도메인"
-                    {...register('customDomain')}
-                  />
-                )}
-              </EmailInputGroup>
-            </FormGroup>
+      <FormGroup>
+        <Label>이메일</Label>
+        <EmailInputGroup>
+          {/* 이메일 아이디 입력 */}
+          <EmailInput
+            type="text"
+            placeholder="이메일 아이디"
+            {...register('emailUser')}
+          />
+          @
+          {/* 이메일 도메인 입력 */}
+          <EmailInput
+            type="text"
+            placeholder="도메인"
+            value={
+              watch('emailDomain') === 'custom'
+                ? watch('customDomain') || ''
+                : watch('emailDomain')
+            }
+            onChange={(e) => {
+              if (watch('emailDomain') === 'custom') {
+                setValue('customDomain', e.target.value);
+              }
+            }}
+            disabled={watch('emailDomain') !== 'custom'} // 직접 입력이 아닐 경우 비활성화
+          />
+          {/* 이메일 도메인 선택 */}
+          <EmailSelect
+            {...register('emailDomain')}
+            onChange={(e) => {
+              setValue('emailDomain', e.target.value);
+              if (e.target.value !== 'custom') {
+                setValue('customDomain', ''); // 직접 입력 필드 초기화
+              }
+            }}
+          >
+            <option value="">선택</option>
+            <option value="custom">직접 입력</option>
+            <option value="naver.com">naver.com</option>
+            <option value="hanmail.net">hanmail.net</option>
+            <option value="gmail.com">gmail.com</option>
+            <option value="daum.net">daum.net</option>
+          </EmailSelect>
+        </EmailInputGroup>
+      </FormGroup>
+      
             {(errors.emailUser || errors.emailDomain) && (
               <ErrorText>
                 {errors.emailUser?.message || errors.emailDomain?.message}
@@ -328,10 +347,16 @@ const Container = styled.div`
   align-items: center;
 
   background-color: white;
-  padding: 20px;
+  padding: 2.5rem;
 
   @media (max-width: 768px) {
-    padding: 10px;
+    height: 80vh;
+    padding: 0rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    height: 50vh;
   }
 `;
 
@@ -342,91 +367,129 @@ const InnerForm = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: 1024px) {
-    width: 80%;
+  @media (max-width: 768px) {
+    width: 90%;
   }
 
-  @media (max-width: 768px) {
-    width: 95%;
+  @media (max-width: 480px) {
+    width: 100%;
   }
 `;
 
 const SignUpBox = styled.div`
   background-color: #f6f6f6;
   width: 100%;
-  max-width: 600px;
+  max-width: 75rem;
 
-  border-radius: 10px;
-  padding: 40px;
+  border-radius: 1.25rem;
+  padding: 5rem;
 
   @media (max-width: 768px) {
-    padding: 20px;
+    padding: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem;
+    border-radius: 0.625rem;
   }
 `;
 
 const Logo = styled.div`
   text-align: center;
-  font-size: 24px;
+  font-size: 3rem;
   font-family: 'Do Hyeon', sans-serif;
   color: rgb(0, 196, 204);
   margin-bottom: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+  text-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+  }
 `;
 
 const Title = styled.h1`
   text-align: center;
-  font-size: 25px;
-  margin-bottom: 30px;
+  font-size: 3.125rem;
+  margin-bottom: 3.75rem;
   color: #333;
-  border-bottom: 2px solid rgb(53, 196, 243);
-  padding-bottom: 10px;
+  border-bottom: 0.25rem solid rgb(53, 196, 243);
+  padding-bottom: 1.25rem;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 2.5rem;
 
   @media (max-width: 768px) {
-    gap: 15px;
+    gap: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1.5rem;
   }
 `;
 
 const FormGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 2.5rem;
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 1rem;
   }
 `;
 
 const Label = styled.label`
-  width: 100px;
+  width: 12.5rem;
   flex-shrink: 0;
   color: #333;
-  font-size: 15px;
+  font-size: 1.875rem;
+
+  @media (max-width: 768px) {
+    width: auto;
+    font-size: 1.5rem;
+  }
 
   @media (max-width: 480px) {
-    width: auto;
+    font-size: 1.3rem;
   }
 `;
 
 const InputWrapper = styled.div`
   display: flex;
   flex: 1;
-  gap: 10px;
+  gap: 1.25rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.625rem;
+  }
 `;
 
 const Input = styled.input`
   flex: 1;
-  padding: 8px 12px;
+  padding: 1rem 1.5rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 0.5rem;
+  font-size: 1.75rem;
   width: 100%;
   box-sizing: border-box;
   background-color: #fff;
@@ -434,149 +497,232 @@ const Input = styled.input`
   &::placeholder {
     color: #999;
   }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0.8rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    padding: 0.6rem 0.8rem;
+  }
 `;
 
 const CheckButton = styled.button`
-  padding: 8px 16px;
+  padding: 1rem 2rem;
   background: white;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 0.5rem;
   white-space: nowrap;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.6rem 1rem;
+    font-size: 1.1rem;
+  }
 `;
 
 const Select = styled.select`
   flex: 1;
-  padding: 8px 12px;
+  padding: 1rem 1.5rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 0.5rem;
+  font-size: 1.75rem;
   background-color: #fff;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0.8rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    padding: 0.6rem 0.8rem;
+  }
 `;
 
 const DateInputGroup = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 1.25rem;
   flex: 1;
 
-  @media (max-width: 480px) {
-    flex-direction: column;
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.625rem;
   }
 `;
 
 const PhoneInputGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1.25rem;
   flex: 1;
 
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.625rem;
   }
 `;
 
 const PhoneInput = styled(Input)`
-  width: calc(33.33% - 14px);
+  width: calc(33.33% - 1.75rem);
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     width: 100%;
   }
 `;
 
 const Dash = styled.span`
   color: #999;
+
+  @media (max-width: 768px) {
+    margin: 0 0.25rem;
+  }
 `;
 
 const EmailInputGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1.25rem;
   flex: 1;
 
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.625rem;
+    flex-wrap: wrap;
   }
 `;
 
 const EmailInput = styled(Input)`
   width: 40%;
-  
-  @media (max-width: 480px) {
+
+  @media (max-width: 768px) {
     width: 100%;
   }
 `;
 
 const EmailAt = styled.span`
   color: #999;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const EmailSelect = styled.select`
   flex: 1;
-  padding: 8px 12px;
+  padding: 1rem 1.5rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 0.5rem;
+  font-size: 1.75rem;
   background-color: #fff;
   cursor: pointer;
+  width: 13%;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding: 0.8rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    padding: 0.6rem 0.8rem;
+  }
 `;
 
 const AgreementSection = styled.div`
-  margin-top: 20px;
+  margin-top: 2.5rem;
 `;
 
 const AgreementTitle = styled.h2`
-  font-size: 16px;
-  margin-bottom: 15px;
+  font-size: 2rem;
+  margin-bottom: 1.875rem;
   color: #333;
+  border-bottom: 0.25rem solid rgb(53, 196, 243);
+  padding-bottom: 1.25rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const AgreementRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 1.25rem;
   position: relative;
 
-  @media (max-width: 480px) {
-    flex-direction: column;
+  @media (max-width: 768px) {
     align-items: flex-start;
+    gap: 0.75rem;
   }
 `;
 
 const AgreementText = styled.span`
-  font-size: 14px;
+  font-size: 1.75rem;
   color: #333;
   display: flex;
   align-items: center;
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const DropdownIcon = styled.span`
-  margin-left: 8px;
+  margin-left: 1rem;
   border: solid black;
-  border-width: 0 2px 2px 0;
+  border-width: 0 0.25rem 0.25rem 0;
   display: inline-block;
-  padding: 3px;
+  padding: 0.375rem;
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
+
+  @media (max-width: 768px) {
+    margin-left: 0.5rem;
+  }
 `;
 
 const ErrorTextInline = styled.span`
-  margin-left: 8px;
+  margin-left: 1rem;
   color: red;
-  font-size: 12px;
+  font-size: 1.5rem;
+
+  @media (max-width: 768px) {
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+  }
 `;
 
 const RadioGroup = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 2.5rem;
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
 
   input[type='radio'] {
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 2rem;
+    height: 2rem;
     border: 1px solid black;
     border-radius: 50%;
     outline: none;
@@ -586,40 +732,79 @@ const RadioGroup = styled.div`
     &:checked {
       background-color: #00c2ff;
     }
+
+    @media (max-width: 768px) {
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+
+    @media (max-width: 480px) {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
   }
 `;
 
 const RadioLabel = styled.label`
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 14px;
+  gap: 0.625rem;
+  font-size: 1.75rem;
   color: #333;
 
   input {
-    margin-right: 5px;
+    margin-right: 0.625rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
   }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
-  padding: 12px;
-  background-color: #01BCD4;
+  padding: 1.5rem;
+  background-color: #01bcd4;
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 1.25rem;
+  font-size: 2rem;
   cursor: pointer;
-  margin-top: 20px;
+  margin-top: 2.5rem;
 
   &:hover {
     background-color: #00b0e6;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.2rem;
+    font-size: 1.8rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
   }
 `;
 
 const ErrorText = styled.div`
   color: red;
-  font-size: 12px;
-  margin-top: -15px;
-  margin-bottom: 5px;
+  font-size: 1.5rem;
+  margin-top: -1.875rem;
+  margin-bottom: 0.625rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `;

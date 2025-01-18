@@ -55,13 +55,7 @@ const router = createBrowserRouter([
 
       {
         path: "planet",
-        errorElement: <NotFoundPage />,
-        children: [
-          {
-            path: ":id",
-            element: <PlanetPage />,
-          },
-        ]
+        element: <PlanetPage />,
       },
       {
         path: "ranking",
