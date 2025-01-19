@@ -3,6 +3,19 @@ import searchIcon from '../../assets/images/home/search.png'
 import upArrow from '../../assets/images/home/search-up-arrow.png';
 import decreaseArrow from '../../assets/images/home/search-decrease-arrow.png';
 import TravelPost from '../../components/travelPost/travel-post';
+import { API } from '../../apis/axios';
+
+//에시 검색어 추천 데이터
+const suggestions = [
+    { id: 1, text: '홍콩', arrow: upArrow },
+    { id: 3, text: '일본', arrow: decreaseArrow },
+    { id: 5, text: '싱가포르', arrow: decreaseArrow },
+    { id: 7, text: '다낭', arrow: decreaseArrow },
+    { id: 2, text: '뉴질랜드', arrow: upArrow },
+    { id: 4, text: '베를린', arrow: upArrow },
+    { id: 6, text: '태국', arrow: decreaseArrow },
+    { id: 8, text: '보스턴', arrow: upArrow },
+];
 
 const Home = () => {
     return (
@@ -13,38 +26,11 @@ const Home = () => {
                 <S.SearchResultsContainer>
                     <div className='search-suggesion'>검색어 추천</div>
                     <S.SuggestionBox>
-                        <S.SuggestionItem>
-                            <img src={upArrow} alt='up-arrow' className='arrow'/>
-                            <div>1. 홍콩</div>
+                    {suggestions.map((item) => (
+                        <S.SuggestionItem key={item.id}>
+                            <div>{`${item.id}. ${item.text}`}</div>
                         </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={decreaseArrow} alt='decrease-arrow' className='arrow'/>
-                            <div>3. 일본</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={decreaseArrow} alt='decrease-arrow' className='arrow'/>
-                            <div>5. 싱가포르</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={decreaseArrow} alt='decrease-arrow' className='arrow'/>
-                            <div>7. 다낭</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={upArrow} alt='up-arrow' className='arrow'/>
-                            <div>2. 뉴질랜드</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={upArrow} alt='up-arrow' className='arrow'/>
-                            <div>4. 베를린</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={decreaseArrow} alt='decrease-arrow' className='arrow'/>
-                            <div>6. 태국</div>
-                        </S.SuggestionItem>
-                        <S.SuggestionItem>
-                            <img src={upArrow} alt='up-arrow' className='arrow'/>
-                            <div>8.보스턴</div>
-                        </S.SuggestionItem>
+                    ))}
                     </S.SuggestionBox>
                 </S.SearchResultsContainer>
             </S.SearchWrapper>
