@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
 import locationPin from '../../assets/images/locationPin.png';
-import share from '../../assets/images/share.png';
+import share from '../../assets/images/posts/posts/share.png';
 import default_profile_img from '../../assets/images/ProfileImage.png';
 
 //예시 이미지
@@ -42,7 +42,7 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({profileImg, nickname, date, location, travelImages, quickReview, buttonType}) => {
+const TravelPost = ({id, profileImg, nickname, date, location, travelImages, quickReview, buttonType}) => {
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ const TravelPost = ({profileImg, nickname, date, location, travelImages, quickRe
     return (
         <S.Container>
             <S.InfoWrapper>
-                <S.Info>
+                <S.Info onClick={() => navigate(`/posts/${id}`)}>
                     <S.ProfileImg>
                         {profileImg ? (
                             <img src={profileImg} alt="프로필" className="profile-img" />
