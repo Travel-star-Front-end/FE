@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../../apis/axios";
 import * as s from "../../../styles/posts/write/write";
@@ -16,6 +16,7 @@ import useMusic from "../../../hooks/useMusic";
 import Menu from "../../../assets/images/posts/write/menu.png";
 import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
+import IframePlayer from "./iframePlayer";
 
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
@@ -29,6 +30,7 @@ const WriteForm = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [feeling, setFeeling] = useState("");
+    const [iframeUrl, setIframeUrl] = useState("");
     const navigate = useNavigate();
 
     const handleMenuClick = () => {
@@ -54,33 +56,25 @@ const WriteForm = () => {
         handleLocationChange(e);
     };
 
-    /*
-    useEffect(() => {
-        if (latitude !== null && longitude !== null) {
-            console.log("선택된 위치 위도:", latitude);
-            console.log("선택된 위치 경도:", longitude);
-        }
-    }, [latitude, longitude]);
-    */
-
     // 음악 검색
     const handleMusicChange = (e) => {
         setMusicQuery(e.target.value);
-        // console.log("검색어 변경:", e.target.value);
         setSelectedMusic("");
     };
 
     const handleMusicSelect = (track) => {
         setSelectedMusic(`${track.name} - ${track.artists[0].name}`);
         setMusicQuery("");
+    
+        if (track.id) {
+            const trackUrl = `https://open.spotify.com/embed/track/${track.id}`;
+            setIframeUrl(trackUrl);
+        } else {
+            setIframeUrl("");
+            alert("선택한 트랙에는 재생할 수 있는 URL이 없습니다.");
+        }
     };
-
-    /*
-    useEffect(() => {
-        // console.log("음악 검색 결과:", musicResults);
-    }, [musicResults]);
-    */
-
+    
     const handleSubmit = async () => {
         const postData = {
             title,
@@ -96,7 +90,6 @@ const WriteForm = () => {
 
         try {
             const response = await API.post("/users", postData);
-            // console.log("게시글 작성 성공.", response.data);
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
@@ -115,6 +108,14 @@ const WriteForm = () => {
                 {menu && <Toggle />}
             </s.TitleContainer>
 
+            <WriteTextarea placeholder="글 작성" IconData={IconData} value={content} onChange={(e) => setContent(e.target.value)} />
+
+            <s.AIContainer>
+                {/* 원래 48% */}
+                <WriteTextarea width="88%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} />
+                <AIButton>분석하기</AIButton>
+            </s.AIContainer>
+
             <s.SearchContainer>
                 <WriteInput width="100%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
                 <ListLocation locationResults={locationResults} handleLocationSelect={handleLocationSelect} locationQuery={locationQuery} />
@@ -125,18 +126,13 @@ const WriteForm = () => {
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
             </s.SearchContainer>
 
-            <WriteTextarea placeholder="글 작성" IconData={IconData} value={content} onChange={(e) => setContent(e.target.value)} />
-
-            <s.AIContainer>
-                <WriteTextarea width="48%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} />
-                <AIButton>분석하기</AIButton>
-            </s.AIContainer>
+            <IframePlayer iframeUrl={iframeUrl} />
 
             <s.ButtonContainer>
                 <WriteButton btncolor={colors.main} onClick={handleSubmit} disabled={!isFormValid}>일지 저장</WriteButton>
             </s.ButtonContainer>
         </s.FormContainer>
-    )
-}
+    );
+};
 
 export default WriteForm;

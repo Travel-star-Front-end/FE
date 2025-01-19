@@ -38,6 +38,10 @@ const Edit = ({
     }));
   };
 
+  const handleNavigate = (path) => {
+    navigate(`/mypage/${path}`); // 절대 경로로 이동
+  };
+
   return (
     <Container>
       <MainContent>
@@ -49,13 +53,13 @@ const Edit = ({
             <UserNickname>{formValues.nickname}</UserNickname>
             <UserPlanet>{planetName}</UserPlanet>
           </ProfileInfo>
-          <ProfileEditButton onClick={() => navigate('edit')}>프로필 수정</ProfileEditButton>
+          <ProfileEditButton onClick={() => handleNavigate('edit')}>프로필 수정</ProfileEditButton>
         </ProfileSection>
 
         <InfoSection>
           <ButtonGroup>
-            <BlueButton onClick={() => navigate('friends')}>친구관리</BlueButton>
-            <BlueButton onClick={() => navigate('posts')}>보관 글 관리</BlueButton>
+            <BlueButton onClick={() => handleNavigate('friends')}>친구관리</BlueButton>
+            <BlueButton onClick={() => handleNavigate('posts')}>보관 글 관리</BlueButton>
           </ButtonGroup>
           <InfoRow>
             <InfoLabel>아이디</InfoLabel>
@@ -170,6 +174,8 @@ const Edit = ({
 
 export default Edit;
 
+// 스타일 컴포넌트 생략 (기존 코드 그대로 유지)
+
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
@@ -179,189 +185,359 @@ const Container = styled.div`
 
 const MainContent = styled.div`
   flex: 1;
-  padding: 40px;
+  padding: 5rem;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem;
+  }
 `;
 
 const Header = styled.h1`
-  font-size: 24px;
-  margin-bottom: 30px;
+  font-size: 3rem;
+  margin-bottom: 3.75rem;
   color: #333;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 20px;
+  border-bottom: 0.125rem solid #ddd;
+  padding-bottom: 2.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+  }
 `;
 
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 3.75rem;
   position: relative;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-bottom: 3rem;
+  }
 `;
 
 const ProfileImage = styled.img`
-  width: 130px;
-  height: 130px;
+  width: 16.25rem;
+  height: 16.25rem;
   object-fit: contain;
-  margin-right: 20px; 
+  margin-right: 2.5rem; 
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const ProfileInfo = styled.div`
   flex: 1;
-  margin-top: 60px;
+  margin-top: 7.5rem;
+
+  @media (max-width: 768px) {
+    margin-top: 0;
+    text-align: center;
+  }
 `;
 
 const UserNickname = styled.div`
-  font-size: 20px;
+  font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 0.625rem;
   color: #333;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const UserPlanet = styled.div`
-  font-size: 14px;
+  font-size: 1.75rem;
   color: #777;
-  margin-bottom: 10px;
+  margin-bottom: 1.25rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column; 
-  gap: 10px; 
+  gap: 1.25rem; 
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 2.5rem;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+  }
 `;
 
 const BlueButton = styled.button`
-  padding: 8px 12px;
+  padding: 1rem 1.5rem;
   background-color: white;
   color: #00c2ff;
-  border: 1px solid #00c2ff;
-  border-radius: 4px;
-  font-size: 14px;
+  border: 0.125rem solid #00c2ff;
+  border-radius: 0.5rem;
+  font-size: 1.75rem;
   cursor: pointer;
-  width: 141px; 
-  height: 34px;
+  width: 17.625rem; 
+  height: 4.25rem;
 
   &:hover {
     background-color: #f0fcff;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    width: 15rem;
+    height: 4rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    width: 13rem;
+    height: 3.5rem;
   }
 `;
 
 const ProfileEditButton = styled.button`
   position: absolute;
-  top: 75px;
+  top: 9.375rem;
   right: 0;
-  padding: 8px 16px;
+  padding: 1rem 2rem;
   background-color: white;
   color: #00c2ff;
-  border: 1px solid #00c2ff;
-  border-radius: 4px;
-  font-size: 14px;
+  border: 0.125rem solid #00c2ff;
+  border-radius: 0.5rem;
+  font-size: 1.75rem;
   cursor: pointer;
-  width: 141px;
-  height: 34px;
+  width: 17.625rem;
+  height: 4.25rem;
 
   &:hover {
     background-color: #f0fcff;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    width: 15rem;
+    height: 4rem;
+    top: 1rem;
+    position: static;
+    align-self: center;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    width: 13rem;
+    height: 3.5rem;
   }
 `;
 
 const InfoSection = styled.div`
   width: 100%;
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
+  border-top: 0.125rem solid #ddd;
+  padding-top: 2.5rem;
+
+  @media (max-width: 768px) {
+    padding-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    padding-top: 1.5rem;
+  }
 `;
 
 const InfoRow = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px 0;
-  max-width: 600px; 
+  padding: 2.375rem 0;
+  max-width: 75rem; 
   margin: 0 auto; 
-  border-bottom: 1px solid #ddd;
+  border-bottom: 0.125rem solid #ddd;
   position: relative;
-  top: -50px; 
+  top: -6.25rem; 
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 0;
+    top: 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0;
+  }
 `;
 
 const InfoLabel = styled.div`
-  width: 150px; 
+  width: 18.75rem; 
   color: #565656;
-  font-size: 14px;
+  font-size: 1.75rem;
   text-align: left;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const WideInput = styled.input`
-  width: 373px; 
-  height: 36px;
+  width: 46.625rem; 
+  height: 4.5rem;
   color: #565656;   
-  font-size: 14px;
-  border: 1px solid #ADADAD;
-  border-radius: 4px;
+  font-size: 1.75rem;
+  border: 0.125rem solid #ADADAD;
+  border-radius: 0.5rem;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
+  }
+
+  @media (max-width: 768px) {
+    width: 50%;
+    font-size: 1.5rem;
+    height: 4rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    height: 3.5rem;
   }
 `;
 
 const ShortInput = styled.input`
-  width: 158px; 
-  height: 36px;
-  font-size: 14px;
+  width: 19.75rem; 
+  height: 4.5rem;
+  font-size: 1.75rem;
   color: #565656;
-  border: 1px solid #ADADAD;
-  border-radius: 4px;
+  border: 0.125rem solid #ADADAD;
+  border-radius: 0.5rem;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.5rem;
+    height: 4rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    height: 3.5rem;
+  }
 `;
 
 const InfoInput = styled.input`
-  width: 86px;
-  height: 36px;
-  font-size: 14px;
+  width: 10.75rem;
+  height: 4.5rem;
+  font-size: 1.75rem;
   color: #565656;
-  border: 1px solid #ADADAD;
-  border-radius: 4px;
+  border: 0.125rem solid #ADADAD;
+  border-radius: 0.5rem;
   text-align: center;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.5rem;
+    height: 4rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    height: 3.5rem;
+  }
 `;
 
 const DateInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.625rem;
 
   span {
     color: #999;
-    font-size: 14px;
+    font-size: 1.75rem;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+    }
   }
 `;
 
 const PhoneInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.625rem;
 
   span {
     color: #999;
-    font-size: 14px;
+    font-size: 1.75rem;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+    }
   }
 `;
 
 const EmailInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.625rem;
 
   span {
     color: #999;
-    font-size: 14px;
+    font-size: 1.75rem;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+    }
   }
 `;
