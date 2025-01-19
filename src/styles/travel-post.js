@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import RightArrow from '../assets/images/travel-post/right-arrow.png';
+import LeftArrow from '../assets/images/travel-post/left-arrow.png';
 
 export const Container = styled.div`
     width: 100%;
@@ -10,6 +12,8 @@ export const Container = styled.div`
 export const InfoWrapper = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
 `;
 
 export const Info = styled.div`
@@ -110,11 +114,24 @@ export const EditButton = styled.button`
 `;
 
 export const SliderWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+
     .slick-list {
         overflow: hidden;
+        padding: 0;
+    }
+
+    .slick-slider {
+        width: 90%;
+        position: relative;
     }
 
     .slick-track {
+        width: 90%;
         display: flex !important; /* 수평 레이아웃 유지 */
         flex-wrap: nowrap; /* 슬라이드가 한 줄로 유지되도록 설정 */
     }
@@ -124,9 +141,35 @@ export const SliderWrapper = styled.div`
         margin-right: 8px;
     }
 
-    .slick-prev::before,
-    .slick-next::before{
-        color: #9eb23b;
+    .slick-prev::before, .slick-next::before {
+        content: ''; /* 기본 화살표 제거 */
+    }
+
+    .slick-prev, .slick-next {
+        // position: absolute;
+        // top: 49%; /* 버튼 수직 중앙 정렬 */
+        transform: translateY(-50%);
+        z-index: 1000;
+        width: 2.5vw;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        background-size: 50% auto;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .slick-prev {
+        position: absolute;
+        top: 49.5%;
+        left: -4.5%;
+        background-image: url(${LeftArrow});
+    }
+
+    .slick-next {
+        position: absolute;
+        top: 49.5%;
+        right: -4%;
+        background-image: url(${RightArrow});
     }
 `;
 

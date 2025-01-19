@@ -38,7 +38,6 @@ export const SearchIcon = styled.img`
     width: 1.15vw;
     height: 1.2vw;
     position: absolute;
-    top: 0.6vw;
     left: 0.7vw;
     bottom: 0.65vw;
     z-index: 2;
@@ -76,6 +75,10 @@ export const SuggestionBox = styled.div`
     align-items:center;
     grid-gap: 0.5vw 3vw;
     padding-right: 2.5vw;
+
+    @media (max-width: 768px) {
+        grid-gap: 5px;
+    }
 `;
 
 export const SuggestionItem = styled.div`
