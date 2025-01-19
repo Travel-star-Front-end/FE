@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import * as S from '../../styles/posts';
-import setting from '../../assets/images/setting.png';
-import friends from '../../assets/images/friends.png';
-import share from '../../assets/images/share.png';
-import add from '../../assets/images/add.png';
+import setting from '../../assets/images/posts/posts/setting.png';
+import friends from '../../assets/images/posts/posts/friends.png';
+import share from '../../assets/images/posts/posts/share.png';
+import add from '../../assets/images/posts/posts/add.png';
+import alert from '../../assets/images/posts/posts/alert.png';
 import TravelPost from '../../components/travelPost/travel-post';
 
 //example img
@@ -10,13 +12,19 @@ import banner from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
+    const [activeTab, setActiveTab] = useState(null);
+
+    const handleClick = (tab) => {
+        setActiveTab(tab);
+    };
+
     return (
         <S.Container>
             <S.BannerContainer>
                 <img src={banner} alt='banner-img' className='banner-img'/>
                 <S.BannerInfo>
+                    <div className='title'>벨라의 세계일주</div>
                     <S.BannerHeader>
-                        <div className='title'>벨라의 세계일주</div>
                         <S.InfoContainer>
                             <S.ProfileImg>
                                 <img src={profile} alt='profile' className='profile-img'/>
@@ -26,14 +34,25 @@ const Posts = () => {
                                 <div className='planet-name'>깐따삐야 행성</div>
                             </div>
                         </S.InfoContainer>
-                    </S.BannerHeader>
 
-                    <S.ToolbarContainer>
-                        <img src={setting} alt='setting' className='toolbar-icon'/>
-                        <img src={friends} alt='friends' className='toolbar-icon'/>
-                        <img src={share} alt='share' className='toolbar-icon'/>
-                        <img src={add} alt='add'className='toolbar-icon'/>
-                    </S.ToolbarContainer>
+                        <S.ToolbarContainer>
+                            <S.Toolbar>
+                                <img src={setting} alt='setting' className='toolbar-icon'/>
+                                <img src={friends} alt='friends' className='toolbar-icon'/>
+                                <img src={share} alt='share' className='toolbar-icon'/>
+                                <img src={alert} alt='alert' className='toolbar-icon'/>                                
+                            </S.Toolbar>
+                            <S.AddToolbar>
+                                <img src={add} alt='add'className='toolbar-icon2'/>
+                            </S.AddToolbar>
+
+                            {activeTab === 'friends' && 
+                            <S.FriendApply>
+                                <div>친구 목록</div>
+                                <div>친구 신청</div>
+                            </S.FriendApply>}
+                        </S.ToolbarContainer>
+                    </S.BannerHeader>
                 </S.BannerInfo>
             </S.BannerContainer>
 
