@@ -6,6 +6,7 @@ import share from '../../assets/images/posts/posts/share.png';
 import add from '../../assets/images/posts/posts/add.png';
 import alert from '../../assets/images/posts/posts/alert.png';
 import TravelPost from '../../components/travelPost/travel-post';
+import FriendsTab from '../../components/travelPost/FriendsTab/friends-tab';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
@@ -15,7 +16,7 @@ const Posts = () => {
     const [activeTab, setActiveTab] = useState(null);
 
     const handleClick = (tab) => {
-        setActiveTab(tab);
+        setActiveTab((prevTab) => (prevTab === tab ? null : tab));
     };
 
     return (
@@ -38,7 +39,7 @@ const Posts = () => {
                         <S.ToolbarContainer>
                             <S.Toolbar>
                                 <img src={setting} alt='setting' className='toolbar-icon'/>
-                                <img src={friends} alt='friends' className='toolbar-icon'/>
+                                <img src={friends} alt='friends' className='toolbar-icon' onClick={() => handleClick('friends')} />
                                 <img src={share} alt='share' className='toolbar-icon'/>
                                 <img src={alert} alt='alert' className='toolbar-icon'/>                                
                             </S.Toolbar>
@@ -46,11 +47,7 @@ const Posts = () => {
                                 <img src={add} alt='add'className='toolbar-icon2'/>
                             </S.AddToolbar>
 
-                            {activeTab === 'friends' && 
-                            <S.FriendApply>
-                                <div>친구 목록</div>
-                                <div>친구 신청</div>
-                            </S.FriendApply>}
+                            {activeTab === 'friends' && <FriendsTab/>}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>

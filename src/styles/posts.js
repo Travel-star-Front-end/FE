@@ -126,10 +126,15 @@ export const AddToolbar = styled.div`
     background-color: rgba(255, 255, 255, 0.67);
 `;
 
-export const FriendApply = styled.div`
+export const FriendApplyContainer = styled.div`
     z-index: 100;
     position: absolute;
-    bottom: 0.6585vw;
+    bottom: 3.1585vw;
+
+    width: 16.6vw;
+    height: 12vw;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
 `;
 
 export const DiaryContainer = styled.div`
