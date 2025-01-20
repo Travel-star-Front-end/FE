@@ -55,18 +55,18 @@ export const SearchContainer = styled.div`
     position: relative;
 `
 
-export const AIContainer = styled.div`
-    display: flex;
-    align-items: flex-end;
-    gap: 0.9vw;
-    margin-bottom: 0.65vw;
-`
-
 export const ButtonContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 1.45vw;
+`
+
+export const ImageContainer = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.45vw;
 `
 
 // writeInput.jsx
@@ -102,9 +102,9 @@ export const IconImg = styled.img`
 
 // writeTextarea.jsx
 export const TextareaWrapper = styled.div`
-    position: relative;
     width: ${props => props.width || "100%"};
     height: ${props => props.height || "20vw"};
+    position: relative;
 `;
 
 export const TextareaContainer = styled.textarea`
@@ -116,24 +116,10 @@ export const TextareaContainer = styled.textarea`
     font-size: 1.2vw;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.49);
-    padding: 0.85vw 0.95vw;
+    padding: ${props => props.padding || "0.85vw 0.95vw"};
     box-sizing: border-box;
     resize: none;
     outline: none;
-`;
-
-export const IconContainer = styled.div`
-    position: absolute;
-    bottom: 0.85vw;
-    right: 0.95vw;
-    display: flex;
-    gap: 0.65vw;
-`;
-
-export const TextareaIconImg = styled.img`
-    width: 2.3vw;
-    height: 2.3vw;
-    cursor: pointer;
 `;
 
 // AIButton.jsx
@@ -142,11 +128,13 @@ export const AIButtonContainer = styled.button`
     height: 1.65vw;
     border: 0.055vw solid ${colors.sideBarGray2};
     border-radius: 0.25vw;
-    background: ${colors.homeGray};
     font-size: 0.7vw;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.49);
     cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translate(-130%, -50%);
 
     &:hover {
         font-weight: bold;
@@ -229,3 +217,26 @@ export const ItemP = styled.p`
     font-weight: 400;
     color: ${colors.sideBarGray2};
 `
+
+// list-image.jsx
+export const ListItemContainer = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.45vw;
+`;
+
+// item-image.jsx
+export const ItemImageContainer = styled.div`
+    width: 4.85vw;
+    height: 4.85vw;
+    position: relative;
+`;
+
+export const DeleteImg = styled.img`
+    width: 0.39vw;
+    height: 0.39vw;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+`;
