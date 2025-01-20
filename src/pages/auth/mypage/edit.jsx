@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Profile from '../../../assets/images/ProfileImage.png';
-import { useNavigate } from "react-router-dom";
+import ProfileEditIcon from '../../../assets/images/ProfileEdit.png';
+import { useNavigate } from 'react-router-dom';
+import { API } from '../../../apis/axios';
 
 const Edit = ({
   userId = 'BBbbe.1',
@@ -11,9 +13,13 @@ const Edit = ({
   birth = '2003-02-14',
   phoneNumber = '010-5479-8234',
   email = 'yoonsu0214@naver.com',
-  planetName = '깐따삐야 행성'
+  planetName = '깐따삐야 행성',
 }) => {
   const navigate = useNavigate();
+  const [profileImage, setProfileImage] = useState(Profile);
+  const fileInputRef = useRef(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formValues, setFormValues] = useState({
     userId,
@@ -30,16 +36,87 @@ const Edit = ({
     emailDomain: email.split('@')[1],
   });
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await API.get('https://jsonplaceholder.typicode.com/users/1');
+      const userData = response.data;
+      
+      setFormValues({
+        userId: userData.username || userId,
+        nickname: userData.name || nickname,
+        password: password,
+        name: userData.name || name,
+        birthYear: birth.split('-')[0],
+        birthMonth: birth.split('-')[1],
+        birthDay: birth.split('-')[2],
+        phonePart1: userData.phone ? userData.phone.split('-')[0] : phoneNumber.split('-')[0],
+        phonePart2: userData.phone ? userData.phone.split('-')[1] : phoneNumber.split('-')[1],
+        phonePart3: userData.phone ? userData.phone.split('-')[2] : phoneNumber.split('-')[2],
+        emailUser: userData.email ? userData.email.split('@')[0] : email.split('@')[0],
+        emailDomain: userData.email ? userData.email.split('@')[1] : email.split('@')[1],
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fileUrl = URL.createObjectURL(file);
+    setProfileImage(fileUrl);
+    setIsMenuOpen(false);
+  };
+
+  const handlePhotoRegister = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handlePhotoDelete = () => {
+    setProfileImage(Profile);
+    setIsMenuOpen(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
+    setFormValues((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  const handleNavigate = (path) => {
-    navigate(`/mypage/${path}`); // 절대 경로로 이동
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const handleProfileEdit = async () => {
+    if (!isEditing) {
+      setIsEditing(true);
+    } else {
+      try {
+        const updatedUserData = {
+          username: formValues.userId,
+          name: formValues.name,
+          phone: `${formValues.phonePart1}-${formValues.phonePart2}-${formValues.phonePart3}`,
+          email: `${formValues.emailUser}@${formValues.emailDomain}`,
+        };
+
+        const response = await API.patch('https://jsonplaceholder.typicode.com/users/1', updatedUserData);
+        console.log('User data updated:', response.data);
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Error updating user data:', error);
+      }
+    }
   };
 
   return (
@@ -48,26 +125,46 @@ const Edit = ({
         <Header>마이페이지</Header>
 
         <ProfileSection>
-          <ProfileImage src={Profile} alt="Profile" />
+          <ProfileImageWrapper>
+            <ProfileImage src={profileImage} alt="Profile" />
+            <CameraIcon src={ProfileEditIcon} onClick={toggleMenu} />
+            {isMenuOpen && (
+              <CameraMenu>
+                <CameraMenuItem onClick={handlePhotoRegister}>
+                  사진 등록
+                </CameraMenuItem>
+                <CameraMenuItemDelete onClick={handlePhotoDelete}>
+                  사진 삭제
+                </CameraMenuItemDelete>
+              </CameraMenu>
+            )}
+            <HiddenFileInput
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+          </ProfileImageWrapper>
+
           <ProfileInfo>
             <UserNickname>{formValues.nickname}</UserNickname>
             <UserPlanet>{planetName}</UserPlanet>
           </ProfileInfo>
-          <ProfileEditButton onClick={() => handleNavigate('edit')}>프로필 수정</ProfileEditButton>
+
+          <ProfileEditButton onClick={handleProfileEdit}>
+            {isEditing ? '수정 완료' : '프로필 수정'}
+          </ProfileEditButton>
         </ProfileSection>
 
         <InfoSection>
-          <ButtonGroup>
-            <BlueButton onClick={() => handleNavigate('friends')}>친구관리</BlueButton>
-            <BlueButton onClick={() => handleNavigate('posts')}>보관 글 관리</BlueButton>
-          </ButtonGroup>
           <InfoRow>
             <InfoLabel>아이디</InfoLabel>
             <WideInput
               type="text"
               name="userId"
-              value={formValues.userId || ''}
+              value={formValues.userId}
               onChange={handleChange}
+              disabled={!isEditing}
             />
           </InfoRow>
           <InfoRow>
@@ -75,8 +172,9 @@ const Edit = ({
             <WideInput
               type="text"
               name="nickname"
-              value={formValues.nickname || ''}
+              value={formValues.nickname}
               onChange={handleChange}
+              disabled={!isEditing}
             />
           </InfoRow>
           <InfoRow>
@@ -84,8 +182,9 @@ const Edit = ({
             <WideInput
               type="password"
               name="password"
-              value={formValues.password || ''}
+              value={formValues.password}
               onChange={handleChange}
+              disabled={!isEditing}
             />
           </InfoRow>
           <InfoRow>
@@ -93,8 +192,9 @@ const Edit = ({
             <WideInput
               type="text"
               name="name"
-              value={formValues.name || ''}
+              value={formValues.name}
               onChange={handleChange}
+              disabled={!isEditing}
             />
           </InfoRow>
           <InfoRow>
@@ -103,22 +203,25 @@ const Edit = ({
               <InfoInput
                 type="text"
                 name="birthYear"
-                value={formValues.birthYear || ''}
+                value={formValues.birthYear}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>년</span>
               <InfoInput
                 type="text"
                 name="birthMonth"
-                value={formValues.birthMonth || ''}
+                value={formValues.birthMonth}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>월</span>
               <InfoInput
                 type="text"
                 name="birthDay"
-                value={formValues.birthDay || ''}
+                value={formValues.birthDay}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>일</span>
             </DateInputWrapper>
@@ -129,22 +232,25 @@ const Edit = ({
               <InfoInput
                 type="text"
                 name="phonePart1"
-                value={formValues.phonePart1 || ''}
+                value={formValues.phonePart1}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>-</span>
               <InfoInput
                 type="text"
                 name="phonePart2"
-                value={formValues.phonePart2 || ''}
+                value={formValues.phonePart2}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>-</span>
               <InfoInput
                 type="text"
                 name="phonePart3"
-                value={formValues.phonePart3 || ''}
+                value={formValues.phonePart3}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
             </PhoneInputWrapper>
           </InfoRow>
@@ -154,15 +260,17 @@ const Edit = ({
               <ShortInput
                 type="text"
                 name="emailUser"
-                value={formValues.emailUser || ''}
+                value={formValues.emailUser}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
               <span>@</span>
               <ShortInput
                 type="text"
                 name="emailDomain"
-                value={formValues.emailDomain || ''}
+                value={formValues.emailDomain}
                 onChange={handleChange}
+                disabled={!isEditing}
               />
             </EmailInputWrapper>
           </InfoRow>
@@ -174,12 +282,9 @@ const Edit = ({
 
 export default Edit;
 
-// 스타일 컴포넌트 생략 (기존 코드 그대로 유지)
-
 const Container = styled.div`
   display: flex;
   min-height: 100vh;
-  background-color: #F5F5F5;
   width: 100%;
 `;
 
@@ -187,32 +292,14 @@ const MainContent = styled.div`
   flex: 1;
   padding: 5rem;
   box-sizing: border-box;
-
-  @media (max-width: 768px) {
-    padding: 3rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 2rem;
-  }
 `;
 
 const Header = styled.h1`
   font-size: 3rem;
   margin-bottom: 3.75rem;
   color: #333;
-  border-bottom: 0.125rem solid #ddd;
+  border-bottom: 0.125rem solid #D9D9D9;
   padding-bottom: 2.5rem;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2rem;
-    margin-bottom: 2.5rem;
-  }
 `;
 
 const ProfileSection = styled.div`
@@ -220,33 +307,65 @@ const ProfileSection = styled.div`
   align-items: center;
   margin-bottom: 3.75rem;
   position: relative;
+`;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    margin-bottom: 3rem;
-  }
+const ProfileImageWrapper = styled.div`
+  position: relative;
+  margin-right: 2.5rem;
 `;
 
 const ProfileImage = styled.img`
   width: 16.25rem;
   height: 16.25rem;
-  object-fit: contain;
-  margin-right: 2.5rem; 
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #D0D0D0;
+`;
 
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 1.5rem;
-  }
+const CameraIcon = styled.img`
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 4rem;
+  height: 4rem;
+  cursor: pointer;
+`;
+
+const CameraMenu = styled.div`
+  position: absolute;
+  width: 13rem;
+  bottom: -7.8rem; 
+  right: -8rem;
+  background: #CDCDCD;
+  border: 1px solid #D9D9D9;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
+
+const CameraMenuItem = styled.div`
+  font-size: 1.4rem;
+  padding: 0.8rem 1.2rem;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: bold;
+`;
+
+const CameraMenuItemDelete = styled(CameraMenuItem)`
+  color: #ff4444;
+  border-top: 1px solid #D9D9D9;
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
 `;
 
 const ProfileInfo = styled.div`
   flex: 1;
   margin-top: 7.5rem;
-
-  @media (max-width: 768px) {
-    margin-top: 0;
-    text-align: center;
-  }
 `;
 
 const UserNickname = styled.div`
@@ -254,72 +373,12 @@ const UserNickname = styled.div`
   font-weight: bold;
   margin-bottom: 0.625rem;
   color: #333;
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.75rem;
-  }
 `;
 
 const UserPlanet = styled.div`
   font-size: 1.75rem;
   color: #777;
   margin-bottom: 1.25rem;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column; 
-  gap: 1.25rem; 
-  align-items: flex-start;
-  margin-bottom: 2.5rem;
-
-  @media (max-width: 768px) {
-    gap: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.75rem;
-  }
-`;
-
-const BlueButton = styled.button`
-  padding: 1rem 1.5rem;
-  background-color: white;
-  color: #00c2ff;
-  border: 0.125rem solid #00c2ff;
-  border-radius: 0.5rem;
-  font-size: 1.75rem;
-  cursor: pointer;
-  width: 17.625rem; 
-  height: 4.25rem;
-
-  &:hover {
-    background-color: #f0fcff;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    width: 15rem;
-    height: 4rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    width: 13rem;
-    height: 3.5rem;
-  }
 `;
 
 const ProfileEditButton = styled.button`
@@ -327,135 +386,54 @@ const ProfileEditButton = styled.button`
   top: 9.375rem;
   right: 0;
   padding: 1rem 2rem;
-  background-color: white;
-  color: #00c2ff;
-  border: 0.125rem solid #00c2ff;
+  background-color: #01BCD4;
+  color: white;
+  border: 0.125rem solid #01BCD4;
   border-radius: 0.5rem;
   font-size: 1.75rem;
   cursor: pointer;
   width: 17.625rem;
   height: 4.25rem;
 
-  &:hover {
-    background-color: #f0fcff;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    width: 15rem;
-    height: 4rem;
-    top: 1rem;
-    position: static;
-    align-self: center;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    width: 13rem;
-    height: 3.5rem;
-  }
+  
 `;
 
 const InfoSection = styled.div`
   width: 100%;
   border-top: 0.125rem solid #ddd;
-  padding-top: 2.5rem;
-
-  @media (max-width: 768px) {
-    padding-top: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    padding-top: 1.5rem;
-  }
+  padding-top: 10rem;
+  padding-right: 4rem;
 `;
 
 const InfoRow = styled.div`
   display: flex;
   align-items: center;
   padding: 2.375rem 0;
-  max-width: 75rem; 
-  margin: 0 auto; 
+  max-width: 75rem;
+  margin: 0 auto;
   border-bottom: 0.125rem solid #ddd;
   position: relative;
-  top: -6.25rem; 
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 2rem 0;
-    top: 0;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem 0;
-  }
+  top: -6.25rem;
 `;
 
 const InfoLabel = styled.div`
-  width: 18.75rem; 
+  width: 18.75rem;
   color: #565656;
   font-size: 1.75rem;
   text-align: left;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-  }
 `;
 
 const WideInput = styled.input`
-  width: 46.625rem; 
+  width: 46.625rem;
   height: 4.5rem;
-  color: #565656;   
-  font-size: 1.75rem;
-  border: 0.125rem solid #ADADAD;
-  border-radius: 0.5rem;
-
-  &:focus {
-    outline: none;
-    border-color: #00c2ff;
-  }
-
-  @media (max-width: 768px) {
-    width: 50%;
-    font-size: 1.5rem;
-    height: 4rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    height: 3.5rem;
-  }
-`;
-
-const ShortInput = styled.input`
-  width: 19.75rem; 
-  height: 4.5rem;
-  font-size: 1.75rem;
   color: #565656;
-  border: 0.125rem solid #ADADAD;
+  font-size: 1.75rem;
+  border: 0.125rem solid #adadad;
   border-radius: 0.5rem;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    font-size: 1.5rem;
-    height: 4rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    height: 3.5rem;
   }
 `;
 
@@ -464,24 +442,13 @@ const InfoInput = styled.input`
   height: 4.5rem;
   font-size: 1.75rem;
   color: #565656;
-  border: 0.125rem solid #ADADAD;
+  border: 0.125rem solid #adadad;
   border-radius: 0.5rem;
   text-align: center;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    font-size: 1.5rem;
-    height: 4rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.25rem;
-    height: 3.5rem;
   }
 `;
 
@@ -493,14 +460,6 @@ const DateInputWrapper = styled.div`
   span {
     color: #999;
     font-size: 1.75rem;
-
-    @media (max-width: 768px) {
-      font-size: 1.5rem;
-    }
-
-    @media (max-width: 480px) {
-      font-size: 1.25rem;
-    }
   }
 `;
 
@@ -512,14 +471,6 @@ const PhoneInputWrapper = styled.div`
   span {
     color: #999;
     font-size: 1.75rem;
-
-    @media (max-width: 768px) {
-      font-size: 1.5rem;
-    }
-
-    @media (max-width: 480px) {
-      font-size: 1.25rem;
-    }
   }
 `;
 
@@ -531,13 +482,19 @@ const EmailInputWrapper = styled.div`
   span {
     color: #999;
     font-size: 1.75rem;
+  }
+`;
 
-    @media (max-width: 768px) {
-      font-size: 1.5rem;
-    }
+const ShortInput = styled.input`
+  width: 19.75rem;
+  height: 4.5rem;
+  font-size: 1.75rem;
+  color: #565656;
+  border: 0.125rem solid #adadad;
+  border-radius: 0.5rem;
 
-    @media (max-width: 480px) {
-      font-size: 1.25rem;
-    }
+  &:focus {
+    outline: none;
+    border-color: #00c2ff;
   }
 `;
