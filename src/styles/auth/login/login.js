@@ -4,7 +4,7 @@ import LoginBackground from "../../../assets/images/auth/login/loginBackground.p
 
 export const LoginContainer = styled.div`
     background: url(${LoginBackground}) no-repeat center center/cover;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     position: relative;
     display: flex;
@@ -13,16 +13,16 @@ export const LoginContainer = styled.div`
 `
 
 export const FormContainer = styled.form`
-    width: 71.6rem;
-    height: 76.9rem;
+    width: 35.8vw;
+    height: 38.45vw;
     background: ${colors.white};
     border: none;
-    border-radius: 1.5rem;
+    border-radius: 0.75vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 2.6rem 0;
+    padding: 1.3vw 0;
     z-index: 9999;
 `
 
@@ -30,60 +30,60 @@ export const LogoContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.4rem;
+    gap: 0.7vw;
 `
 
 export const LogoImg = styled.img`
-    width: ${(props) => props.width || '5.7rem'};
-    height: ${(props) => props.height || '5.7rem'};
+    width: ${(props) => props.width || '2.85vw'};
+    height: ${(props) => props.height || '2.85vw'};
 `
 
 export const LoginP = styled.p`
-    font-size: 4.8rem;
+    font-size: 2.4vw;
     font-weight: 600;
     color: ${colors.loginP};
-    margin: 2.9rem 0 3.9rem 0;
-    border-bottom: 0.6rem solid ${colors.loginGreen};
+    margin: 1.45vw 0 1.95vw 0;
+    border-bottom: 0.3vw solid ${colors.loginGreen};
     cursor: default;
 `
 
 export const InputContainer = styled.div`
-    width: 52rem;
+    width: 26vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4rem;
-    margin-bottom: 7.38rem;
+    gap: 2vw;
+    margin-bottom: 3.69vw;
 `
 
 export const ButtonContainer = styled(InputContainer)`
-    gap: 1.2rem;
-    margin: 0 0 3.2rem 0;
+    gap: 0.6vw;
+    margin: 0 0 1.6vw 0;
 `
 
 export const LoginP2 = styled.p`
-    font-size: ${(props) => props.size || '1.5rem'};
+    font-size: ${(props) => props.size || '0.75vw'};
     font-weight: 300;
     color: ${(props) => props.color || colors.loginP2};
     cursor: pointer;
-    margin-top: 0.5rem;
+    margin-top: 0.25vw;
 `
 
 export const LoginInputContainer = styled.input`
     width: 100%;
-    height: 5.6rem;
+    height: 2.8vw;
     background: ${colors.white};
     border: none;
     outline: none;
-    border-bottom: 0.12rem solid ${colors.loginPurple};
-    font-size: 2rem;
+    border-bottom: 0.06vw solid ${colors.loginPurple};
+    font-size: 1vw;
     font-weight: 300;
     color: ${colors.loginP2};
     cursor: pointer;
     caret-color: ${colors.loginP2};
 
     &::placeholder {
-        font-size: 2rem;
+        font-size: 1vw;
         font-weight: 300;
         color: ${colors.loginP2};
     }
@@ -91,12 +91,12 @@ export const LoginInputContainer = styled.input`
 
 export const LoginButtonContainer = styled.button`
     width: 100%;
-    height: 6.1rem;
+    height: 3.05vw;
     background: ${props => props.btncolor || colors.loginGray};
     border: none;
-    border-radius: 1.5rem;
+    border-radius: 0.75vw;
     color: ${colors.white};
     font-weight: 800;
-    font-size: 2.2rem;
+    font-size: 1.1vw;
     cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
 `
