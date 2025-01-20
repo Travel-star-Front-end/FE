@@ -1,6 +1,7 @@
 import AuthLayout from "../layouts/auth-layout";
 import LoginPage from "../pages/auth/login/login";
 import SignUpPage from "../pages/auth/signup/signup";
+import CompletedPage from "../pages/auth/signup/completed";
 import SettingPage from "../pages/auth/setting/setting";
 
 const authRouter = [
@@ -22,6 +23,10 @@ const authRouter = [
         index: true,
         element: <SignUpPage />,
       },
+      {
+        path: "completed",
+        element: <CompletedPage />,
+      }
     ],
   },
   {

@@ -1,11 +1,13 @@
 const colors = {
     main: "#01BCD4",
+    subMain: "#AEE0EA",
     loginP: "#211B45",
     loginP2: "#747474",
     loginP3: "#515151",
     loginGreen: "#8BC24A",
     loginPurple: "#7888C4",
     loginGray: "#C7C7C7",
+    completedGray: "#FAFAFA",
     homeGray: "#F9F9F9",
     sideBarGray: "#F6F6F6",
     sideBarGray2: "#555555",
@@ -17,6 +19,7 @@ const colors = {
     calenderGray: "#E1E1E1",
     calenderGray2: "#F3F3F3",
     calenderGray3: "#ADADAD",
+    calenderGray4: "#565656",
     black: "#000000",
     white: "#FFFFFF",
 };

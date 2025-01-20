@@ -58,7 +58,7 @@ const LoginForm = () => {
         <s.FormContainer onSubmit={handleSubmit(onSubmit)}>
             <s.LogoContainer>
                 <s.LogoImg src={Logo} alt="logo" />
-                <s.LogoImg src={LogoP} width="7.5rem" height="2.9rem" alt="logoP" />
+                <s.LogoImg src={LogoP} width="3.75vw" height="1.45vw" alt="logoP" />
             </s.LogoContainer>
 
             <s.LoginP>Login</s.LoginP>
@@ -74,7 +74,7 @@ const LoginForm = () => {
                 <s.LoginP2>아이디 찾기 / 비밀번호 찾기</s.LoginP2>
             </s.ButtonContainer>
 
-            <s.LoginP2 size="1.3rem" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</s.LoginP2>
+            <s.LoginP2 size="0.65vw" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</s.LoginP2>
         </s.FormContainer>
     )
 }
