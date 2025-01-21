@@ -411,7 +411,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input type="radio" value="agree" {...register('terms1')} checked={termsAgreement[1] === true} onChange={() => handleAgreeChange(true, 1)}/>
+                  <input type="radio" value="agree" {...register('terms1')} checked={termsAgreement[1] === true} onChange={() => handleAgreeChange(true, 1)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -437,7 +437,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input type="radio" value="agree" {...register('terms2')} checked={termsAgreement[2] === true} onChange={() => handleAgreeChange(true, 2)}/>
+                  <input type="radio" value="agree" {...register('terms2')} checked={termsAgreement[2] === true} onChange={() => handleAgreeChange(true, 2)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
