@@ -4,14 +4,15 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
-import locationPin from '../../assets/images/locationPin.png';
+import locationPin from '../../assets/images/travel-post/locationPin.png';
+import lock from '../../assets/images/travel-post/lock-person.png';
 import share from '../../assets/images/posts/posts/share.png';
 import default_profile_img from '../../assets/images/ProfileImage.png';
 
 //예시 이미지
-import image1 from '../../assets/images/image 1.png';
-import image2 from '../../assets/images/image 2.png';
-import image3 from '../../assets/images/image 3.png';
+import image1 from '../../assets/images/travel-post/image 1.png';
+import image2 from '../../assets/images/travel-post/image 2.png';
+import image3 from '../../assets/images/travel-post/image 3.png';
 
 //slick setting
 const settings = {
@@ -23,22 +24,7 @@ const settings = {
     slidesToShow: 3,
     slidesToScroll: 1,
     arrows: true,
-    responsive: [
-        {
-            breakpoint: 1024,   //width 1024px 미만
-            settings: {
-                slidesToShow: 2,
-                slidesToScroll: 1
-            }
-        },
-        {
-            breakpoint: 768, // 화면 너비 768px 이하
-            settings: {
-                slidesToShow: 1,
-                slidesToScroll: 1,
-            },
-        },
-    ],
+    draggable: false,
 }
 
 //추천 게시글 컴포넌트
@@ -54,8 +40,17 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
 
     return (
         <S.Container>
+            <S.Hr/>
             <S.InfoWrapper>
-                <S.Info onClick={() => navigate(`/posts/${id}`)}>
+                <S.Info onClick={() => navigate(`/posts/${id}`, {
+                    state: { 
+                        nickname, 
+                        date, 
+                        location, 
+                        quickReview, 
+                        profileImg 
+                    } 
+                })}>
                     <S.ProfileImg>
                         {profileImg ? (
                             <img src={profileImg} alt="프로필" className="profile-img" />
@@ -86,6 +81,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
                 )}
                 {buttonType === 'edit' && (
                     <S.EditBtnContainer>
+                        <img src={lock} alt='lock' className='lock-icon' />
                         <img src={share} alt="share" className="share-icon" />
                         <S.EditButton type="button" onClick={() => navigate('edit')}>수정하기</S.EditButton>
                     </S.EditBtnContainer>
@@ -117,8 +113,6 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
             </S.SliderWrapper>
 
             <S.QuickReview>{quickReview}</S.QuickReview>
-
-            <S.Hr/>
 
         </S.Container>
     )

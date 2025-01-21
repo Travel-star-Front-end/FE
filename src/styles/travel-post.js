@@ -6,7 +6,15 @@ export const Container = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    padding-bottom: 1vw;
+`;
+
+export const Hr = styled.hr`
+    width: 100%;
+    border: 0;
+    height: 0.05vw;
+    background-color: #D9D9D9;
+    margin-bottom: 2vw;
 `;
 
 export const InfoWrapper = styled.div`
@@ -14,6 +22,7 @@ export const InfoWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    margin-bottom: 1vw;
 `;
 
 export const Info = styled.div`
@@ -88,7 +97,13 @@ export const Button = styled.button`
 
 export const EditBtnContainer= styled.div`
     display: flex;
+    align-items: center;
     gap: 9px;
+
+    .lock-icon {
+        width: 1.15vw;
+        height: 1.15vw;
+    }
 
     .share-icon {
         width: 1.55vw;//31px
@@ -117,8 +132,9 @@ export const SliderWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 92%;
     margin: 0 auto;
+    margin-bottom: 1vw;
 
     .slick-list {
         overflow: hidden;
@@ -126,19 +142,20 @@ export const SliderWrapper = styled.div`
     }
 
     .slick-slider {
-        width: 90%;
+        width: 100%;
         position: relative;
     }
 
     .slick-track {
         width: 90%;
-        display: flex !important; /* 수평 레이아웃 유지 */
-        flex-wrap: nowrap; /* 슬라이드가 한 줄로 유지되도록 설정 */
+        display: flex !important;
+        flex-wrap: nowrap;
     }
 
      .slick-slide {
-        width: 20vw !important; /* 슬라이드 항목 너비 강제 설정 */
-        margin-right: 8px;
+        width: 20vw !important;
+        height: 16.65vw !important;
+        margin-right: 0.4vw;
     }
 
     .slick-prev::before, .slick-next::before {
@@ -146,8 +163,8 @@ export const SliderWrapper = styled.div`
     }
 
     .slick-prev, .slick-next {
-        // position: absolute;
-        // top: 49%; /* 버튼 수직 중앙 정렬 */
+        position: absolute;
+        top: 50%; /* 버튼 수직 중앙 정렬 */
         transform: translateY(-50%);
         z-index: 1000;
         width: 2.5vw;
@@ -159,15 +176,11 @@ export const SliderWrapper = styled.div`
     }
 
     .slick-prev {
-        position: absolute;
-        top: 49.5%;
-        left: -4.5%;
+        left: -4.1%;
         background-image: url(${LeftArrow});
     }
 
     .slick-next {
-        position: absolute;
-        top: 49.5%;
         right: -4%;
         background-image: url(${RightArrow});
     }
@@ -189,12 +202,4 @@ export const QuickReview = styled.div`
     font-weight: 100;
     font-size: 1vw;
     color: #000000;
-`;
-
-export const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 1px;
-    background-color: #D9D9D9;
-    margin-bottom: 43px;
 `;
