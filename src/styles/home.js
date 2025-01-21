@@ -5,7 +5,7 @@ export const Container = styled.div`
     flex-direction: column;
     margin: auto;
     margin-top: 2.85vw;
-    width: 66vw;
+    width: 80%;
     height: 100vh;
     box-sizing: border-box;
 `;
@@ -102,13 +102,6 @@ export const Text = styled.div`
     color: #555555;
 `;
 
-export const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 1px;
-    background-color: #D9D9D9;
-`;
-
 export const PostWrapper = styled.div`
-    padding: 1.5vw 0;
+   widht: 100%;
 `;
