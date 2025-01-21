@@ -6,7 +6,7 @@ import locationPin from '../../assets/images/locationPin.png';
 import share from '../../assets/images/share.png';
 
 //예시 이미지
-import img from '../../assets/images/logo.png';
+import img from '../../assets/images/auth/login/logo.png';
 import image1 from '../../assets/images/image 1.png';
 import image2 from '../../assets/images/image 2.png';
 import image3 from '../../assets/images/image 3.png';

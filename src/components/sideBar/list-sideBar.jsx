@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import * as s from "../../styles/common/sidebar/sidebar";
 import ItemSideBar from "./item-sideBar";
-import SideBarData from "../../utils/sideBar/sideBarData"; // Assuming this contains the actual data
-
-const ListContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    margin-top: 9.15vw;
-    padding-left: 3.7vw;
-    gap: 2.05vw;
-`;
+import SideBarData from "../../utils/sideBar/sideBarData";
 
 const ListSideBar = () => {
     const [sideBarData, setSideBarData] = useState([]);
@@ -20,7 +11,7 @@ const ListSideBar = () => {
     }, []);
 
     return (
-        <ListContainer>
+        <s.ListContainer>
             {sideBarData.map((item, index) => (
                 <ItemSideBar 
                     key={index}
@@ -31,7 +22,7 @@ const ListSideBar = () => {
                     logoClick={item.logoClick}
                 />
             ))}
-        </ListContainer>
+        </s.ListContainer>
     );
 };
 

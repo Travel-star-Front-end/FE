@@ -1,30 +1,17 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "../components/sideBar/sideBar";
-import styled from "styled-components";
-
-const RootContainer = styled.div`
-    display: flex;
-    min-height: 100vh;
-`
-
-const SideBarContainer = styled.div`
-    width: 15vw;
-`
-
-const OutletContainer = styled.div`
-    width: calc(100% - 15vw);
-`
+import * as s from "../styles/common/layout/layout";
 
 const RootLayout = () => {
     return (
-        <RootContainer>
-            <SideBarContainer>
+        <s.RootContainer>
+            <s.SideBarContainer>
                 <SideBar />
-            </SideBarContainer>
-            <OutletContainer>
+            </s.SideBarContainer>
+            <s.OutletContainer>
                 <Outlet />
-            </OutletContainer>
-        </RootContainer>
+            </s.OutletContainer>
+        </s.RootContainer>
     )
 }
 

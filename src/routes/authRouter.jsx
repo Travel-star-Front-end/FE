@@ -25,7 +25,6 @@ const authRouter = [
     ],
   },
   {
-    // 행성 설정 경로
     path: "/setting",
     element: <AuthLayout />,
     children: [

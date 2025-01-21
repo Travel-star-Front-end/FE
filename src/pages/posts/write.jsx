@@ -1,42 +1,16 @@
-import styled from "styled-components";
-import colors from "../../styles/colors";
+import * as s from "../../styles/posts/write/write";
 import WriteForm from "../../components/posts/write/writeForm";
-
-const WriteContainer = styled.div`
-    background: ${colors.homeGray};
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 3.1vw 0 2.25vw 0;
-`
-
-const WriteInnerContainer = styled.div`
-    width: 90%;
-`
-
-const WriteP = styled.p`
-    font-size: 1.2vw;
-    font-weight: 600;
-    color: ${colors.sideBarGray2};
-`
-
-const WriteBar = styled.div`
-    width: 100%;
-    height: 0.05vw;
-    background: ${colors.writeGray};
-    margin-top: 0.035vw;
-`
 
 const Write = () => {
     return (
-        <WriteContainer>
-            <WriteInnerContainer>
-                <WriteP>일지 작성</WriteP>
-                <WriteBar />
+        <s.WriteContainer>
+            <s.WriteInnerContainer>
+                <s.WriteP>일지 작성</s.WriteP>
+                <s.WriteBar />
 
                 <WriteForm />
-            </WriteInnerContainer>
-        </WriteContainer>
+            </s.WriteInnerContainer>
+        </s.WriteContainer>
     )
 }
 
