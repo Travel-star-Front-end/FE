@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { API } from '../../../apis/axios';
 
 const signUpSchema = z
   .object({
@@ -21,36 +22,61 @@ const signUpSchema = z
     year: z.string().nonempty('년을 선택해주세요.'),
     month: z.string().nonempty('월을 선택해주세요.'),
     day: z.string().nonempty('일을 선택해주세요.'),
-    phone1: z.string().nonempty('전화번호 앞자리를 입력해주세요.'),
-    phone2: z.string().nonempty('전화번호 중간 자리를 입력해주세요.'),
-    phone3: z.string().nonempty('전화번호 마지막 자리를 입력해주세요.'),
+    phone1: z
+      .string()
+      .nonempty('전화번호 앞자리를 입력해주세요.')
+      .regex(/^\d+$/, '전화번호에는 숫자만 입력해주세요.'),
+    phone2: z
+      .string()
+      .nonempty('전화번호 중간 자리를 입력해주세요.')
+      .regex(/^\d+$/, '전화번호에는 숫자만 입력해주세요.'),
+    phone3: z
+      .string()
+      .nonempty('전화번호 마지막 자리를 입력해주세요.')
+      .regex(/^\d+$/, '전화번호에는 숫자만 입력해주세요.'),
     emailUser: z.string().nonempty('이메일 아이디를 입력해주세요.'),
     emailDomain: z.string().nonempty('이메일 도메인을 선택해주세요.'),
     customDomain: z.string().optional(),
-    terms1: z.enum(['agree', 'disagree'], { invalid_type_error: '* 필수입니다' }),
-    terms2: z.enum(['agree', 'disagree'], { invalid_type_error: '* 필수입니다' }),
+    terms1: z
+      .enum(['agree', 'disagree'])
+      .refine((val) => val === 'agree', { message: '* 필수입니다' }),
+    terms2: z
+      .enum(['agree', 'disagree'])
+      .refine((val) => val === 'agree', { message: '* 필수입니다' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: '비밀번호가 일치하지 않습니다.',
     path: ['confirmPassword'],
-  })
-  .refine((data) => data.terms1 === 'agree', {
-    message: '* 필수입니다',
-    path: ['terms1'],
-  })
-  .refine((data) => data.terms2 === 'agree', {
-    message: '* 필수입니다',
-    path: ['terms2'],
   });
 
 const signUpFn = async (formData) => {
-  // 실제 회원가입 로직은 서버와의 통신으로 이뤄지며, 여기서는 예시로 localStorage에만 저장
-  localStorage.setItem('userId', formData.userId);
-  localStorage.setItem('password', formData.password);
+  const finalDomain =
+    formData.emailDomain === 'custom'
+      ? formData.customDomain
+      : formData.emailDomain;
 
-  // 서버 통신 지연 시뮬레이션
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return { success: true };
+  const birthDate = `${formData.year}-${String(formData.month).padStart(2, '0')}-${String(formData.day).padStart(2, '0')}`;
+
+  const phoneNumber = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
+
+  const payload = {
+    name: formData.name,
+    username: formData.userId,
+    email: `${formData.emailUser}@${finalDomain}`,
+    phone: phoneNumber,
+    address: {
+      suite: birthDate,
+    },
+  };
+
+  try {
+    const response = await API.post('https://jsonplaceholder.typicode.com/users', payload);
+    console.log('응답 데이터:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('요청 실패:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 const SignUp = () => {
@@ -58,16 +84,33 @@ const SignUp = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(signUpSchema),
     mode: 'onChange',
+    defaultValues: {
+      userId: '',
+      password: '',
+      confirmPassword: '',
+      name: '',
+      year: '',
+      month: '',
+      day: '',
+      phone1: '',
+      phone2: '',
+      phone3: '',
+      emailUser: '',
+      emailDomain: '',
+      customDomain: '',
+      terms1: 'none',
+      terms2: 'none',
+    },
   });
 
   const { mutate } = useMutation({
     mutationFn: signUpFn,
     onSuccess: () => {
-      console.log('회원가입에 성공하셨습니다. (localStorage에 저장)');
       alert('회원가입에 성공하셨습니다.');
       window.location.href = '/login';
     },
@@ -77,7 +120,11 @@ const SignUp = () => {
     },
   });
 
-  const years = Array.from({ length: 120 }, (_, i) => 1900 + i);
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = 1900; y <= currentYear; y++) {
+    years.push(y);
+  }
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   const getDaysInMonth = (y, m) => {
@@ -87,12 +134,7 @@ const SignUp = () => {
     const lastDay = new Date(yearNum, monthNum, 0).getDate();
     return Array.from({ length: lastDay }, (_, i) => i + 1);
   };
-
   const days = getDaysInMonth(watch('year'), watch('month'));
-
-  const onSubmit = (data) => {
-    mutate(data);
-  };
 
   const handleCheckId = () => {
     const userIdValue = watch('userId');
@@ -100,8 +142,11 @@ const SignUp = () => {
       alert('아이디를 입력해주세요.');
       return;
     }
-    // 실제 중복확인 로직은 서버와 통신
-    alert('중복확인에 성공하셨습니다.');
+    alert('중복확인에 성공하셨습니다. (예시)');
+  };
+
+  const onSubmit = (data) => {
+    mutate(data);
   };
 
   return (
@@ -114,166 +159,181 @@ const SignUp = () => {
           <Form onSubmit={handleSubmit(onSubmit)}>
             <FormGroup>
               <Label>아이디</Label>
-              <InputWrapper>
-                <Input
-                  type="text"
-                  placeholder="아이디 입력"
-                  {...register('userId')}
-                />
-                <CheckButton type="button" onClick={handleCheckId}>
-                  중복확인
-                </CheckButton>
-              </InputWrapper>
+              <InputContainer>
+                <InputWrapper>
+                  <Input
+                    type="text"
+                    placeholder="아이디 입력"
+                    {...register('userId')}
+                  />
+                  <CheckButton type="button" onClick={handleCheckId}>
+                    중복확인
+                  </CheckButton>
+                </InputWrapper>
+                {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
+              </InputContainer>
             </FormGroup>
-            {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
 
             <FormGroup>
               <Label>비밀번호</Label>
+              <InputContainer>
                 <Input
                   type="password"
                   placeholder="비밀번호 입력"
                   {...register('password')}
                 />
+                {errors.password && (
+                  <ErrorText>{errors.password.message}</ErrorText>
+                )}
+              </InputContainer>
             </FormGroup>
-            {errors.password && (
-              <ErrorText>{errors.password.message}</ErrorText>
-            )}
 
             <FormGroup>
               <Label>비밀번호 확인</Label>
-              <Input
-                type="password"
-                placeholder="비밀번호 재입력"
-                {...register('confirmPassword')}
-              />
+              <InputContainer>
+                <Input
+                  type="password"
+                  placeholder="비밀번호 재입력"
+                  {...register('confirmPassword')}
+                />
+                {errors.confirmPassword && (
+                  <ErrorText>{errors.confirmPassword.message}</ErrorText>
+                )}
+              </InputContainer>
             </FormGroup>
-            {errors.confirmPassword && (
-              <ErrorText>{errors.confirmPassword.message}</ErrorText>
-            )}
 
             <FormGroup>
               <Label>이름</Label>
-              <Input type="text" placeholder="이름 입력" {...register('name')} />
+              <InputContainer>
+                <Input
+                  type="text"
+                  placeholder="이름 입력"
+                  {...register('name')}
+                />
+                {errors.name && <ErrorText>{errors.name.message}</ErrorText>}
+              </InputContainer>
             </FormGroup>
-            {errors.name && <ErrorText>{errors.name.message}</ErrorText>}
 
             <FormGroup>
               <Label>생년월일</Label>
-              <DateInputGroup>
-                <Select {...register('year')}>
-                  <option value="">년</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </Select>
-                <Select {...register('month')}>
-                  <option value="">월</option>
-                  {months.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </Select>
-                <Select {...register('day')}>
-                  <option value="">일</option>
-                  {days.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </Select>
-              </DateInputGroup>
+              <InputContainer>
+                <DateInputGroup>
+                  <Select {...register('year')}>
+                    <option value="">년</option>
+                    {years.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </Select>
+                  <Select {...register('month')}>
+                    <option value="">월</option>
+                    {months.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </Select>
+                  <Select {...register('day')}>
+                    <option value="">일</option>
+                    {days.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </Select>
+                </DateInputGroup>
+                {(errors.year || errors.month || errors.day) && (
+                  <ErrorText>
+                    {errors.year?.message ||
+                      errors.month?.message ||
+                      errors.day?.message}
+                  </ErrorText>
+                )}
+              </InputContainer>
             </FormGroup>
-            {(errors.year || errors.month || errors.day) && (
-              <ErrorText>
-                {errors.year?.message ||
-                  errors.month?.message ||
-                  errors.day?.message}
-              </ErrorText>
-            )}
 
             <FormGroup>
               <Label>전화번호</Label>
-              <PhoneInputGroup>
-                <PhoneInput
-                  type="text"
-                  placeholder="010"
-                  {...register('phone1')}
-                />
-                <Dash>-</Dash>
-                <PhoneInput
-                  type="text"
-                  placeholder="0000"
-                  {...register('phone2')}
-                />
-                <Dash>-</Dash>
-                <PhoneInput
-                  type="text"
-                  placeholder="0000"
-                  {...register('phone3')}
-                />
-              </PhoneInputGroup>
+              <InputContainer>
+                <PhoneInputGroup>
+                  <PhoneInput
+                    type="text"
+                    placeholder="010"
+                    {...register('phone1')}
+                  />
+                  <Dash>-</Dash>
+                  <PhoneInput
+                    type="text"
+                    placeholder="0000"
+                    {...register('phone2')}
+                  />
+                  <Dash>-</Dash>
+                  <PhoneInput
+                    type="text"
+                    placeholder="0000"
+                    {...register('phone3')}
+                  />
+                </PhoneInputGroup>
+                {(errors.phone1 || errors.phone2 || errors.phone3) && (
+                  <ErrorText>
+                    {errors.phone1?.message ||
+                      errors.phone2?.message ||
+                      errors.phone3?.message}
+                  </ErrorText>
+                )}
+              </InputContainer>
             </FormGroup>
-            {(errors.phone1 || errors.phone2 || errors.phone3) && (
-              <ErrorText>
-                {errors.phone1?.message ||
-                  errors.phone2?.message ||
-                  errors.phone3?.message}
-              </ErrorText>
-            )}
-      <FormGroup>
-        <Label>이메일</Label>
-        <EmailInputGroup>
-          {/* 이메일 아이디 입력 */}
-          <EmailInput
-            type="text"
-            placeholder="이메일 아이디"
-            {...register('emailUser')}
-          />
-          @
-          {/* 이메일 도메인 입력 */}
-          <EmailInput
-            type="text"
-            placeholder="도메인"
-            value={
-              watch('emailDomain') === 'custom'
-                ? watch('customDomain') || ''
-                : watch('emailDomain')
-            }
-            onChange={(e) => {
-              if (watch('emailDomain') === 'custom') {
-                setValue('customDomain', e.target.value);
-              }
-            }}
-            disabled={watch('emailDomain') !== 'custom'} // 직접 입력이 아닐 경우 비활성화
-          />
-          {/* 이메일 도메인 선택 */}
-          <EmailSelect
-            {...register('emailDomain')}
-            onChange={(e) => {
-              setValue('emailDomain', e.target.value);
-              if (e.target.value !== 'custom') {
-                setValue('customDomain', ''); // 직접 입력 필드 초기화
-              }
-            }}
-          >
-            <option value="">선택</option>
-            <option value="custom">직접 입력</option>
-            <option value="naver.com">naver.com</option>
-            <option value="hanmail.net">hanmail.net</option>
-            <option value="gmail.com">gmail.com</option>
-            <option value="daum.net">daum.net</option>
-          </EmailSelect>
-        </EmailInputGroup>
-      </FormGroup>
-      
-            {(errors.emailUser || errors.emailDomain) && (
-              <ErrorText>
-                {errors.emailUser?.message || errors.emailDomain?.message}
-              </ErrorText>
-            )}
+
+            <FormGroup>
+              <Label>이메일</Label>
+              <InputContainer>
+                <EmailInputGroup>
+                  <EmailInput
+                    type="text"
+                    placeholder="이메일 아이디"
+                    {...register('emailUser')}
+                  />
+                  @
+                  <EmailInput
+                    type="text"
+                    placeholder="도메인"
+                    value={
+                      watch('emailDomain') === 'custom'
+                        ? watch('customDomain') ?? ''
+                        : watch('emailDomain') ?? ''
+                    }
+                    onChange={(e) => {
+                      if (watch('emailDomain') === 'custom') {
+                        setValue('customDomain', e.target.value);
+                      }
+                    }}
+                    disabled={watch('emailDomain') !== 'custom'}
+                  />
+                  <EmailSelect
+                    {...register('emailDomain')}
+                    onChange={(e) => {
+                      setValue('emailDomain', e.target.value);
+                      if (e.target.value !== 'custom') {
+                        setValue('customDomain', '');
+                      }
+                    }}
+                  >
+                    <option value="">선택</option>
+                    <option value="custom">직접 입력</option>
+                    <option value="naver.com">naver.com</option>
+                    <option value="hanmail.net">hanmail.net</option>
+                    <option value="gmail.com">gmail.com</option>
+                    <option value="daum.net">daum.net</option>
+                  </EmailSelect>
+                </EmailInputGroup>
+                {(errors.emailUser || errors.emailDomain) && (
+                  <ErrorText>
+                    {errors.emailUser?.message || errors.emailDomain?.message}
+                  </ErrorText>
+                )}
+              </InputContainer>
+            </FormGroup>
 
             <AgreementSection>
               <AgreementTitle>약관동의</AgreementTitle>
@@ -339,24 +399,17 @@ export default SignUp;
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   background-color: white;
   padding: 2.5rem;
 
   @media (max-width: 768px) {
-    height: 80vh;
-    padding: 0rem;
-  }
-
-  @media (max-width: 480px) {
+    height: auto;
     padding: 1rem;
-    height: 50vh;
   }
 `;
 
@@ -370,7 +423,6 @@ const InnerForm = styled.div`
   @media (max-width: 768px) {
     width: 90%;
   }
-
   @media (max-width: 480px) {
     width: 100%;
   }
@@ -380,14 +432,12 @@ const SignUpBox = styled.div`
   background-color: #f6f6f6;
   width: 100%;
   max-width: 75rem;
-
   border-radius: 1.25rem;
   padding: 5rem;
 
   @media (max-width: 768px) {
     padding: 3rem;
   }
-
   @media (max-width: 480px) {
     padding: 2rem;
     border-radius: 0.625rem;
@@ -400,13 +450,11 @@ const Logo = styled.div`
   font-family: 'Do Hyeon', sans-serif;
   color: rgb(0, 196, 204);
   margin-bottom: 0;
-
   text-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
     font-size: 2.5rem;
   }
-
   @media (max-width: 480px) {
     font-size: 2rem;
   }
@@ -424,7 +472,6 @@ const Title = styled.h1`
     font-size: 2.5rem;
     margin-bottom: 2.5rem;
   }
-
   @media (max-width: 480px) {
     font-size: 2rem;
     margin-bottom: 2rem;
@@ -439,7 +486,6 @@ const Form = styled.form`
   @media (max-width: 768px) {
     gap: 2rem;
   }
-
   @media (max-width: 480px) {
     gap: 1.5rem;
   }
@@ -447,12 +493,11 @@ const Form = styled.form`
 
 const FormGroup = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start; 
   gap: 2.5rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: flex-start;
     gap: 1rem;
   }
 `;
@@ -462,20 +507,27 @@ const Label = styled.label`
   flex-shrink: 0;
   color: #333;
   font-size: 1.875rem;
+  margin-top: 0.4rem; // 살짝 정렬용
 
   @media (max-width: 768px) {
     width: auto;
     font-size: 1.5rem;
+    margin-top: 0;
   }
-
   @media (max-width: 480px) {
     font-size: 1.3rem;
   }
 `;
 
+// (2) 인풋+에러를 묶는 컨테이너
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
 const InputWrapper = styled.div`
   display: flex;
-  flex: 1;
   gap: 1.25rem;
 
   @media (max-width: 768px) {
@@ -502,7 +554,6 @@ const Input = styled.input`
     font-size: 1.5rem;
     padding: 0.8rem 1rem;
   }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
     padding: 0.6rem 0.8rem;
@@ -521,7 +572,6 @@ const CheckButton = styled.button`
     padding: 0.8rem 1.5rem;
     font-size: 1.3rem;
   }
-
   @media (max-width: 480px) {
     padding: 0.6rem 1rem;
     font-size: 1.1rem;
@@ -541,7 +591,6 @@ const Select = styled.select`
     font-size: 1.5rem;
     padding: 0.8rem 1rem;
   }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
     padding: 0.6rem 0.8rem;
@@ -551,7 +600,6 @@ const Select = styled.select`
 const DateInputGroup = styled.div`
   display: flex;
   gap: 1.25rem;
-  flex: 1;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -563,10 +611,9 @@ const PhoneInputGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  flex: 1;
+  width: 100%;
 
   @media (max-width: 768px) {
-    width: 100%;
     gap: 0.625rem;
   }
 `;
@@ -581,7 +628,6 @@ const PhoneInput = styled(Input)`
 
 const Dash = styled.span`
   color: #999;
-
   @media (max-width: 768px) {
     margin: 0 0.25rem;
   }
@@ -591,7 +637,6 @@ const EmailInputGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  flex: 1;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -608,14 +653,6 @@ const EmailInput = styled(Input)`
   }
 `;
 
-const EmailAt = styled.span`
-  color: #999;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 const EmailSelect = styled.select`
   flex: 1;
   padding: 1rem 1.5rem;
@@ -629,8 +666,8 @@ const EmailSelect = styled.select`
   @media (max-width: 768px) {
     font-size: 1.5rem;
     padding: 0.8rem 1rem;
+    width: 100%;
   }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
     padding: 0.6rem 0.8rem;
@@ -652,7 +689,6 @@ const AgreementTitle = styled.h2`
     font-size: 1.8rem;
     margin-bottom: 1rem;
   }
-
   @media (max-width: 480px) {
     font-size: 1.5rem;
   }
@@ -680,7 +716,6 @@ const AgreementText = styled.span`
   @media (max-width: 768px) {
     font-size: 1.4rem;
   }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
   }
@@ -700,6 +735,7 @@ const DropdownIcon = styled.span`
   }
 `;
 
+// 약관 동의 라디오 옆에 뜨는 에러는 inline으로 둠
 const ErrorTextInline = styled.span`
   margin-left: 1rem;
   color: red;
@@ -728,16 +764,13 @@ const RadioGroup = styled.div`
     outline: none;
     cursor: pointer;
     margin: 0;
-
     &:checked {
       background-color: #00c2ff;
     }
-
     @media (max-width: 768px) {
       width: 1.6rem;
       height: 1.6rem;
     }
-
     @media (max-width: 480px) {
       width: 1.4rem;
       height: 1.4rem;
@@ -760,9 +793,24 @@ const RadioLabel = styled.label`
     font-size: 1.4rem;
     gap: 0.5rem;
   }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
+  }
+`;
+
+// (2) 오류 메시지
+const ErrorText = styled.div`
+  color: red;
+  font-size: 1.5rem;
+  margin-top: 0.5rem; 
+  left: 50vh; /* 필요에 따라 left/center 등 조정 */
+
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+    text-align: left;
+  }
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
   }
 `;
 
@@ -780,31 +828,14 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #00b0e6;
   }
-
   @media (max-width: 768px) {
     padding: 1.2rem;
     font-size: 1.8rem;
     margin-top: 2rem;
   }
-
   @media (max-width: 480px) {
     padding: 1rem;
     font-size: 1.4rem;
     margin-top: 1.5rem;
-  }
-`;
-
-const ErrorText = styled.div`
-  color: red;
-  font-size: 1.5rem;
-  margin-top: -1.875rem;
-  margin-bottom: 0.625rem;
-
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.1rem;
   }
 `;
