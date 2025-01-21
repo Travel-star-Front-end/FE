@@ -5,10 +5,11 @@ import * as s from "../../../styles/posts/write/write";
 import colors from "../../../styles/common/colors";
 import WriteInput from "./input/writeInput";
 import WriteTextarea from "./textarea/writeTextarea";
-import AIButton from "./button/AIButton";
 import WriteButton from "./button/writeButton";
 import Toggle from "./toggle/toggle";
-import IconData from "../../../utils/posts/iconData";
+import ImageButton from "./button/imageButton";
+import ListImage from "./list-image";
+import AIButton from "./button/AIButton";
 import ListLocation from "./list-location";
 import ListMusic from "./list-music";
 import useLocation from "../../../hooks/useLocation";
@@ -20,6 +21,7 @@ import IframePlayer from "./iframePlayer";
 
 const WriteForm = () => {
     const [menu, setMenu] = useState(false);
+    const [selectedImages, setSelectedImages] = useState([]);
     const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
     const [selectedLocation, setSelectedLocation] = useState("");
     const [latitude, setLatitude] = useState(null);
@@ -36,6 +38,23 @@ const WriteForm = () => {
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
     }
+
+    // 이미지 선택
+    const addImage = (file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setSelectedImages(prevImages => [
+                ...prevImages,
+                { name: file.name, preview: reader.result }
+            ]);
+        };
+        reader.readAsDataURL(file); 
+    };
+
+    // 이미지 삭제
+    const handleDeleteImage = (index) => {
+        setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+    };
 
     // 위치 검색
     const handleLocationSelect = (location) => {
@@ -78,6 +97,7 @@ const WriteForm = () => {
     const handleSubmit = async () => {
         const postData = {
             title,
+            photos: selectedImages.map(img => img.name), 
             location: {
                 latitude,
                 longitude,
@@ -90,6 +110,7 @@ const WriteForm = () => {
 
         try {
             const response = await API.post("/users", postData);
+            console.log("Response:", response);
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
@@ -108,13 +129,14 @@ const WriteForm = () => {
                 {menu && <Toggle />}
             </s.TitleContainer>
 
-            <WriteTextarea placeholder="글 작성" IconData={IconData} value={content} onChange={(e) => setContent(e.target.value)} />
+            <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
 
-            <s.AIContainer>
-                {/* 원래 48% */}
-                <WriteTextarea width="88%" height="8.65vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} />
-                <AIButton>분석하기</AIButton>
-            </s.AIContainer>
+            <s.ImageContainer>
+                <ListImage images={selectedImages} onDelete={handleDeleteImage} />
+                <ImageButton onImageSelect={addImage} />
+            </s.ImageContainer>
+
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 13vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} AIButton={AIButton} />
 
             <s.SearchContainer>
                 <WriteInput width="100%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
