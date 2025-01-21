@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Globe from 'react-globe.gl';
 import { postPlanetName } from '../../../apis/planet/planetService';
+import planetCutyVer from '../../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 
 function SettingPage() {
   const globeRef = useRef();
@@ -68,12 +69,17 @@ function SettingPage() {
     <>
       <GlobeWrapper>
         <GlobeContainer ref={globeContainerRef}>
+          <TopBar>
+            <SettingContainer>
+              <PlanetName>나의 행성</PlanetName>
+            </SettingContainer>
+          </TopBar>
           <Globe
             ref={globeRef}
             width={dimensions.width}
             height={dimensions.height}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            // globeImageUrl="../../images/planet.jpg"
+            // globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            globeImageUrl={planetCutyVer}
             // ↑ 카툰 느낌의 지구본 텍스쳐
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
@@ -158,6 +164,21 @@ const BottomBar = styled.div`
   top: 0;
   z-index: 10;
   margin-top: 730px;
+`;
+
+const PlanetName = styled.div`
+  font-size: 4rem;
+  font-weight: bold;
+  color: white;
+`;
+
+const TopBar = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 10;
+  margin-top: 150px;
 `;
 
 export default SettingPage;
