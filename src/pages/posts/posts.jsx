@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as S from '../../styles/posts';
 import setting from '../../assets/images/posts/posts/setting.png';
 import friends from '../../assets/images/posts/posts/friends.png';
@@ -13,6 +14,7 @@ import banner from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
 
     const handleClick = (tab) => {
@@ -44,7 +46,7 @@ const Posts = () => {
                                 <img src={alert} alt='alert' className='toolbar-icon'/>                                
                             </S.Toolbar>
                             <S.AddToolbar>
-                                <img src={add} alt='add'className='toolbar-icon2'/>
+                                <img src={add} alt='add'className='toolbar-icon2' onClick={() => navigate('/posts/write')}/>
                             </S.AddToolbar>
 
                             {activeTab === 'friends' && <FriendsTab/>}
@@ -55,10 +57,17 @@ const Posts = () => {
 
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
-                <S.Hr/>
                 <S.PostWrapper>
                     <TravelPost
+                        id='1'
                         nickname="벨라" 
+                        date="2024.09.15 14:58" 
+                        location="베트남, 다낭" 
+                        quickReview="바보 원숭이 !! 다낭여행 (2)"
+                        buttonType="edit"  />
+                    <TravelPost
+                        id='2'
+                        nickname="벨라2" 
                         date="2024.09.15 14:58" 
                         location="베트남, 다낭" 
                         quickReview="바보 원숭이 !! 다낭여행 (2)"
