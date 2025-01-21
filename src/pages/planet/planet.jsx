@@ -274,7 +274,7 @@ const PlanetPage = () => {
           <TimeDisplay>현재 시각 {getCurrentTime()}</TimeDisplay>
         </TopBar>
 
-        {/* 수정 모달달 */}
+        {/* 수정 모달 */}
         {showModal && (
           <ModalBackdrop onClick={handleCloseModal}>
             <ModalContent onClick={(e) => e.stopPropagation()}>
