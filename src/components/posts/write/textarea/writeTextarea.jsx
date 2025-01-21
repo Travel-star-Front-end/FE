@@ -1,8 +1,6 @@
 import * as s from "../../../../styles/posts/write/write";
 
-const WriteTextarea = ({ width, height, placeholder, IconData, value, onChange }) => {
-    const validIconData = Array.isArray(IconData) && IconData.length > 0;
-
+const WriteTextarea = ({ width, height, placeholder, value, onChange, AIButton, padding }) => {
     return (
         <s.TextareaWrapper width={width} height={height}>
             <s.TextareaContainer 
@@ -11,14 +9,13 @@ const WriteTextarea = ({ width, height, placeholder, IconData, value, onChange }
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                padding={padding}
             />
 
-            {validIconData && (
-                <s.IconContainer>
-                    {IconData.map((icon) => (
-                        icon.src && <s.TextareaIconImg key={icon.id} src={icon.src} alt={`icon-${icon.id}`} />
-                    ))}
-                </s.IconContainer>
+            {AIButton && (
+                <s.AIButtonContainer>
+                    분석하기
+                </s.AIButtonContainer>
             )}
         </s.TextareaWrapper>
     );
