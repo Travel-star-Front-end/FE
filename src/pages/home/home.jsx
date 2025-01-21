@@ -37,9 +37,16 @@ const Home = () => {
 
             <div>
                 <S.Text>추천 게시글</S.Text>
-                <S.Hr/>
                 <S.PostWrapper>
                     <TravelPost
+                        id='1'
+                        nickname="여행별 일지 콩콩" 
+                        date="2024.09.15" 
+                        location="일본, 오사카" 
+                        quickReview="일본 오사카에서 행복했던 여행"
+                        buttonType="friend"  />
+                    <TravelPost
+                        id='2'
                         nickname="여행별 일지 콩콩" 
                         date="2024.09.15" 
                         location="일본, 오사카" 
