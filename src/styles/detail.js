@@ -26,3 +26,20 @@ export const Hr = styled.hr`
 export const PostWrapper = styled.div`
     padding: 1.5vw 0;
 `;
+
+export const ContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.75vw;
+    width: 100%;
+    font-weight: 300px;
+    .title {
+        font-size: 1vw;
+        line-height: 1.21vw; 
+    }
+
+    .content {
+        font-size: 0.8vw;
+        line-height: 0.968vw;        
+    }
+`; 

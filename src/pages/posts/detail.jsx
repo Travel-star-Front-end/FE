@@ -1,19 +1,28 @@
+import { useLocation } from 'react-router-dom';
 import * as S from '../../styles/detail';
 import TravelPost from '../../components/travelPost/travel-post';
 
 const Detail = () => {
+    const location = useLocation();
+    const { nickname, date, location: postLocation, quickReview, profileImg } = location.state || {};
+
     return (
         <S.Container>
             <S.Text>일지 보기</S.Text>
-                <S.Hr/>
                 <S.PostWrapper>
                     <TravelPost
-                        nickname="벨라" 
-                        date="2024.09.15 14:58" 
-                        location="베트남, 다낭" 
-                        quickReview="바보 원숭이 !! 다낭여행 (2)"
+                        profileImg={profileImg}
+                        nickname={nickname}
+                        date={date}
+                        location={postLocation}
                         buttonType="edit"  />
-            </S.PostWrapper>
+                    <S.ContentWrapper>
+                        <div className='title'>{quickReview}</div>
+                        <div className='content'>
+                            content
+                        </div>
+                    </S.ContentWrapper>
+                </S.PostWrapper>
         </S.Container>
     )
 }
