@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '@fontsource/do-hyeon';
 import { useForm } from 'react-hook-form';
@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { API } from '../../../apis/axios';
+import AgreeModal from "../../../components/auth/signup/agreeModal";
+import AgreeData from "../../../utils/signup/agreeData";
 
 const signUpSchema = z
   .object({
@@ -103,8 +105,8 @@ const SignUp = () => {
       emailUser: '',
       emailDomain: '',
       customDomain: '',
-      terms1: 'none',
-      terms2: 'none',
+      terms1: '',
+      terms2: '',
     },
   });
 
@@ -173,6 +175,43 @@ const SignUp = () => {
     mutate(data);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [termsAgreement, setTermsAgreement] = useState({
+    terms1: '',
+    terms2: '',
+  });
+
+  const handleOpenModal = (id) => {
+    const selectedAgreement = AgreeData.find((item) => item.id === id);
+    setModalData(selectedAgreement);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
+
+  const handleAgreeChange = (agree, termsId) => {
+    const fieldName = termsId === 1 ? 'terms1' : 'terms2';
+    
+    setValue(fieldName, agree ? 'agree' : 'disagree', {
+      shouldValidate: true, 
+    });
+
+    setTermsAgreement((prev) => ({
+      ...prev,
+      [termsId]: agree,
+    }));
+  };
+  
+  useEffect(() => {
+    // console.log('terms1:', watch('terms1'));
+    // console.log('terms2:', watch('terms2'));
+  }, [watch('terms1'), watch('terms2')]); 
+  
+  
   return (
     <Container>
       <InnerForm>
@@ -363,7 +402,7 @@ const SignUp = () => {
               <AgreementTitle>약관동의</AgreementTitle>
 
               <AgreementRow>
-                <AgreementText>
+                <AgreementText onClick={() => handleOpenModal(1)}>
                   홈페이지 이용 약관 동의
                   <DropdownIcon />
                   {errors.terms1 && (
@@ -372,11 +411,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input
-                      type="radio"
-                      value="agree"
-                      {...register('terms1')}
-                    />
+                  <input type="radio" value="agree" {...register('terms1')} checked={termsAgreement[1] === true} onChange={() => handleAgreeChange(true, 1)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -384,6 +419,8 @@ const SignUp = () => {
                       type="radio"
                       value="disagree"
                       {...register('terms1')}
+                      checked={termsAgreement[1] === false}
+                      onChange={() => handleAgreeChange(false, 1)}
                     />
                     비동의
                   </RadioLabel>
@@ -391,7 +428,7 @@ const SignUp = () => {
               </AgreementRow>
 
               <AgreementRow>
-                <AgreementText>
+                <AgreementText onClick={() => handleOpenModal(2)}>
                   개인정보 수집 및 이용
                   <DropdownIcon />
                   {errors.terms2 && (
@@ -400,11 +437,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input
-                      type="radio"
-                      value="agree"
-                      {...register('terms2')}
-                    />
+                  <input type="radio" value="agree" {...register('terms2')} checked={termsAgreement[2] === true} onChange={() => handleAgreeChange(true, 2)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -412,6 +445,8 @@ const SignUp = () => {
                       type="radio"
                       value="disagree"
                       {...register('terms2')}
+                      checked={termsAgreement[2] === false}
+                      onChange={() => handleAgreeChange(false, 2)}
                     />
                     비동의
                   </RadioLabel>
@@ -423,6 +458,8 @@ const SignUp = () => {
           </Form>
         </SignUpBox>
       </InnerForm>
+
+      <AgreeModal isOpen={isModalOpen} data={modalData} onClose={handleCloseModal} onAgreeChange={handleAgreeChange} termsAgreement={termsAgreement}/>
     </Container>
   );
 };
@@ -753,6 +790,7 @@ const AgreementText = styled.span`
   color: #333;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     font-size: 1.4rem;
