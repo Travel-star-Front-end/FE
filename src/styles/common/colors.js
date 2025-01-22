@@ -17,6 +17,7 @@ const colors = {
     writeGray2: "#ECECEC",
     writeGray3: "#B3B3B3",
     writeRed: "#FF4F4F",
+    writeRed2: "#FF7070",
     rankingGray: "#B4B4B4",
     calenderGray: "#E1E1E1",
     calenderGray2: "#F3F3F3",
