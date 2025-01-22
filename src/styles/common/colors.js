@@ -7,6 +7,8 @@ const colors = {
     loginGreen: "#8BC24A",
     loginPurple: "#7888C4",
     loginGray: "#C7C7C7",
+    signupGray: "#949494",
+    signupRed: "#FF0000",
     completedGray: "#FAFAFA",
     homeGray: "#F9F9F9",
     sideBarGray: "#F6F6F6",
