@@ -153,44 +153,6 @@ export const WriteButtonContainer = styled.button`
     cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
 `
 
-// toggle.jsx
-export const ToggleContainer = styled.div`
-    width: 10.75vw;
-    height: 7.3vw;
-    position: absolute;
-    background: ${colors.writeGray};
-    right: 0;
-    top: 4.2vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`
-
-export const InnerContainer = styled.div`
-    width: 88%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0.45vw 0; 
-    cursor: pointer;
-`
-
-export const ToggleP = styled.p`
-    font-size: 1.2vw;
-    font-weight: 400;
-    color: ${colors.sideBarGray2};
-`
-
-export const ToggleImg = styled.img`
-    width: 1.35vw;
-`
-
-export const ToggleBar = styled.div`
-    width: 100%;
-    height: 0.05vw;
-    background: ${colors.white};
-`
-
 // list-location.jsx, list-music.jsx
 export const ListContainer = styled.div`
     position: absolute;
