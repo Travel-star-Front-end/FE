@@ -1,54 +1,35 @@
-import styled from "styled-components";
-import colors from "../../../styles/common/colors";
+import { useState, useEffect } from "react";
+import * as s from "../../../styles/ranking/ranking";
 import ListTopRanking from "./top/list-topRanking";
 import ListBottomRanking from "./bottom/list-bottomRanking";
 
-const LeftContainer = styled.div`
-    width: 68%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`
-
-const LeftP = styled.p`
-    font-size: 1vw;
-    font-weight: 600;
-    color: ${colors.main};
-`
-
-const BottomContainer = styled.div`
-    width: 100%;
-    margin: 1.05vw 0 0.45vw 0;
-`
-
-const BottomBar = styled.div`
-    width: 100%;
-    height: 0.05vw;
-    background: ${colors.writeGray};
-`
 
 
 const RankingLeft = ({ data }) => {
-    if (!data) {
+    const [sortedData, setSortedData] = useState([]);
+
+    useEffect(() => {
+        if (data) {
+            const sorted = [...data].sort((a, b) => b.id - a.id);
+            setSortedData(sorted);
+        }
+    }, [data]);
+
+    if (!sortedData.length) {
         return null;
     }
-    
-    const sortedData = data.sort((a, b) => b.id - a.id);
-    const currentMonth = new Date().getMonth() + 1;
 
     return (
-        <LeftContainer>
-            <LeftP>[이 달 랭]</LeftP>
+        <s.LeftContainer>
             <ListTopRanking data={sortedData} />
 
-            <BottomContainer>
-                <LeftP style={{color: colors.sideBarGray2}}>{currentMonth}월 랭킹</LeftP>
-                <BottomBar />
+            <s.BottomBar />
 
-                <ListBottomRanking data={sortedData}/>
-            </BottomContainer>
-        </LeftContainer>
-    )
+            <s.BottomContainer>
+                <ListBottomRanking data={sortedData} />
+            </s.BottomContainer>
+        </s.LeftContainer>
+    );
 }
 
 export default RankingLeft;

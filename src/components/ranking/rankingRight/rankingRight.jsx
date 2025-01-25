@@ -1,52 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { API } from '../../../apis/axios';
-import styled from 'styled-components';
-import colors from '../../../styles/common/colors';
+import * as s from "../../../styles/ranking/ranking";
 import InputRankingRight from './input/inputRankingRight';
 import ButtonRankingRight from './button/buttonRankingRight';
 import ConstellationViewer from '../../planet/ConstellationViewer';
-
-const RightContainer = styled.div`
-  width: 30%;
-  background: ${colors.white};
-  height: 35.01vw;
-  margin-top: 1.65vw;
-  box-shadow: 0 0.2vw 0.68vw 0 rgba(0, 0, 0, 0.04);
-  border-radius: 0.25vw;
-  padding: 0 0.7vw;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const ImgContainer = styled.div`
-  width: 16.1vw;
-  height: 16.1vw;
-  background: ${colors.black};
-  border-radius: 50%;
-  margin-top: 3.2vw;
-`;
-
-const RightP = styled.p`
-  font-size: 1.2vw;
-  font-weight: 800;
-  color: ${colors.black};
-  margin-top: 2.2vw;
-`;
-
-const InputContainer = styled.div`
-  width: 100%;
-  padding: 0 1.65vw;
-`;
+import html2canvas from 'html2canvas';
 
 const RankingRight = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  // 별자리 관련 추가함
   const [pointsData, setPointsData] = useState([]);
   const [arcsData, setArcsData] = useState([]);
+  const imgContainerRef = useRef(null);
 
   const handleChange = (e) => {
     setName(e.target.value);
@@ -58,17 +25,28 @@ const RankingRight = () => {
     setLoading(true);
 
     try {
-      const response = await API.post('/users', { username: name });
-      alert('별자리 신청이 완료되었습니다.');
-      console.log(response.data);
+      const canvas = await html2canvas(imgContainerRef.current);
+      canvas.toBlob(async (blob) => {
+        const filename = `${Date.now()}_constellation.png`;
+
+        const response = await API.post('/users', {
+          username: name,
+          constellationImage: filename,
+        });
+
+        alert('별자리 신청이 완료되었습니다.');
+        console.log(response.data);
+
+        setIsCompleted(true);
+      });
     } catch (err) {
-      alert('서버에 문제가 발생했습니다. 다시 시도해주세요.');
+      alert('이미지 캡처 중 오류 발생');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 별자리 관련 추가함함
   useEffect(() => {
     const storedPointsData = localStorage.getItem('pointsData');
     const storedArcsData = localStorage.getItem('arcsData');
@@ -81,28 +59,25 @@ const RankingRight = () => {
   }, []);
 
   return (
-    <RightContainer>
-      <ImgContainer>
-        <ConstellationViewer pointsData={pointsData} arcsData={arcsData} />
-      </ImgContainer>
-      <RightP>나의 여행 별자리</RightP>
+    <s.RightContainer>
+        <s.ImgContainer ref={imgContainerRef}>
+          <ConstellationViewer pointsData={pointsData} arcsData={arcsData} />
+        </s.ImgContainer>
+        <s.ImgOutContainer completed={isCompleted.toString()}/>
+      <s.RightP>나의 여행 별자리</s.RightP>
 
-      <InputContainer>
-        <RightP
-          style={{ fontWeight: '600', fontSize: '0.9vw', marginTop: '1.3vw' }}
-        >
-          이름
-        </RightP>
-        <InputRankingRight
-          placeholder="작성해주세요."
-          value={name}
-          onChange={handleChange}
-        />
-        <ButtonRankingRight onClick={handleSubmit}>
-          {loading ? '신청 중...' : '신청하기'}
-        </ButtonRankingRight>
-      </InputContainer>
-    </RightContainer>
+      {isCompleted ? (
+        <s.CompletedP>신청완료</s.CompletedP>
+      ) : (
+        <s.InputContainer>
+          <s.RightP style={{ fontWeight: '600', fontSize: '0.9vw', marginTop: '1.3vw' }}>
+            이름
+          </s.RightP>
+          <InputRankingRight placeholder="작성해주세요." value={name} onChange={handleChange} />
+          <ButtonRankingRight onClick={handleSubmit}>신청하기</ButtonRankingRight>
+        </s.InputContainer>
+      )}
+    </s.RightContainer>
   );
 };
 
