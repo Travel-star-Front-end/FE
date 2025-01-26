@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import * as s from "../../../../styles/auth/search/search";
+import colors from "../../../../styles/common/colors";
 import LogoP from "../../../../assets/images/auth/search/logoP.png";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -83,7 +84,7 @@ const SearchPasswordForm = () => {
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
 
-    const getErrorStyle = (field) => (errors[field] ? { borderColor: 'red' } : {});
+    const getErrorStyle = (field) => (errors[field] ? { borderColor: colors.searchRed } : {});
 
     // 하단 버튼
     useEffect(() => {

@@ -25,6 +25,7 @@ const SearchIdForm = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
+        mode: "onChange",
     });
 
     useEffect(() => {
@@ -72,6 +73,7 @@ const SearchIdForm = () => {
     };
 
     const timerStyle = timer <= 10 ? { color: colors.searchRed } : {};
+    const getErrorStyle = (field) => (errors[field] ? { borderColor: colors.searchRed } : {});
 
     const handleSearchIdClick = () => {
         navigate("/search/id/completed");
@@ -85,7 +87,8 @@ const SearchIdForm = () => {
             <s.SearchInnerContainer>
                 <s.SearchItemContainer>
                     <s.SearchItemP>이메일</s.SearchItemP>
-                    <SearchInput placeholder="가입하신 이메일을 입력해주세요." {...register("email")} />
+                    <SearchInput placeholder="가입하신 이메일을 입력해주세요." {...register("email")} style={getErrorStyle("email")} />
+                        {errors.email && <s.ErrorP>{errors.email.message}</s.ErrorP>}
                     <s.SearchIdButton onClick={handleSubmit(onSubmit)}>인증번호 발송</s.SearchIdButton>
                 </s.SearchItemContainer>
 
