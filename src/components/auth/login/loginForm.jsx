@@ -58,6 +58,10 @@ const LoginForm = () => {
         navigate("/search/id");
     }
 
+    const handleSearchPasswordClick = () => {
+        navigate("/search/password");
+    }
+
     return (
         <s.FormContainer onSubmit={handleSubmit(onSubmit)}>
             <s.LogoContainer>
@@ -78,7 +82,7 @@ const LoginForm = () => {
                 <s.LoginPContainer>
                     <s.LoginP2 onClick={handleSearchIdClick}>아이디 찾기</s.LoginP2>
                     <s.LoginP2>/</s.LoginP2>
-                    <s.LoginP2>비밀번호 찾기</s.LoginP2>
+                    <s.LoginP2 onClick={handleSearchPasswordClick}>비밀번호 찾기</s.LoginP2>
                 </s.LoginPContainer>
             </s.ButtonContainer>
 

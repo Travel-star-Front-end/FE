@@ -53,6 +53,7 @@ export const SearchItemContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 1.15vw;
+    position: relative;
 `
 
 export const SearchItemP = styled.p`
@@ -80,6 +81,23 @@ export const SearchTimeP = styled.p`
     position: absolute;
     right: 11.8vw;
     bottom: 0.2vw;
+`
+
+export const ErrorP = styled.p`
+    font-size: 0.6vw;
+    font-weight: 400;
+    color: ${colors.searchRed};
+    position: absolute;
+    left: 8.2vw;
+    top: 2.5vw;
+`
+
+// searchPasswordForm.jsx
+export const SearchInnerContainer2 = styled(SearchInnerContainer)`
+    border-top: none;
+    border-bottom: none;
+    margin: 0;
+    padding: 1vw 0;
 `
 
 // completedIdForm.jsx

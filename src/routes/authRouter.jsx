@@ -2,6 +2,8 @@ import AuthLayout from "../layouts/auth-layout";
 import LoginPage from "../pages/auth/login/login";
 import SearchIdPage from "../pages/auth/search/searchId";
 import CompletedIdPage from "../pages/auth/search/completedId";
+import SearchPasswordPage from "../pages/auth/search/searchPassword";
+import CompletedPassword from "../pages/auth/search/completedPassword";
 import SignUpPage from "../pages/auth/signup/signup";
 import CompletedPage from "../pages/auth/signup/completed";
 import SettingPage from "../pages/auth/setting/setting";
@@ -28,6 +30,14 @@ const authRouter = [
       {
         path: "id/completed",
         element: <CompletedIdPage />,
+      },
+      {
+        path: "password",
+        element: <SearchPasswordPage />,
+      },
+      {
+        path: "password/completed",
+        element: <CompletedPassword />,
       }
     ]
   },
