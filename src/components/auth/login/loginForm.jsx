@@ -54,6 +54,10 @@ const LoginForm = () => {
         navigate("/signup");
     }
 
+    const handleSearchIdClick = () => {
+        navigate("/search/id");
+    }
+
     return (
         <s.FormContainer onSubmit={handleSubmit(onSubmit)}>
             <s.LogoContainer>
@@ -71,7 +75,11 @@ const LoginForm = () => {
             <s.ButtonContainer>
                 <LoginButton type={'submit'} disabled={!isValid || loginMutation.isLoading} btncolor={colors.main}>로그인</LoginButton>
                 <LoginButton onClick={handleSignUpClick}>회원가입</LoginButton>
-                <s.LoginP2>아이디 찾기 / 비밀번호 찾기</s.LoginP2>
+                <s.LoginPContainer>
+                    <s.LoginP2 onClick={handleSearchIdClick}>아이디 찾기</s.LoginP2>
+                    <s.LoginP2>/</s.LoginP2>
+                    <s.LoginP2>비밀번호 찾기</s.LoginP2>
+                </s.LoginPContainer>
             </s.ButtonContainer>
 
             <s.LoginP2 size="0.65vw" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</s.LoginP2>

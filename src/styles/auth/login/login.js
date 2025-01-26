@@ -61,12 +61,18 @@ export const ButtonContainer = styled(InputContainer)`
     margin: 0 0 1.6vw 0;
 `
 
+export const LoginPContainer = styled.div`
+    display: flex;
+    margin-top: 0.25vw;
+    align-items: center;
+    gap: 0.5vw;
+`
+
 export const LoginP2 = styled.p`
     font-size: ${(props) => props.size || '0.75vw'};
     font-weight: 300;
     color: ${(props) => props.color || colors.loginP2};
     cursor: pointer;
-    margin-top: 0.25vw;
 `
 
 export const LoginInputContainer = styled.input`
