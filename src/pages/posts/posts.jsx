@@ -9,6 +9,7 @@ import alert from '../../assets/images/posts/posts/alert.png';
 import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
 import ShareTab from '../../components/posts/posts/Tabs/share-tab';
+import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
@@ -41,9 +42,9 @@ const Posts = () => {
 
                         <S.ToolbarContainer>
                             <S.Toolbar>
-                                <img src={setting} alt='setting' className='toolbar-icon'/>
+                                <img src={setting} alt='setting' className='toolbar-icon' onClick={() => handleClick('setting')}/>
                                 <img src={friends} alt='friends' className='toolbar-icon' onClick={() => handleClick('friends')} />
-                                <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('friends')}/>
+                                <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
                                 <img src={alert} alt='alert' className='toolbar-icon'/>                                
                             </S.Toolbar>
                             <S.AddToolbar>
@@ -52,6 +53,7 @@ const Posts = () => {
 
                             {activeTab === 'friends' && <FriendsTab/>}
                             {activeTab === 'share' && <ShareTab/>}
+                            {activeTab === 'setting' && <SettingTab setActiveTab={setActiveTab} />}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>
