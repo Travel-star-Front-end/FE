@@ -14,6 +14,7 @@ import MyPageEditPage from '../pages/auth/mypage/edit';
 import MyPagePostsPage from '../pages/auth/mypage/posts';
 import MyPageFriendsPage from '../pages/auth/mypage/friends';
 import NotFoundPage from '../pages/notFound/notFound';
+import OthersPlanet from '../pages/planet/othersPlanet';
 import SubscribePage from '../pages/subscribe/subscribe';
 import Payment from '../components/subscribe/Payment';
 
@@ -57,7 +58,17 @@ const router = createBrowserRouter([
 
       {
         path: 'planet',
-        element: <PlanetPage />,
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: 'true',
+            element: <PlanetPage />,
+          },
+          {
+            path: ':id',
+            element: <OthersPlanet />,
+          },
+        ],
       },
       {
         path: 'ranking',
