@@ -1,6 +1,6 @@
-import * as S from '../../../styles/friend-card';
-import default_profile_img from '../../../assets/images/ProfileImage.png';
-import closeX from '../../../assets/images/travel-post/friend-card/x.png';
+import * as S from '../../../../styles/friend-card';
+import default_profile_img from '../../../../assets/images/ProfileImage.png';
+import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 
 //친구 목록 리스트 컴포넌트
 export const FriendCard = ({profileImg, name}) => {

@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import * as S from '../../styles/detail';
-import TravelPost from '../../components/travelPost/travel-post';
+import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 
 const Detail = () => {
     const location = useLocation();

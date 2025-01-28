@@ -6,8 +6,9 @@ import friends from '../../assets/images/posts/posts/friends.png';
 import share from '../../assets/images/posts/posts/share.png';
 import add from '../../assets/images/posts/posts/add.png';
 import alert from '../../assets/images/posts/posts/alert.png';
-import TravelPost from '../../components/travelPost/travel-post';
-import FriendsTab from '../../components/travelPost/FriendsTab/friends-tab';
+import TravelPost from '../../components/posts/posts/travelPost/travel-post';
+import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
+import ShareTab from '../../components/posts/posts/Tabs/share-tab';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
@@ -42,7 +43,7 @@ const Posts = () => {
                             <S.Toolbar>
                                 <img src={setting} alt='setting' className='toolbar-icon'/>
                                 <img src={friends} alt='friends' className='toolbar-icon' onClick={() => handleClick('friends')} />
-                                <img src={share} alt='share' className='toolbar-icon'/>
+                                <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('friends')}/>
                                 <img src={alert} alt='alert' className='toolbar-icon'/>                                
                             </S.Toolbar>
                             <S.AddToolbar>
@@ -50,6 +51,7 @@ const Posts = () => {
                             </S.AddToolbar>
 
                             {activeTab === 'friends' && <FriendsTab/>}
+                            {activeTab === 'share' && <ShareTab/>}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>

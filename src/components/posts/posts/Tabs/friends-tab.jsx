@@ -1,5 +1,5 @@
 import { useState } from "react";
-import * as S from '../../../styles/friends-tab';
+import * as S from '../../../../styles/friends-tab';
 import { FriendCard, FriendApplyCard } from "./friend-card";
 
 const FriendsTab = ({ friends, requests }) => {

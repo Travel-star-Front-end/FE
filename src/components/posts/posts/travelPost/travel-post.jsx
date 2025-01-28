@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import * as S from '../../styles/travel-post';
+import * as S from '../../../../styles/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
-import locationPin from '../../assets/images/travel-post/locationPin.png';
-import lock from '../../assets/images/travel-post/lock-person.png';
-import share from '../../assets/images/posts/posts/share.png';
-import default_profile_img from '../../assets/images/ProfileImage.png';
+import locationPin from '../../../../assets/images/travel-post/locationPin.png';
+import lock from '../../../../assets/images/travel-post/lock-person.png';
+import share from '../../../../assets/images/posts/posts/share.png';
+import default_profile_img from '../../../../assets/images/ProfileImage.png';
 
 //예시 이미지
-import image1 from '../../assets/images/travel-post/image 1.png';
-import image2 from '../../assets/images/travel-post/image 2.png';
-import image3 from '../../assets/images/travel-post/image 3.png';
+import image1 from '../../../../assets/images/travel-post/image 1.png';
+import image2 from '../../../../assets/images/travel-post/image 2.png';
+import image3 from '../../../../assets/images/travel-post/image 3.png';
 
 //slick setting
 const settings = {

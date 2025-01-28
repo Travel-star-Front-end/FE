@@ -2,7 +2,7 @@ import * as S from '../../styles/home';
 import searchIcon from '../../assets/images/home/search.png';
 import upArrow from '../../assets/images/home/search-up-arrow.png';
 import decreaseArrow from '../../assets/images/home/search-decrease-arrow.png';
-import TravelPost from '../../components/travelPost/travel-post';
+import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import { API } from '../../apis/axios';
 
 //에시 검색어 추천 데이터
