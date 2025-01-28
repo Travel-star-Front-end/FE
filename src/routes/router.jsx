@@ -15,6 +15,8 @@ import MyPagePostsPage from '../pages/auth/mypage/posts';
 import MyPageFriendsPage from '../pages/auth/mypage/friends';
 import NotFoundPage from '../pages/notFound/notFound';
 import OthersPlanet from '../pages/planet/othersPlanet';
+import SubscribePage from '../pages/subscribe/subscribe';
+import Payment from '../components/subscribe/Payment';
 
 const router = createBrowserRouter([
   {
@@ -98,6 +100,10 @@ const router = createBrowserRouter([
             element: <MyPageFriendsPage />,
           },
         ],
+      },
+      {
+        path: 'subscribe',
+        element: <SubscribePage />,
       },
     ],
   },

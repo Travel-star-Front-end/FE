@@ -1,18 +1,11 @@
-import styled from "styled-components";
+import * as s from "../../../../styles/ranking/ranking";
 import ItemBottomRanking from "./item-bottomRanking";
-
-const ListContainer = styled.div`
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin-top: 1vw;
-`
 
 const ListBottomRanking = ({ data }) => {
     const slicedData = data.slice(3); 
 
     return (
-        <ListContainer>
+        <s.ListBottomContainer>
             {slicedData.map((item, index) => (
                 <ItemBottomRanking 
                     key={index}
@@ -20,7 +13,7 @@ const ListBottomRanking = ({ data }) => {
                     username={item.username}
                 />
             ))}
-        </ListContainer>
+        </s.ListBottomContainer>
     )
 }
 
