@@ -14,8 +14,8 @@ export const Container2 = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 0 0.5vw;
     justify-content: space-between;
+    // position: absolute;
 `;
 
 export const FriendContnet = styled.div`
@@ -62,8 +62,19 @@ export const AccpetBtn = styled.button`
     height: 0.75vw;
     background-color: #FFFFFF;
     border-radius: 5px;
-    font-weight: 600px;
+    font-weight: 600;
     font-size: 0.4vw;
     line-height: 0.484vw;
     color: #555555;
+`;
+
+export const ShareBtn = styled.button`
+    width: 2.95vw;
+    height: 0.75vw;
+    border-radius: 0.25vw;
+    background-color: ${({ shared }) => (shared ? 'rgba(147, 147, 147, 1)' : 'white')};
+    font-weight: 600;
+    font-size: 0.4vw;
+    line-height: 0.484vw;
+    color: rgba(85, 85, 85, 1);
 `;
