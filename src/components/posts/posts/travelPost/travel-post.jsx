@@ -36,7 +36,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
     //친구 추가 버튼 상태태
     const handleButtonClick = () => {
         setIsFriend((prevState) => !prevState);
-      };
+    };
 
     return (
         <S.Container>
@@ -83,7 +83,11 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
                     <S.EditBtnContainer>
                         <img src={lock} alt='lock' className='lock-icon' />
                         <img src={share} alt="share" className="share-icon" />
-                        <S.EditButton type="button" onClick={() => navigate('edit')}>수정하기</S.EditButton>
+                        <S.EditButton 
+                            type="button" 
+                            onClick={() => navigate('edit')}>
+                                수정하기
+                        </S.EditButton>
                     </S.EditBtnContainer>
                 )}
 
