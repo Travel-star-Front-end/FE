@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import * as S from '../../styles/posts';
+import * as S from '../../styles/posts/posts/posts';
 import setting from '../../assets/images/posts/posts/setting.png';
 import friends from '../../assets/images/posts/posts/friends.png';
 import share from '../../assets/images/posts/posts/share.png';

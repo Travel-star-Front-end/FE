@@ -1,4 +1,4 @@
-import * as S from '../../../../styles/friend-card';
+import * as S from '../../../../styles/posts/posts/Tabs/friend-card';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
 import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 
