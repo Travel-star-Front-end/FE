@@ -16,12 +16,8 @@ const Edit = ({
   planetName = '깐따삐야 행성',
 }) => {
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState(Profile);
-  const fileInputRef = useRef(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const [formValues, setFormValues] = useState({
+  const [userData, setUserData] = useState({
     userId,
     nickname,
     password,
@@ -36,6 +32,13 @@ const Edit = ({
     emailDomain: email.split('@')[1],
   });
 
+  const [formValues, setFormValues] = useState({ ...userData });
+
+  const [profileImage, setProfileImage] = useState(Profile);
+  const fileInputRef = useRef(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -43,30 +46,45 @@ const Edit = ({
   const fetchUserData = async () => {
     try {
       const response = await API.get('https://jsonplaceholder.typicode.com/users/1');
-      const userData = response.data;
-      
-      setFormValues({
-        userId: userData.username || userId,
-        nickname: userData.name || nickname,
-        password: password,
-        name: userData.name || name,
-        birthYear: birth.split('-')[0],
-        birthMonth: birth.split('-')[1],
-        birthDay: birth.split('-')[2],
-        phonePart1: userData.phone ? userData.phone.split('-')[0] : phoneNumber.split('-')[0],
-        phonePart2: userData.phone ? userData.phone.split('-')[1] : phoneNumber.split('-')[1],
-        phonePart3: userData.phone ? userData.phone.split('-')[2] : phoneNumber.split('-')[2],
-        emailUser: userData.email ? userData.email.split('@')[0] : email.split('@')[0],
-        emailDomain: userData.email ? userData.email.split('@')[1] : email.split('@')[1],
-      });
+      const userDataFromApi = response.data;
+
+      const phoneParts = userDataFromApi.phone ? userDataFromApi.phone.split('-') : phoneNumber.split('-');
+      const emailParts = userDataFromApi.email ? userDataFromApi.email.split('@') : email.split('@');
+
+      const newUserData = {
+        userId: userDataFromApi.username || userId,
+        nickname: userDataFromApi.name || nickname,
+        password: userData.password, 
+        name: userDataFromApi.name || name,
+        birthYear: userData.birthYear,
+        birthMonth: userData.birthMonth,
+        birthDay: userData.birthDay,
+        phonePart1: phoneParts[0] || '',
+        phonePart2: phoneParts[1] || '',
+        phonePart3: phoneParts[2] || '',
+        emailUser: emailParts[0] || '',
+        emailDomain: emailParts[1] || '',
+      };
+
+      setUserData(newUserData);
+      setFormValues(newUserData); 
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const fileUrl = URL.createObjectURL(file);
     setProfileImage(fileUrl);
     setIsMenuOpen(false);
@@ -86,14 +104,6 @@ const Edit = ({
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
@@ -101,7 +111,9 @@ const Edit = ({
   const handleProfileEdit = async () => {
     if (!isEditing) {
       setIsEditing(true);
+      setFormValues(userData);
     } else {
+      
       try {
         const updatedUserData = {
           username: formValues.userId,
@@ -112,6 +124,8 @@ const Edit = ({
 
         const response = await API.patch('https://jsonplaceholder.typicode.com/users/1', updatedUserData);
         console.log('User data updated:', response.data);
+
+        setUserData(formValues);
         setIsEditing(false);
       } catch (error) {
         console.error('Error updating user data:', error);
@@ -130,12 +144,8 @@ const Edit = ({
             <CameraIcon src={ProfileEditIcon} onClick={toggleMenu} />
             {isMenuOpen && (
               <CameraMenu>
-                <CameraMenuItem onClick={handlePhotoRegister}>
-                  사진 등록
-                </CameraMenuItem>
-                <CameraMenuItemDelete onClick={handlePhotoDelete}>
-                  사진 삭제
-                </CameraMenuItemDelete>
+                <CameraMenuItem onClick={handlePhotoRegister}>사진 등록</CameraMenuItem>
+                <CameraMenuItemDelete onClick={handlePhotoDelete}>사진 삭제</CameraMenuItemDelete>
               </CameraMenu>
             )}
             <HiddenFileInput
@@ -145,9 +155,8 @@ const Edit = ({
               onChange={handleFileChange}
             />
           </ProfileImageWrapper>
-
           <ProfileInfo>
-            <UserNickname>{formValues.nickname}</UserNickname>
+            <UserNickname>{userData.nickname}</UserNickname>
             <UserPlanet>{planetName}</UserPlanet>
           </ProfileInfo>
 
@@ -334,7 +343,7 @@ const CameraIcon = styled.img`
 const CameraMenu = styled.div`
   position: absolute;
   width: 13rem;
-  bottom: -7.8rem; 
+  bottom: -7.8rem;
   right: -8rem;
   background: #CDCDCD;
   border: 1px solid #D9D9D9;
@@ -394,8 +403,6 @@ const ProfileEditButton = styled.button`
   cursor: pointer;
   width: 17.625rem;
   height: 4.25rem;
-
-  
 `;
 
 const InfoSection = styled.div`
@@ -437,6 +444,17 @@ const WideInput = styled.input`
   }
 `;
 
+const DateInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  span {
+    color: #999;
+    font-size: 1.75rem;
+  }
+`;
+
 const InfoInput = styled.input`
   width: 10.75rem;
   height: 4.5rem;
@@ -449,17 +467,6 @@ const InfoInput = styled.input`
   &:focus {
     outline: none;
     border-color: #00c2ff;
-  }
-`;
-
-const DateInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-
-  span {
-    color: #999;
-    font-size: 1.75rem;
   }
 `;
 

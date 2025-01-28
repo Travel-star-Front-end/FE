@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import '@fontsource/do-hyeon';
 import { useForm } from 'react-hook-form';
@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { API } from '../../../apis/axios';
+import AgreeModal from "../../../components/auth/signup/agreeModal";
+import AgreeData from "../../../utils/signup/agreeData";
 
 const signUpSchema = z
   .object({
@@ -103,37 +105,61 @@ const SignUp = () => {
       emailUser: '',
       emailDomain: '',
       customDomain: '',
-      terms1: 'none',
-      terms2: 'none',
+      terms1: '',
+      terms2: '',
     },
   });
 
   const { mutate } = useMutation({
     mutationFn: signUpFn,
     onSuccess: () => {
-      alert('회원가입에 성공하셨습니다.');
-      window.location.href = '/login';
+      window.location.href = '/signup/completed'; 
     },
     onError: (err) => {
       console.error(err);
       alert('회원가입에 실패했습니다.');
     },
   });
+  
 
   const currentYear = new Date().getFullYear();
   const years = [];
   for (let y = 1900; y <= currentYear; y++) {
     years.push(y);
   }
+
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   const getDaysInMonth = (y, m) => {
     if (!y || !m) return [];
+
     const yearNum = Number(y);
     const monthNum = Number(m);
+
+    const now = new Date();
+    const nowYear = now.getFullYear();
+    const nowMonth = now.getMonth() + 1; 
+    const nowDay = now.getDate();
+
+    if (yearNum > nowYear) {
+      return [];
+    }
+
+    if (yearNum === nowYear) {
+      if (monthNum > nowMonth) {
+        return [];
+      }
+      if (monthNum === nowMonth) {
+        return Array.from({ length: nowDay }, (_, i) => i + 1);
+      }
+      const lastDay = new Date(yearNum, monthNum, 0).getDate();
+      return Array.from({ length: lastDay }, (_, i) => i + 1);
+    }
+
     const lastDay = new Date(yearNum, monthNum, 0).getDate();
     return Array.from({ length: lastDay }, (_, i) => i + 1);
   };
+
   const days = getDaysInMonth(watch('year'), watch('month'));
 
   const handleCheckId = () => {
@@ -149,6 +175,43 @@ const SignUp = () => {
     mutate(data);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [termsAgreement, setTermsAgreement] = useState({
+    terms1: '',
+    terms2: '',
+  });
+
+  const handleOpenModal = (id) => {
+    const selectedAgreement = AgreeData.find((item) => item.id === id);
+    setModalData(selectedAgreement);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
+
+  const handleAgreeChange = (agree, termsId) => {
+    const fieldName = termsId === 1 ? 'terms1' : 'terms2';
+    
+    setValue(fieldName, agree ? 'agree' : 'disagree', {
+      shouldValidate: true, 
+    });
+
+    setTermsAgreement((prev) => ({
+      ...prev,
+      [termsId]: agree,
+    }));
+  };
+  
+  useEffect(() => {
+    // console.log('terms1:', watch('terms1'));
+    // console.log('terms2:', watch('terms2'));
+  }, [watch('terms1'), watch('terms2')]); 
+  
+  
   return (
     <Container>
       <InnerForm>
@@ -339,7 +402,7 @@ const SignUp = () => {
               <AgreementTitle>약관동의</AgreementTitle>
 
               <AgreementRow>
-                <AgreementText>
+                <AgreementText onClick={() => handleOpenModal(1)}>
                   홈페이지 이용 약관 동의
                   <DropdownIcon />
                   {errors.terms1 && (
@@ -348,7 +411,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input type="radio" value="agree" {...register('terms1')} />
+                  <input type="radio" value="agree" {...register('terms1')} checked={termsAgreement[1] === true} onChange={() => handleAgreeChange(true, 1)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -356,6 +419,8 @@ const SignUp = () => {
                       type="radio"
                       value="disagree"
                       {...register('terms1')}
+                      checked={termsAgreement[1] === false}
+                      onChange={() => handleAgreeChange(false, 1)}
                     />
                     비동의
                   </RadioLabel>
@@ -363,7 +428,7 @@ const SignUp = () => {
               </AgreementRow>
 
               <AgreementRow>
-                <AgreementText>
+                <AgreementText onClick={() => handleOpenModal(2)}>
                   개인정보 수집 및 이용
                   <DropdownIcon />
                   {errors.terms2 && (
@@ -372,7 +437,7 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                    <input type="radio" value="agree" {...register('terms2')} />
+                  <input type="radio" value="agree" {...register('terms2')} checked={termsAgreement[2] === true} onChange={() => handleAgreeChange(true, 2)}/>
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -380,6 +445,8 @@ const SignUp = () => {
                       type="radio"
                       value="disagree"
                       {...register('terms2')}
+                      checked={termsAgreement[2] === false}
+                      onChange={() => handleAgreeChange(false, 2)}
                     />
                     비동의
                   </RadioLabel>
@@ -391,6 +458,8 @@ const SignUp = () => {
           </Form>
         </SignUpBox>
       </InnerForm>
+
+      <AgreeModal isOpen={isModalOpen} data={modalData} onClose={handleCloseModal} onAgreeChange={handleAgreeChange} termsAgreement={termsAgreement}/>
     </Container>
   );
 };
@@ -409,7 +478,7 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     height: auto;
-    padding: 1rem;
+    padding: 2.5rem;
   }
 `;
 
@@ -424,7 +493,7 @@ const InnerForm = styled.div`
     width: 90%;
   }
   @media (max-width: 480px) {
-    width: 100%;
+    width: 60%;
   }
 `;
 
@@ -439,7 +508,7 @@ const SignUpBox = styled.div`
     padding: 3rem;
   }
   @media (max-width: 480px) {
-    padding: 2rem;
+    padding: 3rem;
     border-radius: 0.625rem;
   }
 `;
@@ -493,14 +562,22 @@ const Form = styled.form`
 
 const FormGroup = styled.div`
   display: flex;
-  align-items: flex-start; 
+  align-items: center;
   gap: 2.5rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  & > label {
+    width: 120px;  
+  }
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
+    & > label {
+      width: 10rem;;
+    }
   }
 `;
+
 
 const Label = styled.label`
   width: 12.5rem;
@@ -519,7 +596,6 @@ const Label = styled.label`
   }
 `;
 
-// (2) 인풋+에러를 묶는 컨테이너
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -553,10 +629,12 @@ const Input = styled.input`
   @media (max-width: 768px) {
     font-size: 1.5rem;
     padding: 0.8rem 1rem;
+    
   }
   @media (max-width: 480px) {
     font-size: 1.2rem;
     padding: 0.6rem 0.8rem;
+    
   }
 `;
 
@@ -712,6 +790,7 @@ const AgreementText = styled.span`
   color: #333;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     font-size: 1.4rem;
@@ -735,7 +814,6 @@ const DropdownIcon = styled.span`
   }
 `;
 
-// 약관 동의 라디오 옆에 뜨는 에러는 inline으로 둠
 const ErrorTextInline = styled.span`
   margin-left: 1rem;
   color: red;
@@ -754,8 +832,16 @@ const RadioGroup = styled.div`
   @media (max-width: 768px) {
     gap: 1.5rem;
   }
+`;
 
-  input[type='radio'] {
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center; /* 수직 정렬 추가 */
+  gap: 0.625rem;
+  font-size: 1.75rem;
+  color: #333;
+
+  input[type="radio"] {
     appearance: none;
     width: 2rem;
     height: 2rem;
@@ -764,9 +850,11 @@ const RadioGroup = styled.div`
     outline: none;
     cursor: pointer;
     margin: 0;
+    vertical-align: middle; /* 체크박스와 텍스트 수직 정렬 */
     &:checked {
       background-color: #00c2ff;
     }
+
     @media (max-width: 768px) {
       width: 1.6rem;
       height: 1.6rem;
@@ -775,18 +863,6 @@ const RadioGroup = styled.div`
       width: 1.4rem;
       height: 1.4rem;
     }
-  }
-`;
-
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  font-size: 1.75rem;
-  color: #333;
-
-  input {
-    margin-right: 0.625rem;
   }
 
   @media (max-width: 768px) {
@@ -798,12 +874,10 @@ const RadioLabel = styled.label`
   }
 `;
 
-// (2) 오류 메시지
 const ErrorText = styled.div`
   color: red;
   font-size: 1.5rem;
-  margin-top: 0.5rem; 
-  left: 50vh; /* 필요에 따라 left/center 등 조정 */
+  margin-top: 0.5rem;
 
   @media (max-width: 768px) {
     font-size: 1.3rem;
@@ -828,6 +902,7 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #00b0e6;
   }
+
   @media (max-width: 768px) {
     padding: 1.2rem;
     font-size: 1.8rem;

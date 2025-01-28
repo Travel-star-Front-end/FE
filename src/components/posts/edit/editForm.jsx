@@ -3,22 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { API } from "../../../apis/axios";
 import * as s from "../../../styles/posts/write/write";
 import colors from "../../../styles/common/colors";
-import WriteInput from "./input/writeInput";
-import WriteTextarea from "./textarea/writeTextarea";
-import WriteButton from "./button/writeButton";
-import ImageButton from "./button/imageButton";
-import ListImage from "./list-image";
-import AIButton from "./button/AIButton";
-import ListLocation from "./list-location";
-import ListMusic from "./list-music";
+import WriteInput from "../write/input/writeInput";
+import WriteTextarea from "../write/textarea/writeTextarea";
+import WriteButton from "../write/button/writeButton";
+import Toggle from "./toggle/toggle";
+import ImageButton from "../write/button/imageButton";
+import ListImage from "../write/list-image";
+import AIButton from "../write/button/AIButton";
+import ListLocation from "../write/list-location";
+import ListMusic from "../write/list-music";
 import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
 import Menu from "../../../assets/images/posts/write/menu.png";
 import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
-import IframePlayer from "./iframePlayer";
+import IframePlayer from "../write/iframePlayer";
 
-const WriteForm = () => {
+const EditForm = ({ data }) => {
+    const [menu, setMenu] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
     const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
     const [selectedLocation, setSelectedLocation] = useState("");
@@ -32,6 +34,18 @@ const WriteForm = () => {
     const [feeling, setFeeling] = useState("");
     const [iframeUrl, setIframeUrl] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (data) {
+            setTitle(data.title);
+            setContent(data.body);
+            setFeeling(data.body);
+        }
+    }, [data]);
+
+    const handleMenuClick = () => {
+        setMenu(prevState => !prevState); 
+    }
 
     // 이미지 선택
     const addImage = (file) => {
@@ -118,7 +132,9 @@ const WriteForm = () => {
         <s.FormContainer>
             <s.TitleContainer>
                 <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
-                <s.MenuImg src={Menu} alt="menu" />
+                <s.MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
+                
+                {menu && <Toggle />}
             </s.TitleContainer>
 
             <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
@@ -149,4 +165,4 @@ const WriteForm = () => {
     );
 };
 
-export default WriteForm;
+export default EditForm;

@@ -1,5 +1,5 @@
 import * as S from '../../styles/home';
-import searchIcon from '../../assets/images/home/search.png'
+import searchIcon from '../../assets/images/home/search.png';
 import upArrow from '../../assets/images/home/search-up-arrow.png';
 import decreaseArrow from '../../assets/images/home/search-decrease-arrow.png';
 import TravelPost from '../../components/travelPost/travel-post';
