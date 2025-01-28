@@ -20,7 +20,7 @@ export const TabHeader = styled.div`
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
         height: 1.75vw;
-        font-weight: 30vw;
+        font-weight: 600;
         font-size: 0.6vw;
         line-height: 0.726vw;
 
@@ -37,6 +37,14 @@ export const TabHeader = styled.div`
 `;
 
 export const TabContent = styled.div`
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer */
+    
+    &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+    }
+
     height: 10.25vw;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
@@ -47,5 +55,5 @@ export const CardListContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8vw;
-    padding-top: 0.5vw;
+    padding: 0.35vw 0.5vw;
 `;
