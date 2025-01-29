@@ -6,12 +6,13 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { API } from '../../../apis/axios';
-import AgreeModal from "../../../components/auth/signup/agreeModal";
-import AgreeData from "../../../utils/signup/agreeData";
+import AgreeModal from '../../../components/auth/signup/agreeModal';
+import AgreeData from '../../../utils/signup/agreeData';
 
 const signUpSchema = z
   .object({
     userId: z.string().nonempty('아이디를 입력해주세요.'),
+    nickName: z.string().nonempty('닉네임을 입력해주세요.'),
     password: z
       .string()
       .min(8, '비밀번호는 최소 8자리 이상이어야 합니다.')
@@ -57,23 +58,27 @@ const signUpFn = async (formData) => {
       ? formData.customDomain
       : formData.emailDomain;
 
-  const birthDate = `${formData.year}-${String(formData.month).padStart(2, '0')}-${String(formData.day).padStart(2, '0')}`;
+  const birthDate = `${formData.year}-${String(formData.month).padStart(
+    2,
+    '0'
+  )}-${String(formData.day).padStart(2, '0')}`;
 
   const phoneNumber = `${formData.phone1}-${formData.phone2}-${formData.phone3}`;
 
   const payload = {
+    user_id: formData.userId,
+    nickname: formData.nickName,
+    password: formData.password,
     name: formData.name,
-    username: formData.userId,
+    birth: birthDate, 
+    phonenum: phoneNumber,
     email: `${formData.emailUser}@${finalDomain}`,
-    phone: phoneNumber,
-    address: {
-      suite: birthDate,
-    },
   };
 
   try {
-    const response = await API.post('https://jsonplaceholder.typicode.com/users', payload);
-    console.log('응답 데이터:', response.data);
+    const response = await API.post('https://w94yrmif2m.execute-api.ap-northeast-2.amazonaws.com/prod/register', payload);
+    
+    console.log('응답 데이터(요청 함수 내부):', response.data);
     return response.data;
   } catch (error) {
     console.error('요청 실패:', error.response?.data || error.message);
@@ -93,6 +98,7 @@ const SignUp = () => {
     mode: 'onChange',
     defaultValues: {
       userId: '',
+      nickName: '',
       password: '',
       confirmPassword: '',
       name: '',
@@ -112,15 +118,15 @@ const SignUp = () => {
 
   const { mutate } = useMutation({
     mutationFn: signUpFn,
-    onSuccess: () => {
-      window.location.href = '/signup/completed'; 
+    onSuccess: (data) => {
+      console.log('회원가입 성공! onSuccess 데이터:', data);
+      window.location.href = '/signup/completed';
     },
     onError: (err) => {
       console.error(err);
       alert('회원가입에 실패했습니다.');
     },
   });
-  
 
   const currentYear = new Date().getFullYear();
   const years = [];
@@ -132,13 +138,12 @@ const SignUp = () => {
 
   const getDaysInMonth = (y, m) => {
     if (!y || !m) return [];
-
     const yearNum = Number(y);
     const monthNum = Number(m);
 
     const now = new Date();
     const nowYear = now.getFullYear();
-    const nowMonth = now.getMonth() + 1; 
+    const nowMonth = now.getMonth() + 1;
     const nowDay = now.getDate();
 
     if (yearNum > nowYear) {
@@ -168,6 +173,8 @@ const SignUp = () => {
       alert('아이디를 입력해주세요.');
       return;
     }
+    // 실제로는 백엔드에 아이디 중복 확인 요청을 보내야 합니다.
+    // 여기서는 예시로만 처리
     alert('중복확인에 성공하셨습니다. (예시)');
   };
 
@@ -195,9 +202,8 @@ const SignUp = () => {
 
   const handleAgreeChange = (agree, termsId) => {
     const fieldName = termsId === 1 ? 'terms1' : 'terms2';
-    
     setValue(fieldName, agree ? 'agree' : 'disagree', {
-      shouldValidate: true, 
+      shouldValidate: true,
     });
 
     setTermsAgreement((prev) => ({
@@ -205,13 +211,12 @@ const SignUp = () => {
       [termsId]: agree,
     }));
   };
-  
+
   useEffect(() => {
     // console.log('terms1:', watch('terms1'));
     // console.log('terms2:', watch('terms2'));
-  }, [watch('terms1'), watch('terms2')]); 
-  
-  
+  }, [watch('terms1'), watch('terms2')]);
+
   return (
     <Container>
       <InnerForm>
@@ -234,6 +239,20 @@ const SignUp = () => {
                   </CheckButton>
                 </InputWrapper>
                 {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
+              </InputContainer>
+            </FormGroup>
+
+            <FormGroup>
+              <Label>닉네임</Label>
+              <InputContainer>
+                <Input
+                  type="text"
+                  placeholder="닉네임 입력"
+                  {...register('nickName')}
+                />
+                {errors.nickName && (
+                  <ErrorText>{errors.nickName.message}</ErrorText>
+                )}
               </InputContainer>
             </FormGroup>
 
@@ -411,7 +430,13 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                  <input type="radio" value="agree" {...register('terms1')} checked={termsAgreement[1] === true} onChange={() => handleAgreeChange(true, 1)}/>
+                    <input
+                      type="radio"
+                      value="agree"
+                      {...register('terms1')}
+                      checked={termsAgreement[1] === true}
+                      onChange={() => handleAgreeChange(true, 1)}
+                    />
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -437,7 +462,13 @@ const SignUp = () => {
                 </AgreementText>
                 <RadioGroup>
                   <RadioLabel>
-                  <input type="radio" value="agree" {...register('terms2')} checked={termsAgreement[2] === true} onChange={() => handleAgreeChange(true, 2)}/>
+                    <input
+                      type="radio"
+                      value="agree"
+                      {...register('terms2')}
+                      checked={termsAgreement[2] === true}
+                      onChange={() => handleAgreeChange(true, 2)}
+                    />
                     동의
                   </RadioLabel>
                   <RadioLabel>
@@ -459,7 +490,13 @@ const SignUp = () => {
         </SignUpBox>
       </InnerForm>
 
-      <AgreeModal isOpen={isModalOpen} data={modalData} onClose={handleCloseModal} onAgreeChange={handleAgreeChange} termsAgreement={termsAgreement}/>
+      <AgreeModal
+        isOpen={isModalOpen}
+        data={modalData}
+        onClose={handleCloseModal}
+        onAgreeChange={handleAgreeChange}
+        termsAgreement={termsAgreement}
+      />
     </Container>
   );
 };
@@ -568,16 +605,15 @@ const FormGroup = styled.div`
   flex-wrap: wrap;
 
   & > label {
-    width: 120px;  
+    width: 15rem; /* 라벨 최소 너비 */
   }
 
   @media (max-width: 768px) {
     & > label {
-      width: 10rem;;
+      width: 10rem;
     }
   }
 `;
-
 
 const Label = styled.label`
   width: 12.5rem;
@@ -629,12 +665,10 @@ const Input = styled.input`
   @media (max-width: 768px) {
     font-size: 1.5rem;
     padding: 0.8rem 1rem;
-    
   }
   @media (max-width: 480px) {
     font-size: 1.2rem;
     padding: 0.6rem 0.8rem;
-    
   }
 `;
 
@@ -836,12 +870,12 @@ const RadioGroup = styled.div`
 
 const RadioLabel = styled.label`
   display: flex;
-  align-items: center; /* 수직 정렬 추가 */
+  align-items: center; /* 수직 정렬 */
   gap: 0.625rem;
   font-size: 1.75rem;
   color: #333;
 
-  input[type="radio"] {
+  input[type='radio'] {
     appearance: none;
     width: 2rem;
     height: 2rem;
@@ -850,7 +884,7 @@ const RadioLabel = styled.label`
     outline: none;
     cursor: pointer;
     margin: 0;
-    vertical-align: middle; /* 체크박스와 텍스트 수직 정렬 */
+    vertical-align: middle;
     &:checked {
       background-color: #00c2ff;
     }
