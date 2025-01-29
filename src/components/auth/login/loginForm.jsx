@@ -30,6 +30,7 @@ const LoginForm = () => {
             console.log("로그인 성공: ", data);
 
             const token = data?.data?.token;
+            localStorage.setItem("token", token);
             if (!token) {
                 alert("로그인 실패: 토큰이 없습니다.");
                 return;
