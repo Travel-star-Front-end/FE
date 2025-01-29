@@ -27,7 +27,13 @@ const LoginForm = () => {
         mutationFn: (userData) => API.post("/prod/login", userData),
         onSuccess: (data) => {
             console.log("로그인 성공: ", data);
-            // localStorage.setItem('isLoggedIn', 'true');
+            
+            const token = response?.data?.token; 
+            if (token) {
+                localStorage.setItem("token", token);
+                localStorage.setItem("isLoggedIn", "true");
+            }
+            
 
             const planetName = localStorage.getItem('planetName');
             if (planetName) {
