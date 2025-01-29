@@ -27,8 +27,8 @@ const LoginForm = () => {
         mutationFn: (userData) => API.post("/prod/login", userData),
         onSuccess: (data) => {
             console.log("로그인 성공: ", data);
-            
-            const token = response?.data?.token; 
+
+            const token = data?.data?.token; 
             if (token) {
                 localStorage.setItem("token", token);
                 localStorage.setItem("isLoggedIn", "true");
