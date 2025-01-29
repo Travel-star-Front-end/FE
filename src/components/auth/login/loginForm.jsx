@@ -24,7 +24,7 @@ const LoginForm = () => {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (userData) => API.post("/users", userData),
+        mutationFn: (userData) => API.post("/prod/login", userData),
         onSuccess: (data) => {
             console.log("로그인 성공: ", data);
             // localStorage.setItem('isLoggedIn', 'true');
@@ -46,7 +46,7 @@ const LoginForm = () => {
 
         loginMutation.mutate({
             id: data.id,
-            password: data.password,
+            pw: data.password,
         });
     };
 
