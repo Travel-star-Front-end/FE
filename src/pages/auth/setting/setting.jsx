@@ -20,7 +20,7 @@ function SettingPage() {
       localStorage.setItem('planetId', newId);
     }
 
-    navigate('/planet');
+    navigate('/home');
   };
 
   useEffect(() => {

@@ -3,10 +3,18 @@ import { API } from '../axios.js';
 
 export async function postPlanetName(name) {
   try {
-    const response = await API.post('/posts', { planetName: name });
+    const authToken = localStorage.getItem("accessToken");
+    const response = await API.post('/planet', { name }, 
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        }
+      }
+    );
+    // console.log(response.data);
     return response.data?.id ?? null;
   } catch (error) {
-    console.error('jsonplaceholder post 에러:', error);
+    console.error('Error:', error);
     return null;
   }
 }

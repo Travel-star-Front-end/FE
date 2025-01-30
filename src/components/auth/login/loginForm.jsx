@@ -27,7 +27,7 @@ const LoginForm = () => {
     const loginMutation = useMutation({
         mutationFn: (userData) => API.post("/login", userData),
         onSuccess: async (data) => {
-            console.log("로그인 성공: ", data);
+            // console.log("로그인 성공: ", data);
 
             const accessToken = data?.data?.token;
             localStorage.setItem("accessToken", accessToken);
@@ -62,7 +62,7 @@ const LoginForm = () => {
     });
 
     const onSubmit = (data) => {
-        console.log('전송된 데이터:', data);
+        // console.log('전송된 데이터:', data);
         loginMutation.mutate({
             id: data.id,
             pw: data.password,
