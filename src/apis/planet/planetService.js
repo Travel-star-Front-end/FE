@@ -1,15 +1,19 @@
 // services/planetService.js
 import { API } from '../axios.js';
 
-export async function postPlanetName(name) {
+// 행성 설정
+export const postPlanetName = async (planetName) => {
   try {
-    const response = await API.post('/posts', { planetName: name });
-    return response.data?.id ?? null;
+    const userId = localStorage.getItem('userId');
+    const response = await API.post(`/api/users/${userId}/planets`, {
+      name: planetName,
+    });
+    return response.data.id;
   } catch (error) {
-    console.error('jsonplaceholder post 에러:', error);
-    return null;
+    console.error('행성 생성 실패:', error);
+    throw error;
   }
-}
+};
 
 export async function patchPlanetName(id, name) {
   try {
