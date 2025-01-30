@@ -56,8 +56,8 @@ const SearchPasswordForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await API.post("/users", { email: data.email });
-            setCode(response.data.id);
+            const response = await API.post("/email", { email: data.email });
+            setCode(response.data.authCode);
             alert("인증번호가 발송되었습니다.");
             setIsTimerActive(true);
             setTimer(120);
@@ -104,9 +104,24 @@ const SearchPasswordForm = () => {
         }
     }, [id, email, password, passwordCheck, isVerified, passwordRequiredError, passwordCheckRequiredError, passwordMatchError]);
 
-    const handleSearchPasswordClick = () => {
-        navigate("/search/password/completed");
-    }
+    const handleSearchPasswordClick = async () => {
+        if (!isVerified) {
+            alert("이메일 인증을 먼저 완료해주세요.");
+            return;
+        }
+
+        try {
+            await API.post("/reset-pw", {
+                user_id: id,
+                email: email,
+                newPassword: password,
+                confirmPassword: passwordCheck
+            });
+            navigate("/search/password/completed");
+        } catch (err) {
+            alert(err.response?.data?.message || "비밀번호 변경에 실패했습니다.");
+        }
+    };
 
     return (
         <s.SearchFormContainer>
