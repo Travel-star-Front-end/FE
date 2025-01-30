@@ -31,3 +31,23 @@ export const Button = styled.button`
     line-height: 0.726vw;
     color: rgba(85, 85, 85, 1);
 `;
+
+export const EditBtnContainer = styled.div`
+    z-index: 100;   
+    position: absolute;
+    top: -10vw;
+    left: -40vw;
+    display: flex;
+    gap: 2.65vw;
+`;
+
+export const EditBtn = styled.button`
+    width: 18vw;
+    height: 2.5vw;
+    border-radius: 0.25vw;
+    background-color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    font-size: 1vw;
+    line-height: 1.21vw;
+    color: rgba(85, 85, 85, 1);
+`;
