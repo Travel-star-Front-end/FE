@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { API } from "../../../apis/axios";
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 import * as s from "../../../styles/auth/login/login";
 import colors from '../../../styles/common/colors';
 import Logo from "../../../assets/images/auth/login/logo.png";
@@ -24,49 +25,53 @@ const LoginForm = () => {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (userData) => API.post("/prod/login", userData),
-        onSuccess: (data) => {
+        mutationFn: (userData) => API.post("/login", userData),
+        onSuccess: async (data) => {
             console.log("로그인 성공: ", data);
 
-            const token = data?.data?.token; 
-            if (token) {
-                localStorage.setItem("token", token);
-                localStorage.setItem("isLoggedIn", "true");
+            const token = data?.data?.token;
+            localStorage.setItem("token", token);
+            if (!token) {
+                alert("로그인 실패: 토큰이 없습니다.");
+                return;
             }
-            
 
-            const planetName = localStorage.getItem('planetName');
-            if (planetName) {
-                navigate("/home");
-            } else {
+            try {
+                const decodedToken = jwtDecode(token);
+                console.log("디코딩된 토큰: ", decodedToken);
+
+
+                const userId = decodedToken?.id;
+                if (!userId) {
+                    alert("사용자 ID를 찾을 수 없습니다.");
+                    return;
+                }
+
+                localStorage.setItem("userId", userId);
+                localStorage.setItem("isLoggedIn", "true");
+                // 일단 로그인 성공 시 무조건 setting으로 이동
                 navigate("/setting");
+            } catch (error) {
+                console.error("토큰 디코딩 실패: ", error);
+                alert("토큰이 유효하지 않습니다.");
             }
         },
-        onError: (error) => {
-            console.error("로그인 오류: ", error.response?.data || error.message);
+        onError: () => {
+            alert("아이디 또는 비밀번호가 틀렸습니다. 다시 시도해주세요.");
         },
     });
 
     const onSubmit = (data) => {
         console.log('전송된 데이터:', data);
-
         loginMutation.mutate({
             id: data.id,
             pw: data.password,
         });
     };
 
-    const handleSignUpClick = () => {
-        navigate("/signup");
-    }
-
-    const handleSearchIdClick = () => {
-        navigate("/search/id");
-    }
-
-    const handleSearchPasswordClick = () => {
-        navigate("/search/password");
-    }
+    const handleSignUpClick = () => navigate("/signup");
+    const handleSearchIdClick = () => navigate("/search/id");
+    const handleSearchPasswordClick = () => navigate("/search/password");
 
     return (
         <s.FormContainer onSubmit={handleSubmit(onSubmit)}>
@@ -76,7 +81,7 @@ const LoginForm = () => {
             </s.LogoContainer>
 
             <s.LoginP>Login</s.LoginP>
-                
+
             <s.InputContainer>
                 <LoginInput type={'text'} {...register("id")} placeholder="아이디"/>
                 <LoginInput type={'password'} {...register("password")} placeholder="비밀번호" />
@@ -92,9 +97,12 @@ const LoginForm = () => {
                 </s.LoginPContainer>
             </s.ButtonContainer>
 
-            <s.LoginP2 size="0.65vw" color={colors.loginP3} style={{cursor: "default"}}>계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.</s.LoginP2>
+            <s.LoginP2 size="0.65vw" color={colors.loginP3} style={{cursor: "default"}}>
+                계속 진행하면 여행별의 <span style={{ color: colors.loginPurple }}>개인정보 처리방침</span> 및 
+                <span style={{ color: colors.loginPurple }}>이용약관</span>에 동의하게 됩니다.
+            </s.LoginP2>
         </s.FormContainer>
-    )
+    );
 }
 
 export default LoginForm;
