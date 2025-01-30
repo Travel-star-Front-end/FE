@@ -4,6 +4,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { patchPlanetName } from '../../apis/planet/planetService';
+import updateButton from '../../assets/images/planet/switchButton/updateButton.png';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import ConstellationViewer from '../../components/planet/ConstellationViewer';
 
@@ -48,10 +49,10 @@ const PlanetPage = () => {
 
   // console.log(globeContainerRef.current);
 
-  useEffect(() => {
-    const { innerWidth, innerHeight } = window;
-    setDimensions({ width: innerWidth, height: innerHeight });
-  }, []);
+  // useEffect(() => {
+  //   const { innerWidth, innerHeight } = window;
+  //   setDimensions({ width: innerWidth, height: innerHeight });
+  // }, []);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -65,6 +66,34 @@ const PlanetPage = () => {
     window.addEventListener('resize', updateDimensions);
 
     return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  useEffect(() => {
+    const minWidth = 300; // 최소 화면 너비
+    const maxWidth = 1200; // 최대 화면 너비
+    const minAltitude = 2.5; // 최소 altitude
+    const maxAltitude = 6; // 최대 altitude
+
+    const updateGlobeView = () => {
+      if (globeRef.current) {
+        const { innerWidth } = window;
+
+        const scale = (innerWidth - minWidth) / (maxWidth - minWidth);
+        const newAltitude =
+          minAltitude +
+          (maxAltitude - minAltitude) * (1 - Math.min(Math.max(scale, 0), 1));
+
+        globeRef.current.pointOfView(
+          { lat: 20.5665, lng: 126.978, altitude: newAltitude },
+          0
+        );
+      }
+    };
+
+    updateGlobeView();
+    window.addEventListener('resize', updateGlobeView);
+
+    return () => window.removeEventListener('resize', updateGlobeView);
   }, []);
 
   //지구본 자동 회전 기능
@@ -255,7 +284,7 @@ const PlanetPage = () => {
     <>
       <GlobeWrapper>
         {/* 도시 입력 폼 */}
-        <div>
+        {/* <div>
           <input
             type="text"
             placeholder="도시 이름 입력"
@@ -263,15 +292,17 @@ const PlanetPage = () => {
             onChange={(e) => setCityName(e.target.value)}
           />
           <button onClick={addCity}>추가</button>
-        </div>
+        </div> */}
 
         <TopBar>
           <RefreshButton>
             {planetName}
             <EditButton onClick={handleOpenModal}>수정</EditButton>
           </RefreshButton>
-
-          <TimeDisplay>현재 시각 {getCurrentTime()}</TimeDisplay>
+          <TimeDisplay>
+            <UpdateButton src={updateButton} alt="Update" />
+            현재 시각 {getCurrentTime()}
+          </TimeDisplay>
         </TopBar>
 
         {/* 수정 모달 */}
@@ -298,8 +329,8 @@ const PlanetPage = () => {
             ref={globeRef}
             width={dimensions.width}
             height={dimensions.height}
-            // globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            globeImageUrl={planetCutyVer}
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            // globeImageUrl={planetCutyVer}
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
             pointsData={pointsData}
@@ -307,17 +338,17 @@ const PlanetPage = () => {
             pointLng="lng"
             pointAltitude={0.02}
             pointLabel={({ name }) => `<b>${name}</b>`}
-            arcsData={arcsData}
-            arcStartLat="startLat"
-            arcStartLng="startLng"
-            arcEndLat="endLat"
-            arcEndLng="endLng"
-            arcColor={() => ['#ff9900', '#ff6600']}
-            arcDashLength={1}
-            arcDashGap={0}
-            arcDashAnimateTime={0}
-            arcAltitude={0}
-            arcStroke={1}
+            // arcsData={arcsData}
+            // arcStartLat="startLat"
+            // arcStartLng="startLng"
+            // arcEndLat="endLat"
+            // arcEndLng="endLng"
+            // arcColor={() => ['#ff9900', '#ff6600']}
+            // arcDashLength={1}
+            // arcDashGap={0}
+            // arcDashAnimateTime={0}
+            // arcAltitude={0}
+            // arcStroke={1}
             htmlElementsData={pointsData}
             htmlLat={(d) => d.lat}
             htmlLng={(d) => d.lng}
@@ -384,6 +415,16 @@ const RefreshButton = styled.div`
   font-weight: bold;
   cursor: pointer;
   margin-left: 10rem;
+
+  @media (max-width: 768px) {
+    font-size: 2.8rem;
+    padding: 1.2rem 1.44rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 3rem;
+    padding: 1.7rem 2.04rem;
+  }
 `;
 
 const TimeDisplay = styled.div`
@@ -393,6 +434,14 @@ const TimeDisplay = styled.div`
   color: white;
   font-size: 2rem;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+  }
 `;
 
 const EditButton = styled.button`
@@ -401,6 +450,14 @@ const EditButton = styled.button`
   border-radius: 0.6rem;
   font-size: 1.7rem;
   color: white;
+
+  @media (max-width: 768px) {
+    font-size: 2.55rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 3.4rem;
+  }
 `;
 
 const ModalBackdrop = styled.div`
@@ -468,6 +525,14 @@ const ModalButton = styled.button`
     background: #f5f5f5;
     color: #333;
   }
+`;
+
+const UpdateButton = styled.img`
+  width: auto;
+  height: 100%;
+  margin-right: 4rem;
+  max-height: 4rem;
+  // object-fit: contain;
 `;
 
 export default PlanetPage;

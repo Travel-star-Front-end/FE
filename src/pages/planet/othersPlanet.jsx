@@ -20,9 +20,39 @@ const OthersPlanet = () => {
     height: 0,
   });
 
+  // useEffect(() => {
+  //   const { innerWidth, innerHeight } = window;
+  //   setDimensions({ width: innerWidth, height: innerHeight });
+  // }, []);
+
+  //반응형 관련 altitude 동적으로 조절
   useEffect(() => {
-    const { innerWidth, innerHeight } = window;
-    setDimensions({ width: innerWidth, height: innerHeight });
+    const minWidth = 300; // 최소 화면 너비
+    const maxWidth = 1200; // 최대 화면 너비
+    const minAltitude = 2.5; // 최소 altitude 값
+    const maxAltitude = 6; // 최대 altitude 값
+
+    const updateGlobeView = () => {
+      if (globeRef.current) {
+        const { innerWidth } = window;
+
+        // 화면 너비에 따라 altitude를 선형적으로 계산
+        const scale = (innerWidth - minWidth) / (maxWidth - minWidth);
+        const newAltitude =
+          minAltitude +
+          (maxAltitude - minAltitude) * (1 - Math.min(Math.max(scale, 0), 1));
+
+        globeRef.current.pointOfView(
+          { lat: 20.5665, lng: 126.978, altitude: newAltitude },
+          0
+        );
+      }
+    };
+
+    updateGlobeView();
+    window.addEventListener('resize', updateGlobeView);
+
+    return () => window.removeEventListener('resize', updateGlobeView);
   }, []);
 
   useEffect(() => {
@@ -91,8 +121,8 @@ const OthersPlanet = () => {
             ref={globeRef}
             width={dimensions.width}
             height={dimensions.height}
-            // globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            globeImageUrl={planetCutyVer}
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            // globeImageUrl={planetCutyVer}
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
             pointsData={planetData.pointsData}
@@ -166,6 +196,16 @@ const RefreshButton = styled.div`
   font-weight: bold;
   cursor: pointer;
   margin-left: 10rem;
+
+  @media (max-width: 768px) {
+    font-size: 3rem;
+    padding: 1.2rem 1.44rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 4rem;
+    padding: 1.7rem 2.04rem;
+  }
 `;
 
 export default OthersPlanet;
