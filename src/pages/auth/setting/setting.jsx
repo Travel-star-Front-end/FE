@@ -78,8 +78,8 @@ function SettingPage() {
             ref={globeRef}
             width={dimensions.width}
             height={dimensions.height}
-            // globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            globeImageUrl={planetCutyVer}
+            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            // globeImageUrl={planetCutyVer}
             // ↑ 카툰 느낌의 지구본 텍스쳐
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
@@ -109,13 +109,13 @@ const SettingContainer = styled.div`
   gap: 1rem;
   padding: 1rem;
   text-align: center;
-  min-height: 20vh;
-  width: 100%;
+  // min-height: 20vh;
+  width: 100vw;
   box-sizing: border-box;
 `;
 
 const SettingName = styled.div`
-  font-size: 2rem;
+  font-size: 20px;
   color: white;
 `;
 
@@ -127,10 +127,25 @@ const Settinginput = styled.input`
   border-radius: 0.5rem;
   background: white;
   margin-bottom: 0.8rem;
+
+  @media (max-width: 1800px) {
+    padding: 2rem;
+    font-size: 2rem;
+  }
+
+  @media (max-width: 1200px) {
+    padding: 2.2rem;
+    font-size: 3.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2.6rem;
+    font-size: 5rem;
+  }
 `;
 
 const Settingbutton = styled.button`
-  width: 100%;
+  width: 100vw;
   max-width: 500px;
   padding: 1.9rem;
   border: none;
@@ -141,19 +156,34 @@ const Settingbutton = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+
+  @media (max-width: 1800px) {
+    padding: 2.2rem;
+    font-size: 3rem;
+  }
+
+  @media (max-width: 1200px) {
+    padding: 2.4rem;
+    font-size: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2.8rem;
+    font-size: 6rem;
+  }
 `;
 
 const GlobeWrapper = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: relative;
   background: transparent;
   overflow: hidden;
 `;
 
 const GlobeContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   position: relative;
 `;
 
@@ -163,11 +193,11 @@ const BottomBar = styled.div`
   right: 0;
   top: 0;
   z-index: 10;
-  margin-top: 730px;
+  margin-top: 75vh;
 `;
 
 const PlanetName = styled.div`
-  font-size: 4rem;
+  font-size: 40px;
   font-weight: bold;
   color: white;
 `;
@@ -178,7 +208,7 @@ const TopBar = styled.div`
   right: 0;
   top: 0;
   z-index: 10;
-  margin-top: 150px;
+  margin-top: 15rem;
 `;
 
 export default SettingPage;
