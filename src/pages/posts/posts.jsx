@@ -8,7 +8,7 @@ import add from '../../assets/images/posts/posts/add.png';
 import alert from '../../assets/images/posts/posts/alert.png';
 import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
-import ShareTab from '../../components/posts/posts/Tabs/share-tab';
+import { ShareTab } from '../../components/posts/posts/Tabs/share-tab';
 import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 
 //example img
