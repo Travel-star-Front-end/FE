@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import * as S from '../../../../styles/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -32,10 +33,24 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const currentUrl = window.location.origin + pathname;
 
     //친구 추가 버튼 상태태
     const handleButtonClick = () => {
         setIsFriend((prevState) => !prevState);
+    };
+
+    //현재 url복사
+    const handleCopyUrl = () => {
+        navigator.clipboard.writeText(currentUrl)
+        .then(() => {
+            alert(`주소가 복사되었습니다.\n${currentUrl}`);
+        })
+        .catch((err) => {
+            alert('주소 복사에 실패했습니다. 다시 시도해주세요.');
+            console.error('주소 복사 실패:', err);
+        });
     };
 
     return (
@@ -82,7 +97,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
                 {buttonType === 'edit' && (
                     <S.EditBtnContainer>
                         <img src={lock} alt='lock' className='lock-icon' />
-                        <img src={share} alt="share" className="share-icon" />
+                        <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                         <S.EditButton 
                             type="button" 
                             onClick={() => navigate('edit')}>
