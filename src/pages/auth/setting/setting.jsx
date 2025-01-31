@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Globe from 'react-globe.gl';
+import { API } from '../../../apis/axios';
 import { postPlanetName } from '../../../apis/planet/planetService';
 import planetCutyVer from '../../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 
@@ -14,13 +15,28 @@ function SettingPage() {
   const globeContainerRef = useRef(null);
 
   const handleSave = async () => {
-    localStorage.setItem('planetName', planetName);
-    const newId = await postPlanetName(planetName);
-    if (newId) {
-      localStorage.setItem('planetId', newId);
-    }
+    try {
+      // 행성 이름 로컬 스토리지 저장
+      localStorage.setItem('planetName', planetName);
 
-    navigate('/planet');
+      // 로컬 스토리지에서 userId 가져오기
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('사용자 ID를 찾을 수 없습니다.');
+      }
+
+      // 행성 생성 API 호출
+      const response = await postPlanetName(planetName);
+
+      // 응답으로 받은 행성 ID 저장
+      if (response) {
+        localStorage.setItem('planetId', response);
+        navigate('/planet');
+      }
+    } catch (error) {
+      console.error('행성 생성 실패:', error);
+      // 에러 처리 로직 추가
+    }
   };
 
   useEffect(() => {
