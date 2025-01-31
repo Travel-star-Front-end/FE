@@ -4,14 +4,19 @@ import { API } from '../axios.js';
 // 행성 설정
 export const postPlanetName = async (planetName) => {
   try {
-    const userId = localStorage.getItem('userId');
-    const response = await API.post(`/api/users/${userId}/planets`, {
-      name: planetName,
-    });
-    return response.data.id;
+    const authToken = localStorage.getItem("accessToken");
+    const response = await API.post('/planet', { name }, 
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        }
+      }
+    );
+    // console.log(response.data);
+    return response.data?.id ?? null;
   } catch (error) {
-    console.error('행성 생성 실패:', error);
-    throw error;
+    console.error('Error:', error);
+    return null;
   }
 };
 

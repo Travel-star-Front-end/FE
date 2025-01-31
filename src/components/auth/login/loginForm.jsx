@@ -27,18 +27,18 @@ const LoginForm = () => {
     const loginMutation = useMutation({
         mutationFn: (userData) => API.post("/login", userData),
         onSuccess: async (data) => {
-            console.log("로그인 성공: ", data);
+            // console.log("로그인 성공: ", data);
 
-            const token = data?.data?.token;
-            localStorage.setItem("token", token);
-            if (!token) {
+            const accessToken = data?.data?.token;
+            localStorage.setItem("accessToken", accessToken);
+            if (!accessToken) {
                 alert("로그인 실패: 토큰이 없습니다.");
                 return;
             }
 
             try {
-                const decodedToken = jwtDecode(token);
-                console.log("디코딩된 토큰: ", decodedToken);
+                const decodedToken = jwtDecode(accessToken);
+                // console.log("디코딩된 토큰: ", decodedToken);
 
 
                 const userId = decodedToken?.id;
@@ -62,7 +62,7 @@ const LoginForm = () => {
     });
 
     const onSubmit = (data) => {
-        console.log('전송된 데이터:', data);
+        // console.log('전송된 데이터:', data);
         loginMutation.mutate({
             id: data.id,
             pw: data.password,

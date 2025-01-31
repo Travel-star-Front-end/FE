@@ -31,7 +31,7 @@ function SettingPage() {
       // 응답으로 받은 행성 ID 저장
       if (response) {
         localStorage.setItem('planetId', response);
-        navigate('/planet');
+        navigate('/home');
       }
     } catch (error) {
       console.error('행성 생성 실패:', error);
