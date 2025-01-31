@@ -19,10 +19,10 @@ const CompletedIdForm = () => {
         }
 
         const fetchUserId = async () => {
-            console.log(email);
+            // console.log(email);
             try {
-                const response = await API.post("/find-id", { email });
-                console.log(response.data);
+                const response = await API.post("/find-id", { email: email });
+                // console.log(response.data);
                 setUserId(response.data.user_id);
             } catch (err) {
                 setError("아이디를 찾을 수 없습니다.");
