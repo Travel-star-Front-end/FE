@@ -1,22 +1,35 @@
-import * as S from '../../styles/posts';
-import setting from '../../assets/images/setting.png';
-import friends from '../../assets/images/friends.png';
-import share from '../../assets/images/share.png';
-import add from '../../assets/images/add.png';
-import TravelPost from '../../components/travelPost/travel-post';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as S from '../../styles/posts/posts/posts';
+import setting from '../../assets/images/posts/posts/setting.png';
+import friends from '../../assets/images/posts/posts/friends.png';
+import share from '../../assets/images/posts/posts/share.png';
+import add from '../../assets/images/posts/posts/add.png';
+import alert from '../../assets/images/posts/posts/alert.png';
+import TravelPost from '../../components/posts/posts/travelPost/travel-post';
+import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
+import { ShareTab } from '../../components/posts/posts/Tabs/share-tab';
+import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState(null);
+
+    const handleClick = (tab) => {
+        setActiveTab((prevTab) => (prevTab === tab ? null : tab));
+    };
+
     return (
         <S.Container>
             <S.BannerContainer>
                 <img src={banner} alt='banner-img' className='banner-img'/>
                 <S.BannerInfo>
+                    <div className='title'>벨라의 세계일주</div>
                     <S.BannerHeader>
-                        <div className='title'>벨라의 세계일주</div>
                         <S.InfoContainer>
                             <S.ProfileImg>
                                 <img src={profile} alt='profile' className='profile-img'/>
@@ -26,23 +39,39 @@ const Posts = () => {
                                 <div className='planet-name'>깐따삐야 행성</div>
                             </div>
                         </S.InfoContainer>
-                    </S.BannerHeader>
 
-                    <S.ToolbarContainer>
-                        <img src={setting} alt='setting' className='toolbar-icon'/>
-                        <img src={friends} alt='friends' className='toolbar-icon'/>
-                        <img src={share} alt='share' className='toolbar-icon'/>
-                        <img src={add} alt='add'className='toolbar-icon'/>
-                    </S.ToolbarContainer>
+                        <S.ToolbarContainer>
+                            <S.Toolbar>
+                                <img src={setting} alt='setting' className='toolbar-icon' onClick={() => handleClick('setting')}/>
+                                <img src={friends} alt='friends' className='toolbar-icon' onClick={() => handleClick('friends')} />
+                                <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
+                                <img src={alert} alt='alert' className='toolbar-icon'/>                                
+                            </S.Toolbar>
+                            <S.AddToolbar>
+                                <img src={add} alt='add'className='toolbar-icon2' onClick={() => navigate('/posts/write')}/>
+                            </S.AddToolbar>
+
+                            {activeTab === 'friends' && <FriendsTab/>}
+                            {activeTab === 'share' && <ShareTab/>}
+                            {activeTab === 'setting' && <SettingTab setActiveTab={setActiveTab} />}
+                        </S.ToolbarContainer>
+                    </S.BannerHeader>
                 </S.BannerInfo>
             </S.BannerContainer>
 
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
-                <S.Hr/>
                 <S.PostWrapper>
                     <TravelPost
+                        id='1'
                         nickname="벨라" 
+                        date="2024.09.15 14:58" 
+                        location="베트남, 다낭" 
+                        quickReview="바보 원숭이 !! 다낭여행 (2)"
+                        buttonType="edit"  />
+                    <TravelPost
+                        id='2'
+                        nickname="벨라2" 
                         date="2024.09.15 14:58" 
                         location="베트남, 다낭" 
                         quickReview="바보 원숭이 !! 다낭여행 (2)"

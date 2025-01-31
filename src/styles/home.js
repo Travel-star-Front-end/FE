@@ -5,7 +5,7 @@ export const Container = styled.div`
     flex-direction: column;
     margin: auto;
     margin-top: 2.85vw;
-    width: 66vw;
+    width: 80%;
     height: 100vh;
     box-sizing: border-box;
 `;
@@ -38,7 +38,6 @@ export const SearchIcon = styled.img`
     width: 1.15vw;
     height: 1.2vw;
     position: absolute;
-    top: 0.6vw;
     left: 0.7vw;
     bottom: 0.65vw;
     z-index: 2;
@@ -76,6 +75,10 @@ export const SuggestionBox = styled.div`
     align-items:center;
     grid-gap: 0.5vw 3vw;
     padding-right: 2.5vw;
+
+    @media (max-width: 768px) {
+        grid-gap: 5px;
+    }
 `;
 
 export const SuggestionItem = styled.div`
@@ -99,13 +102,6 @@ export const Text = styled.div`
     color: #555555;
 `;
 
-export const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 1px;
-    background-color: #D9D9D9;
-`;
-
 export const PostWrapper = styled.div`
-    padding: 1.5vw 0;
+   widht: 100%;
 `;
