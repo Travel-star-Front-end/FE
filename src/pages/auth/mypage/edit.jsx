@@ -33,11 +33,23 @@ const Edit = ({
   });
 
   const [formValues, setFormValues] = useState({ ...userData });
-
   const [profileImage, setProfileImage] = useState(Profile);
   const fileInputRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 수정 모드
   const [isEditing, setIsEditing] = useState(false);
+  // 인증번호 발송 여부
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  // 인증 완료 여부
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
+  // 인증번호 입력 값
+  const [verificationCode, setVerificationCode] = useState('');
+
+  // 새 비밀번호, 비밀번호 확인
+  const [newPasswordError, setNewPasswordError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
   useEffect(() => {
     fetchUserData();
@@ -48,13 +60,17 @@ const Edit = ({
       const response = await API.get('https://jsonplaceholder.typicode.com/users/1');
       const userDataFromApi = response.data;
 
-      const phoneParts = userDataFromApi.phone ? userDataFromApi.phone.split('-') : phoneNumber.split('-');
-      const emailParts = userDataFromApi.email ? userDataFromApi.email.split('@') : email.split('@');
+      const phoneParts = userDataFromApi.phone
+        ? userDataFromApi.phone.split('-')
+        : phoneNumber.split('-');
+      const emailParts = userDataFromApi.email
+        ? userDataFromApi.email.split('@')
+        : email.split('@');
 
       const newUserData = {
         userId: userDataFromApi.username || userId,
         nickname: userDataFromApi.name || nickname,
-        password: userData.password, 
+        password: userData.password,
         name: userDataFromApi.name || name,
         birthYear: userData.birthYear,
         birthMonth: userData.birthMonth,
@@ -67,7 +83,7 @@ const Edit = ({
       };
 
       setUserData(newUserData);
-      setFormValues(newUserData); 
+      setFormValues(newUserData);
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -113,16 +129,31 @@ const Edit = ({
       setIsEditing(true);
       setFormValues(userData);
     } else {
-      
       try {
+        if (isCodeVerified) {
+          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+          if (!passwordRegex.test(formValues.password)) {
+            alert('새 비밀번호는 8자리 이상이며 대소문자를 모두 포함해야 합니다.');
+            return;
+          }
+          if (formValues.password !== confirmPassword) {
+            alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+            return;
+          }
+        }
+
         const updatedUserData = {
           username: formValues.userId,
           name: formValues.name,
           phone: `${formValues.phonePart1}-${formValues.phonePart2}-${formValues.phonePart3}`,
           email: `${formValues.emailUser}@${formValues.emailDomain}`,
+          password: formValues.password,
         };
 
-        const response = await API.patch('https://jsonplaceholder.typicode.com/users/1', updatedUserData);
+        const response = await API.patch(
+          'https://jsonplaceholder.typicode.com/users/1',
+          updatedUserData
+        );
         console.log('User data updated:', response.data);
 
         setUserData(formValues);
@@ -130,6 +161,50 @@ const Edit = ({
       } catch (error) {
         console.error('Error updating user data:', error);
       }
+    }
+  };
+
+  const handleSendCode = () => {
+    setIsCodeSent(true);
+    alert('인증번호가 발송되었습니다.');
+  };
+
+  // 인증하기
+  const handleVerifyCode = () => {
+    if (verificationCode === '1234') {
+      setIsCodeVerified(true);
+      setFormValues((prev) => ({ ...prev, password: '' }));
+      setConfirmPassword('');
+      setVerificationCode('');
+      alert('인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.');
+    } else {
+      alert('인증번호가 올바르지 않습니다.');
+    }
+  };
+
+  const handleNewPasswordChange = (e) => {
+    const { value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      password: value,
+    }));
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    if (!passwordRegex.test(value)) {
+      setNewPasswordError('8자리 이상이며, 대소문자를 모두 포함해야 합니다.');
+    } else {
+      setNewPasswordError('');
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const { value } = e.target;
+    setConfirmPassword(value);
+
+    if (formValues.password !== value) {
+      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+    } else {
+      setConfirmPasswordError('');
     }
   };
 
@@ -145,7 +220,9 @@ const Edit = ({
             {isMenuOpen && (
               <CameraMenu>
                 <CameraMenuItem onClick={handlePhotoRegister}>사진 등록</CameraMenuItem>
-                <CameraMenuItemDelete onClick={handlePhotoDelete}>사진 삭제</CameraMenuItemDelete>
+                <CameraMenuItemDelete onClick={handlePhotoDelete}>
+                  사진 삭제
+                </CameraMenuItemDelete>
               </CameraMenu>
             )}
             <HiddenFileInput
@@ -176,6 +253,7 @@ const Edit = ({
               disabled={!isEditing}
             />
           </InfoRow>
+
           <InfoRow>
             <InfoLabel>닉네임</InfoLabel>
             <WideInput
@@ -186,16 +264,62 @@ const Edit = ({
               disabled={!isEditing}
             />
           </InfoRow>
+
           <InfoRow>
-            <InfoLabel>비밀번호</InfoLabel>
-            <WideInput
-              type="password"
-              name="password"
-              value={formValues.password}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
+            <InfoLabel>{isCodeVerified ? '새 비밀번호' : '비밀번호'}</InfoLabel>
+
+              <WideInput
+                type="password"
+                name="password"
+                value={formValues.password}
+                onChange={isCodeVerified ? handleNewPasswordChange : handleChange}
+                disabled={!isEditing}
+              />
+              {isCodeVerified && newPasswordError && (
+                <ErrorMessage>{newPasswordError}</ErrorMessage>
+              )}
+
+            {!isCodeVerified && (
+              <SameWidthButton onClick={handleSendCode} disabled={!isEditing}>
+                인증번호 발송
+              </SameWidthButton>
+            )}
           </InfoRow>
+
+          <InfoRow>
+            <InfoLabel>{isCodeVerified ? '비밀번호 확인' : '인증번호'}</InfoLabel>
+
+              {!isCodeVerified ? (
+                <WideInput
+                  type="text"
+                  name="verificationCode"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  disabled={!isEditing}
+                />
+              ) : (
+                <WideInput
+                  type="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  disabled={!isEditing}
+                />
+              )}
+              {isCodeVerified && confirmPasswordError && (
+                <ErrorMessage>{confirmPasswordError}</ErrorMessage>
+              )}
+
+            {!isCodeVerified && (
+              <SameWidthButton
+                onClick={handleVerifyCode}
+                disabled={!isEditing || !isCodeSent}
+              >
+                인증하기
+              </SameWidthButton>
+            )}
+          </InfoRow>
+
           <InfoRow>
             <InfoLabel>이름</InfoLabel>
             <WideInput
@@ -206,6 +330,7 @@ const Edit = ({
               disabled={!isEditing}
             />
           </InfoRow>
+
           <InfoRow>
             <InfoLabel>생년월일</InfoLabel>
             <DateInputWrapper>
@@ -235,6 +360,7 @@ const Edit = ({
               <span>일</span>
             </DateInputWrapper>
           </InfoRow>
+
           <InfoRow>
             <InfoLabel>전화번호</InfoLabel>
             <PhoneInputWrapper>
@@ -263,6 +389,7 @@ const Edit = ({
               />
             </PhoneInputWrapper>
           </InfoRow>
+
           <InfoRow>
             <InfoLabel>이메일</InfoLabel>
             <EmailInputWrapper>
@@ -307,7 +434,7 @@ const Header = styled.h1`
   font-size: 3rem;
   margin-bottom: 3.75rem;
   color: #333;
-  border-bottom: 0.125rem solid #D9D9D9;
+  border-bottom: 0.125rem solid #d9d9d9;
   padding-bottom: 2.5rem;
 `;
 
@@ -328,7 +455,7 @@ const ProfileImage = styled.img`
   height: 16.25rem;
   object-fit: cover;
   border-radius: 50%;
-  border: 1px solid #D0D0D0;
+  border: 1px solid #d0d0d0;
 `;
 
 const CameraIcon = styled.img`
@@ -345,8 +472,8 @@ const CameraMenu = styled.div`
   width: 13rem;
   bottom: -7.8rem;
   right: -8rem;
-  background: #CDCDCD;
-  border: 1px solid #D9D9D9;
+  background: #cdcdcd;
+  border: 1px solid #d9d9d9;
   border-radius: 0.5rem;
   padding: 0.5rem 0;
   z-index: 10;
@@ -365,7 +492,7 @@ const CameraMenuItem = styled.div`
 
 const CameraMenuItemDelete = styled(CameraMenuItem)`
   color: #ff4444;
-  border-top: 1px solid #D9D9D9;
+  border-top: 1px solid #d9d9d9;
 `;
 
 const HiddenFileInput = styled.input`
@@ -395,9 +522,9 @@ const ProfileEditButton = styled.button`
   top: 9.375rem;
   right: 0;
   padding: 1rem 2rem;
-  background-color: #01BCD4;
+  background-color: #01bcd4;
   color: white;
-  border: 0.125rem solid #01BCD4;
+  border: 0.125rem solid #01bcd4;
   border-radius: 0.5rem;
   font-size: 1.75rem;
   cursor: pointer;
@@ -421,6 +548,7 @@ const InfoRow = styled.div`
   border-bottom: 0.125rem solid #ddd;
   position: relative;
   top: -6.25rem;
+  gap: 1rem;
 `;
 
 const InfoLabel = styled.div`
@@ -431,16 +559,35 @@ const InfoLabel = styled.div`
 `;
 
 const WideInput = styled.input`
-  width: 46.625rem;
+  flex: 1;
+  width: calc(46.625rem - 14rem - 1rem);
   height: 4.5rem;
   color: #565656;
   font-size: 1.75rem;
   border: 0.125rem solid #adadad;
   border-radius: 0.5rem;
+  padding: 0 1rem;
 
   &:focus {
     outline: none;
     border-color: #00c2ff;
+  }
+`;
+
+const SameWidthButton = styled.button`
+  width: 13rem;
+  height: 4.5rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  background-color: white;
+  color: #01bcd4;
+  border: 0.125rem solid #01bcd4;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;
 
@@ -504,4 +651,12 @@ const ShortInput = styled.input`
     outline: none;
     border-color: #00c2ff;
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 1.4rem;
+  margin-top: 7rem; /* input 바로 아래로 띄우기 위해 top만 사용 */
+  margin-left: 20rem;
+  position: absolute;
 `;

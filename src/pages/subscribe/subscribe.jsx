@@ -44,9 +44,9 @@ const SubscribeWrapper = styled.div`
 `;
 
 const SubscribeContainer = styled.div`
-  padding: 3rem 3rem 0 3rem;
+  padding: 3vw 3vw 0 3vw;
   display: flex;
-  gap: 13rem;
+  gap: 5%;
   justify-content: center;
   align-items: center;
 `;
@@ -62,6 +62,10 @@ const SubscriptionCard = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 
   &:hover {
     background-color: rgb(15, 155, 180);

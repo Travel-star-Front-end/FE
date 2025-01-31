@@ -1,7 +1,8 @@
 // services/planetService.js
 import { API } from '../axios.js';
 
-export async function postPlanetName(name) {
+// 행성 설정
+export const postPlanetName = async (planetName) => {
   try {
     const authToken = localStorage.getItem("accessToken");
     const response = await API.post('/planet', { name }, 
@@ -17,7 +18,7 @@ export async function postPlanetName(name) {
     console.error('Error:', error);
     return null;
   }
-}
+};
 
 export async function patchPlanetName(id, name) {
   try {

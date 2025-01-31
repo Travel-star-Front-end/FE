@@ -1,15 +1,28 @@
 import styled from "styled-components";
+import RightArrow from '../assets/images/travel-post/right-arrow.png';
+import LeftArrow from '../assets/images/travel-post/left-arrow.png';
 
 export const Container = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    padding-bottom: 1vw;
+`;
+
+export const Hr = styled.hr`
+    width: 100%;
+    border: 0;
+    height: 0.05vw;
+    background-color: #D9D9D9;
+    margin-bottom: 2vw;
 `;
 
 export const InfoWrapper = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 1vw;
 `;
 
 export const Info = styled.div`
@@ -69,19 +82,28 @@ export const Button = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 6.05vw;//121px
-    height: 1.7vw;//34px
+    width: 6.05vw; // 121px
+    height: 1.7vw; // 34px
     border-radius: 15px;
-    background-color: #01BCD4;
-    color: white;
-
+    background-color: ${(props) => (props.$isFriend ? "white" : "#01BCD4")};
+    color: ${(props) => (props.$isFriend ? "#01BCD4" : "white")};
+    border: ${(props) => (props.$isFriend ? "1px solid #01BCD4" : "none")};
+    
     font-weight: 300;
     font-size: 0.8vw;
+    cursor: pointer;
 `;
+
 
 export const EditBtnContainer= styled.div`
     display: flex;
+    align-items: center;
     gap: 9px;
+
+    .lock-icon {
+        width: 1.15vw;
+        height: 1.15vw;
+    }
 
     .share-icon {
         width: 1.55vw;//31px
@@ -107,23 +129,60 @@ export const EditButton = styled.button`
 `;
 
 export const SliderWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 92%;
+    margin: 0 auto;
+    margin-bottom: 1vw;
+
     .slick-list {
         overflow: hidden;
+        padding: 0;
+    }
+
+    .slick-slider {
+        width: 100%;
+        position: relative;
     }
 
     .slick-track {
-        display: flex !important; /* 수평 레이아웃 유지 */
-        flex-wrap: nowrap; /* 슬라이드가 한 줄로 유지되도록 설정 */
+        width: 90%;
+        display: flex !important;
+        flex-wrap: nowrap;
     }
 
      .slick-slide {
-        width: 20vw !important; /* 슬라이드 항목 너비 강제 설정 */
-        margin-right: 8px;
+        width: 20vw !important;
+        height: 16.65vw !important;
+        margin-right: 0.4vw;
     }
 
-    .slick-prev::before,
-    .slick-next::before{
-        color: #9eb23b;
+    .slick-prev::before, .slick-next::before {
+        content: ''; /* 기본 화살표 제거 */
+    }
+
+    .slick-prev, .slick-next {
+        position: absolute;
+        top: 50%; /* 버튼 수직 중앙 정렬 */
+        transform: translateY(-50%);
+        z-index: 1000;
+        width: 2.5vw;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        background-size: 50% auto;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .slick-prev {
+        left: -4.1%;
+        background-image: url(${LeftArrow});
+    }
+
+    .slick-next {
+        right: -4%;
+        background-image: url(${RightArrow});
     }
 `;
 
@@ -143,12 +202,4 @@ export const QuickReview = styled.div`
     font-weight: 100;
     font-size: 1vw;
     color: #000000;
-`;
-
-export const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 1px;
-    background-color: #D9D9D9;
-    margin-bottom: 43px;
 `;

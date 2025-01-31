@@ -23,46 +23,48 @@ export const BannerContainer = styled.div`
 
 export const BannerInfo = styled.div`
     display: flex;
-    justify-content: space-between;
-    align-items:center;
+    flex-direction: column;
+    gap: 1.05vw;
     width: 100%;
-    padding: 0 50px;
 
+    padding: 0 2.35vw;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 1.15vw;
+
+    .title {
+        color: white;
+        font-weight: 400;
+        font-size: 1.8vw;
+        line-height: 2.1785vw;
+    }
 `;
 
 export const BannerHeader = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 1.5vw;
-    color: white;
-
-    .title {
-        font-weight: 400;
-        font-size: 1.8vw;
-        line-height: 43.57px;
-    }
+    justify-content: space-between;
+    align-items: center;
 `;
 
 export const InfoContainer = styled.div`
     display: flex;
+    align-items: center;
     gap: 1vw;
     padding-left: 0.3vw;//6px
     align-items:center;
+    color: white;
 
     .nickname{
         font-weight: 400;
         font-size: 1vw;
-        line-height: 24.86px;
+        line-height: 1.243vw;
         margin-bottom: 0.25vw;//5px
     }
     .planet-name{
         font-weight: 300;
         font-size: 0.7vw;
-        line-height: 21px;
+        line-height: 1.05vw;
     }
 `;
 
@@ -86,6 +88,24 @@ export const DetailInfo = styled.div`
 
 export const ToolbarContainer = styled.div`
     display: flex;
+    gap: 0.7vw;
+    position: relative;
+
+    .toolbar-icon{
+        width: 1.7vw;//34px
+        height: 1.7vw;
+        cursor: pointer;
+    }
+
+    .toolbar-icon2{
+        width: 1.95vw;
+        height: 1.95vw;
+        cursor: pointer;
+    }
+`;
+
+export const Toolbar = styled.div`
+    display: flex;
     justify-content: space-between;
     width: 13.8vw;//276px
     height: 2.5vw;//50px
@@ -94,12 +114,27 @@ export const ToolbarContainer = styled.div`
     background-color: rgba(255, 255, 255, 0.67);
     align-items:center;
     padding: 0 1vw;
+`;
 
-    .toolbar-icon{
-        width: 1.7vw;//34px
-        height: 1.7vw;
-        cursor: pointer;
-    }
+export const AddToolbar = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.55vw;
+    height: 2.55vw;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.67);
+`;
+
+export const FriendApplyContainer = styled.div`
+    z-index: 100;
+    position: absolute;
+    bottom: 3.1585vw;
+
+    width: 16.6vw;
+    height: 12vw;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
 `;
 
 export const DiaryContainer = styled.div`
@@ -115,13 +150,6 @@ export const Text = styled.div`
     color: #555555;
 `;
 
-export const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 1px;
-    background-color: #D9D9D9;
-`;
-
 export const PostWrapper = styled.div`
-    padding: 1.5vw 0;
+    width: 100%;
 `;
