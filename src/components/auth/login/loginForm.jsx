@@ -38,7 +38,7 @@ const LoginForm = () => {
 
             try {
                 const decodedToken = jwtDecode(accessToken);
-                // console.log("디코딩된 토큰: ", decodedToken);
+                console.log("디코딩된 토큰: ", decodedToken);
 
 
                 const userId = decodedToken?.id;
