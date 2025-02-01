@@ -7,11 +7,32 @@ import { patchPlanetName } from '../../apis/planet/planetService';
 import updateButton from '../../assets/images/planet/switchButton/updateButton.png';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import ConstellationViewer from '../../components/planet/ConstellationViewer';
+import { checkPlanetExists } from '../../apis/planet/planetService';
 
 const PlanetPage = () => {
   const globeRef = useRef();
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
+
+  // 행성 존재 여부 확인 --------------------------------------------------------------
+  // const [isPlanetExists, setIsPlanetExists] = useState(false); // 행성 존재 여부 상태
+  // const userId = localStorage.getItem('userId'); // 사용자 ID 가져오기
+
+  // useEffect(() => {
+  //   const fetchPlanetStatus = async () => {
+  //     if (userId) {
+  //       const exists = await checkPlanetExists(userId);
+  //       setIsPlanetExists(exists);
+  //     }
+  //   };
+  //   fetchPlanetStatus();
+  // }, [userId]);
+
+  // if (!isPlanetExists) {
+  //   return;
+  // }
+
+  //-------------------------------------------------------------------------------
 
   //행성 이름 관련 state와 localStorage 확인
   const [planetName, setPlanetName] = useState(
@@ -236,20 +257,25 @@ const PlanetPage = () => {
       return;
     }
 
-    // localStorage 갱신
-    localStorage.setItem('planetName', tempPlanetName);
-    setPlanetName(tempPlanetName);
-
-    // planetId가 있으면 PATCH
-    if (planetId) {
-      const success = await patchPlanetName(planetId, tempPlanetName);
-      if (!success) {
-        alert('행성 이름 수정에 실패했습니다.');
-      }
+    const userId = localStorage.getItem('userId'); // user_id 가져오기
+    if (!userId) {
+      alert('사용자 ID를 찾을 수 없습니다.');
+      return;
     }
 
-    // 수정 모드 해제
-    setShowModal(false);
+    // 서버로 변경된 행성 이름 전송
+    const success = await patchPlanetName(userId, tempPlanetName);
+    if (success) {
+      // 서버 통신 성공 시 로컬 스토리지에 저장
+      localStorage.setItem('planetName', tempPlanetName);
+
+      // 화면에 반영
+      setPlanetName(tempPlanetName);
+      alert('행성 이름이 성공적으로 변경되었습니다.');
+      setShowModal(false);
+    } else {
+      alert('행성 이름 수정에 실패했습니다.');
+    }
   };
 
   // 마커 관련

@@ -70,14 +70,14 @@ const signUpFn = async (formData) => {
     nickname: formData.nickName,
     password: formData.password,
     name: formData.name,
-    birth: birthDate, 
+    birth: birthDate,
     phonenum: phoneNumber,
     email: `${formData.emailUser}@${finalDomain}`,
   };
 
   try {
-    const response = await API.post('https://w94yrmif2m.execute-api.ap-northeast-2.amazonaws.com/prod/register', payload);
-    
+    const response = await API.post('/register', payload);
+
     console.log('응답 데이터(요청 함수 내부):', response.data);
     return response.data;
   } catch (error) {
@@ -238,7 +238,9 @@ const SignUp = () => {
                     중복확인
                   </CheckButton>
                 </InputWrapper>
-                {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
+                {errors.userId && (
+                  <ErrorText>{errors.userId.message}</ErrorText>
+                )}
               </InputContainer>
             </FormGroup>
 
