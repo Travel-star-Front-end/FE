@@ -12,9 +12,11 @@ const ToggleData = [
     },
     { 
        "id": 2, 
-        "name": "보관하기", 
+        "name": "보관하기",
+        "name2": "보관됨",
         "endpoint": "/posts",
         "method": "put",
+        "image": images["save"],
         "image": images["save"],
     },
     { 
