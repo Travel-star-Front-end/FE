@@ -207,17 +207,17 @@ export const DeleteImg = styled.img`
 export const ModalOverlay = styled.div`
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100vw;
+    left: 15vw;
+    width: calc(100% - 15vw);
     height: 100vh;
     background: rgba(217, 217, 217, 0.45);
     display: flex;
-    align-items: center;
     justify-content: center;
     z-index: 1000;
 `;
 
 export const ModalContainer = styled.div`
+    margin-top: 24.45vw;
     width: 31.55vw;
     height: 9.65vw;
     border-radius: 0.75vw;
