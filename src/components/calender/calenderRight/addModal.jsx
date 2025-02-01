@@ -1,167 +1,144 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import colors from "../../../styles/common/colors";
-import deleteButton from "../../../assets/images/deleteButton.png"; 
+import Trash from "../../../assets/images/calender/trash.png";
+import ModalTime from "./modalTime";
+import { API } from "../../../apis/axios";
 
-const ModalContent = styled.div`
-  background: #eeeeee;
-  padding: 2vw;
-  position: fixed;
-  bottom: 2vw;
-  right: 4.2vw;
-  width: 23vw;
-  height: 18vw;
-  border-radius: 15px;
-  z-index: 1001;
-
-  &:click {
-    stopPropagation();
-  }
-`;
-
-const InputGroup = styled.div`
-  margin-bottom: 1.5vw;
-`;
-
-const TimeLabelRow = styled.div`
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;
-  margin-bottom: 1vw;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-`;
-
-const DeleteIcon = styled.img`
-  width: 1.2vw;
-  height: 1.2vw;
-  cursor: pointer;
-`;
-
-const Select = styled.select`
-  padding: 0.5vw;
-  border: 1px solid ${colors.calenderGray};
-  border-radius: 0.3vw;
-  font-size: 1vw;
-  background-color: white;
-  width: 13rem;
-`;
-
-const EventInput = styled.input`
-  flex: 1;
-  padding: 0.5vw;
-  border: 1px solid ${colors.calenderGray};
-  border-radius: 0.3vw;
-  font-size: 1vw;
+const AddModalContainer = styled.div`
   width: 100%;
-  background-color: white;
-  margin-top: 0.8vw;
+  height: 16.7vw;
+  border-radius: 0.75vw;
+  background: ${colors.calenderGray5};
+  padding: 0 0.6vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3vw;
 `;
 
-const ButtonContainer = styled.div`
+const TimeContainer = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
-const ModalButton = styled.button`
-  flex: 1;
-  margin-right: 0.5rem;
-  background-color: #01bcd4;
-  color: #fff;
-  border: none;
-  padding: 1rem;
-  border-radius: 5px;
-  font-size: 2rem;
+const TitleP = styled.p`
+  font-size: 0.9vw;
+  font-weight: 700;
+  color: ${colors.sideBarGray2};
+`;
+
+const TrashImg = styled.img`
+  width: 0.85vw;
+  height: 0.9vw;
   cursor: pointer;
-  font-weight: bold;
+`;
+
+const TimeSelectContainer = styled.div`
+  display: flex;
+  gap: 1.6vw;
+  align-items: center;
+`;
+
+const TimeSelectInnerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.45vw;
+`;
+
+const PlaceInput = styled.input`
+  width: 100%;
+  height: 1.65vw;
+  border-radius: 0.25vw;
+  background: ${colors.white};
+  font-size: 0.8vw;
+  font-weight: 500;
+  color: ${colors.sideBarGray2};
+  padding-left: 0.3vw;
+`;
+
+const AddButton = styled.button`
+  width: 9.6vw;
+  height: 1.4vw;
+  border-radius: 0.25vw;
+  background: ${colors.main};
+  cursor: pointer;
+  font-size: 0.8vw;
+  font-weight: 700;
+  color: ${colors.white};
+  margin-top: 0.45vw;
+  border: none;
 
   &:hover {
-    background-color: #00a0bb;
+    background: ${colors.mainDark};
   }
 `;
 
-const InputLabel = styled.label`
-  font-size: 1vw;
-  font-weight: bold;
-  color: black;
-`;
-
-const AddModal = ({ onClose, onAdd }) => {
-  const [hour, setHour] = useState("12");
+const AddModal = ({ onClose, selectedDay }) => {
+  const [period, setPeriod] = useState("오전");
+  const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
-  const [amPm, setAmPm] = useState("오전");
-  const [event, setEvent] = useState("");
+  const [location, setLocation] = useState("");
 
-  const handleSave = () => {
-    const newTime = `${hour}:${minute} ${amPm === "오전" ? "AM" : "PM"}`;
+  const formatNumber = (num) => String(num).padStart(2, "0");
 
-    const newItem = {
-      id: Date.now(), 
-      time: newTime,
-      event,
-    };
+  const handleSubmit = async () => {
+    try {
+      if (!location.trim()) {
+        alert("장소를 입력하세요.");
+        return;
+      }
 
-    onAdd(newItem);
-    onClose();
+      let hour24 = parseInt(hour, 10);
+      if (period === "오후" && hour24 !== 12) {
+        hour24 += 12;
+      } else if (period === "오전" && hour24 === 12) {
+        hour24 = 0;
+      }
+
+      const formattedDateTime = new Date(`${selectedDay}T${formatNumber(hour24)}:${minute}:00Z`).toISOString();
+
+      const requestData = {
+        location,
+        date_time: formattedDateTime,
+      };
+
+      console.log("데이터:", requestData);
+
+      await API.post("/users", requestData);
+
+      alert("일정이 추가되었습니다!");
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("일정 추가 중 오류가 발생했습니다.");
+    }
   };
 
   return (
-    <ModalContent onClick={(e) => e.stopPropagation()}>
-      <InputGroup>
-        <TimeLabelRow>
-          <InputLabel>시간</InputLabel>
-          <DeleteIcon src={deleteButton} alt="닫기" onClick={onClose} />
-        </TimeLabelRow>
-        <InputContainer>
-          <Select value={amPm} onChange={(e) => setAmPm(e.target.value)}>
-            <option value="오전">AM</option>
-            <option value="오후">PM</option>
-          </Select>
+    <AddModalContainer>
+      <TimeContainer>
+        <TitleP>시간</TitleP>
+        <TrashImg src={Trash} onClick={onClose} alt="delete" />
+      </TimeContainer>
 
-          <Select value={hour} onChange={(e) => setHour(e.target.value)}>
-            {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => {
-              const val = num < 10 ? `0${num}` : `${num}`;
-              return (
-                <option key={val} value={val}>
-                  {val}
-                </option>
-              );
-            })}
-          </Select>
+      <TimeSelectContainer>
+        <ModalTime value={period} onChange={setPeriod} options={["오전", "오후"]} />
+        <TimeSelectInnerContainer>
+          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={Array.from({ length: 12 }, (_, i) => formatNumber(i + 1))} />
+          <TitleP style={{ color: colors.black }}>:</TitleP>
+          <ModalTime value={minute} onChange={(value) => setMinute(formatNumber(value))} options={Array.from({ length: 60 }, (_, i) => formatNumber(i))} />
+        </TimeSelectInnerContainer>
+      </TimeSelectContainer>
 
-          <span>:</span>
+      <TitleP style={{ marginTop: "6.35vw", width: "100%" }}>장소</TitleP>
+      <PlaceInput value={location} onChange={(e) => setLocation(e.target.value)} placeholder="장소를 입력하세요" />
 
-          <Select value={minute} onChange={(e) => setMinute(e.target.value)}>
-            {Array.from({ length: 60 }, (_, i) => i).map((num) => {
-              const val = num < 10 ? `0${num}` : `${num}`;
-              return (
-                <option key={val} value={val}>
-                  {val}
-                </option>
-              );
-            })}
-          </Select>
-        </InputContainer>
-      </InputGroup>
-
-      <InputGroup>
-        <InputLabel>장소</InputLabel>
-        <EventInput
-          type="text"
-          value={event}
-          onChange={(e) => setEvent(e.target.value)}
-          placeholder="일정을 입력하세요"
-        />
-      </InputGroup>
-
-      <ButtonContainer>
-        <ModalButton onClick={handleSave}>추가</ModalButton>
-      </ButtonContainer>
-    </ModalContent>
+      <AddButton onClick={handleSubmit}>완료</AddButton>
+    </AddModalContainer>
   );
 };
 

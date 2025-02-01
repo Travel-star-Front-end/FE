@@ -3,20 +3,26 @@ import styled from "styled-components";
 import colors from "../../../styles/common/colors";
 import ListCalender from "./list-calender";
 import useFetch from "../../../hooks/useFetch";
-import PlusButtonImage from "../../../assets/images/add.png";
-import Modal from "./addModal"; 
+import PlusButtonImage from "../../../assets/images/calender/add.png";
+import AddModal from "./addModal";
 
 const CalenderRightContainer = styled.div`
   width: 33%;
   padding-top: 2.25vw;
   display: flex;
   justify-content: flex-end;
-  position: relative;
 `;
 
 const InnerCalenderRightContainer = styled.div`
   width: 92%;
+  position: relative;
 `;
+
+const PContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
 
 const RightP = styled.p`
   font-size: 1.2vw;
@@ -25,22 +31,30 @@ const RightP = styled.p`
 `;
 
 const PlusButton = styled.img`
-  width: 2.5vw;
-  height: 2.5vw;
+  width: 1.625vw;
+  height: 1.625vw;
   cursor: pointer;
+`;
+
+const NotP = styled.p`
+  width: 100%;
+  text-align: center;
+  font-size: 1vw;
+  font-weight: 400;
+  color: ${colors.sideBarGray2};
+  opacity: 0.5;
+  margin-top: 10.55vw;
+`
+
+const ModalContainer = styled.div`
   position: absolute;
-  top: 3.2vw;
-  right: 0vw;
+  width: 100%;
+  bottom: 3.15vw;
 `;
 
 const CalenderRight = ({ selectedDay }) => {
   const { data, loading, error } = useFetch("/users");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [scheduleList, setScheduleList] = useState([]);
-
-  const addSchedule = (newItem) => {
-    setScheduleList(prevList => [...prevList, newItem]);
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -52,27 +66,28 @@ const CalenderRight = ({ selectedDay }) => {
     <CalenderRightContainer>
       <InnerCalenderRightContainer>
         <RightP>일정작성</RightP>
-        <RightP style={{ fontSize: "1vw", fontWeight: "600", marginTop: "0.8vw" }}>
-          {formatDate(selectedDay)}
-        </RightP>
-        <PlusButton
-          src={PlusButtonImage}
-          alt="추가 버튼"
-          onClick={() => setIsModalOpen(true)}
-        />
-        <ListCalender 
-          data={data} 
-          selectedDay={selectedDay} 
-          scheduleList={scheduleList}
-          setScheduleList={setScheduleList}
-        />
+
+        <PContainer>
+          <RightP style={{ fontSize: "1vw", fontWeight: "600", marginTop: "0.8vw" }}>
+            {formatDate(selectedDay)}
+          </RightP>
+          <PlusButton src={PlusButtonImage} alt="추가 버튼" onClick={() => setIsModalOpen(true)} />
+        </PContainer>
+
+        {data && Array.isArray(data) && data.length > 0 ? (
+          <ListCalender data={data} selectedDay={selectedDay} />
+        ) : (
+          <NotP>등록된 일정이 없습니다.</NotP>
+        )}
+
+        {isModalOpen && (
+          <ModalContainer>
+            <AddModal onClose={() => setIsModalOpen(false)} selectedDay={selectedDay}/>
+          </ModalContainer>
+        )}
+
       </InnerCalenderRightContainer>
-      {isModalOpen && (
-        <Modal 
-          onClose={() => setIsModalOpen(false)} 
-          onAdd={addSchedule}
-        />
-      )}
+
     </CalenderRightContainer>
   );
 };
