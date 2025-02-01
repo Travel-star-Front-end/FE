@@ -14,7 +14,7 @@ const ListContainer = styled.div`
 const TitleContainer = styled.div`
     width: 100%;
     height: 2.15vw;
-    background: ${({ isEditVisible }) => (isEditVisible ? colors.subMain : colors.white)};
+    background: ${({ editvisible }) => (editvisible === "true" ? colors.subMain : colors.white)};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,22 +61,26 @@ const EditButton = styled.button`
     font-weight: 500;
     color: ${colors.calenderGray4};
     cursor: pointer;
-    display: ${({ visible }) => (visible ? "inline-block" : "none")};
+    display: ${({ visible }) => (visible === "true" ? "inline-block" : "none")};
 `;
 
-const ListCalender = ({ data, onOpenPlaceModal }) => { 
+const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => { 
     const [selectedId, setSelectedId] = useState(null);
-    const [isEditVisible, setIsEditVisible] = useState(false);
+    const [editVisible, setEditVisible] = useState(false);
 
     const safeData = Array.isArray(data) ? data : []; 
 
     const handleItemClick = (id) => {
         setSelectedId(id);
-        setIsEditVisible(false);
+        setEditVisible(false);
+    };
+
+    const handleEditClick = (id) => {
+        onOpenEditModal(id);
     };
 
     const handleTitleClick = () => {
-        setIsEditVisible(true);
+        setEditVisible(true);
         setSelectedId(null);
     };
 
@@ -90,13 +94,13 @@ const ListCalender = ({ data, onOpenPlaceModal }) => {
 
     return (
         <>
-            <TitleContainer isEditVisible={isEditVisible} onClick={handleTitleClick}>
+            <TitleContainer editvisible={editVisible.toString()} onClick={handleTitleClick}>
                 <TitleInnerContainer>
                     <LeftContainer>
                         <TitleP>{title}</TitleP>
                         <TitleP2>{subTitle}</TitleP2>
                     </LeftContainer>
-                    <EditButton visible={isEditVisible} onClick={handlePlaceModalOpen}>수정</EditButton>
+                    <EditButton visible={editVisible.toString()} onClick={handlePlaceModalOpen}>수정</EditButton>
                 </TitleInnerContainer>
             </TitleContainer>
 
@@ -108,11 +112,11 @@ const ListCalender = ({ data, onOpenPlaceModal }) => {
                         title={item.email}
                         selected={selectedId === item.id} 
                         onItemClick={() => handleItemClick(item.id)} 
+                        onEditClick={handleEditClick}
                     />
                 ))}
             </ListContainer>
         </>
-
     );
 };
 

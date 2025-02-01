@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "../../../styles/common/colors";
 import ListCalender from "./list-calender";
@@ -6,6 +6,7 @@ import useFetch from "../../../hooks/useFetch";
 import PlusButtonImage from "../../../assets/images/calender/add.png";
 import AddModal from "./addModal";
 import PlaceModal from "./placeModal";
+import EditModal from "./editModal";
 
 const CalenderRightContainer = styled.div`
   width: 33%;
@@ -58,7 +59,11 @@ const CalenderRight = ({ selectedDay }) => {
   const [modalType, setModalType] = useState(null);
   const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
+  const [editItemId, setEditItemId] = useState(null);
 
+  useEffect(() => {
+    console.log("선택 날짜 변경: ", selectedDay);
+  }, [selectedDay]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -70,6 +75,11 @@ const CalenderRight = ({ selectedDay }) => {
     setTitle(title);
     setSubTitle(subTitle);
     setModalType("place");
+  };
+
+  const handleEditModalOpen = (id) => {
+    setEditItemId(id);
+    setModalType("edit");
   };
 
   return (
@@ -85,7 +95,7 @@ const CalenderRight = ({ selectedDay }) => {
         </PContainer>
 
         {data && Array.isArray(data) && data.length > 0 ? (
-          <ListCalender data={data} selectedDay={selectedDay} onOpenPlaceModal={handlePlaceModalOpen}/>
+          <ListCalender data={data} selectedDay={selectedDay} onOpenPlaceModal={handlePlaceModalOpen} onOpenEditModal={handleEditModalOpen}/>
         ) : (
           <NotP>등록된 일정이 없습니다.</NotP>
         )}
@@ -94,6 +104,7 @@ const CalenderRight = ({ selectedDay }) => {
           <ModalContainer>
             {modalType === "add" && <AddModal onClose={() => setModalType(null)} selectedDay={selectedDay} />}
             {modalType === "place" && <PlaceModal onClose={() => setModalType(null)} selectedDay={selectedDay} title={title} subTitle={subTitle} />}
+            {modalType === "edit" && <EditModal onClose={() => setModalType(null)} selectedDay={selectedDay} id={editItemId}/>}
           </ModalContainer>
         )}
 

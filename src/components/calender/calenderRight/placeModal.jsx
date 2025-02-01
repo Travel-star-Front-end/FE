@@ -76,7 +76,8 @@ const PlaceModal = ({ title, subTitle, selectedDay, onClose }) => {
         subTitle: modalSubTitle,
       });
 
-      // console.log("response", response.data);
+      console.log("response", response.data);
+      alert("일지 제목이 수정되었습니다.");
       onClose();
     } catch (error) {
       console.error("서버 에러:", error);

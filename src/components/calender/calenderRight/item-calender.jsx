@@ -57,7 +57,7 @@ const EditButton = styled.button`
     display: ${({ selected }) => (selected ? "inline-block" : "none")};
 `
 
-const ItemCalender = ({ id, title, selected, onItemClick }) => {
+const ItemCalender = ({ id, title, selected, onItemClick, onEditClick }) => {
     return (
         <ItemContainer selected={selected} onClick={onItemClick}>
             <ItemInnerContainer>
@@ -66,7 +66,7 @@ const ItemCalender = ({ id, title, selected, onItemClick }) => {
                     <ItemP>{id}</ItemP>
                     <ItemP2>{title}</ItemP2>
                 </LeftContainer>
-                <EditButton selected={selected}>수정</EditButton>
+                <EditButton selected={selected} onClick={(e) => { e.stopPropagation(); onEditClick(id, title); }}>수정</EditButton>
             </ItemInnerContainer>
         </ItemContainer>
     )

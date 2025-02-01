@@ -85,6 +85,20 @@ const AddModal = ({ onClose, selectedDay }) => {
 
   const formatNumber = (num) => String(num).padStart(2, "0");
 
+  // 오전: 00~11, 오후: 12~23 시간 옵션 반환
+  const getHourOptions = (period) => {
+    if (period === "오전") {
+      return Array.from({ length: 12 }, (_, i) => formatNumber(i)); // 00 ~ 11
+    } else {
+      return Array.from({ length: 12 }, (_, i) => formatNumber(i + 12)); // 12 ~ 23
+    }
+  };
+
+  // 시간 변환 로직 (24시간 형식 그대로 반환)
+  const convertTo24Hour = (hour) => {
+    return String(parseInt(hour, 10)).padStart(2, "0");
+  };
+
   const handleSubmit = async () => {
     try {
       if (!location.trim()) {
@@ -92,14 +106,23 @@ const AddModal = ({ onClose, selectedDay }) => {
         return;
       }
 
-      let hour24 = parseInt(hour, 10);
-      if (period === "오후" && hour24 !== 12) {
-        hour24 += 12;
-      } else if (period === "오전" && hour24 === 12) {
-        hour24 = 0;
+      if (!selectedDay || isNaN(new Date(selectedDay).getTime())) {
+        alert("유효하지 않은 날짜입니다.");
+        return;
       }
 
-      const formattedDateTime = new Date(`${selectedDay}T${formatNumber(hour24)}:${minute}:00Z`).toISOString();
+      const hour24 = convertTo24Hour(hour);
+      const dateTimeString = `${selectedDay}T${hour24}:${minute}:00`;
+
+      console.log("날짜 시간 문자열:", dateTimeString);
+      const dateObj = new Date(dateTimeString);
+      
+      if (isNaN(dateObj.getTime())) {
+        alert("날짜 또는 시간이 유효하지 않습니다.");
+        return;
+      }
+
+      const formattedDateTime = dateObj.toISOString();
 
       const requestData = {
         location,
@@ -110,7 +133,7 @@ const AddModal = ({ onClose, selectedDay }) => {
 
       await API.post("/users", requestData);
 
-      alert("일정이 추가되었습니다!");
+      alert("일정이 추가되었습니다.");
       onClose();
     } catch (error) {
       console.error("Error:", error);
@@ -128,7 +151,7 @@ const AddModal = ({ onClose, selectedDay }) => {
       <TimeSelectContainer>
         <ModalTime value={period} onChange={setPeriod} options={["오전", "오후"]} />
         <TimeSelectInnerContainer>
-          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={Array.from({ length: 12 }, (_, i) => formatNumber(i + 1))} />
+          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={getHourOptions(period)}/>
           <TitleP style={{ color: colors.black }}>:</TitleP>
           <ModalTime value={minute} onChange={(value) => setMinute(formatNumber(value))} options={Array.from({ length: 60 }, (_, i) => formatNumber(i))} />
         </TimeSelectInnerContainer>
