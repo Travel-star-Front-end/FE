@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import colors from "../../../styles/common/colors";
-import deleteButton from "../../../assets/images/deleteButton.png";
+import deleteButton from "../../../assets/images/deleteButton.png"; 
 
 const ModalContent = styled.div`
   background: #eeeeee;
@@ -14,17 +14,32 @@ const ModalContent = styled.div`
   border-radius: 15px;
   z-index: 1001;
 
+  &:click {
+    stopPropagation();
+  }
 `;
 
 const InputGroup = styled.div`
   margin-bottom: 1.5vw;
 `;
 
+const TimeLabelRow = styled.div`
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 1vw;
+`;
+
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5vw;
-  margin-bottom: 1vw;
+`;
+
+const DeleteIcon = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
+  cursor: pointer;
 `;
 
 const Select = styled.select`
@@ -33,7 +48,6 @@ const Select = styled.select`
   border-radius: 0.3vw;
   font-size: 1vw;
   background-color: white;
-  margin-top: 1vw;
   width: 13rem;
 `;
 
@@ -70,57 +84,44 @@ const ModalButton = styled.button`
   }
 `;
 
-const DeleteIcon = styled.img`
-  position: absolute;
-  top: 2.15vw;
-  right: 2.1vw;
-  width: 1.2vw;
-  height: 1.2vw;
-  cursor: pointer;
-`;
-
 const InputLabel = styled.label`
   font-size: 1vw;
   font-weight: bold;
   color: black;
 `;
 
-const EditModal = ({ item, onSave, onDelete, onClose }) => {
+const AddModal = ({ onClose, onAdd }) => {
   const [hour, setHour] = useState("12");
   const [minute, setMinute] = useState("00");
   const [amPm, setAmPm] = useState("오전");
-  const [event, setEvent] = useState(item.event || "");
-
-  useEffect(() => {
-    if (item.time) {
-      const [timePart, meridiem] = item.time.split(" "); 
-      const [h, m] = timePart.split(":"); 
-      setHour(h);
-      setMinute(m);
-      setAmPm(meridiem === "AM" ? "오전" : "오후");
-    }
-  }, [item]);
+  const [event, setEvent] = useState("");
 
   const handleSave = () => {
     const newTime = `${hour}:${minute} ${amPm === "오전" ? "AM" : "PM"}`;
-    onSave({
-      ...item,
-      event,
+
+    const newItem = {
+      id: Date.now(), 
       time: newTime,
-    });
+      event,
+    };
+
+    onAdd(newItem);
+    onClose();
   };
 
   return (
     <ModalContent onClick={(e) => e.stopPropagation()}>
-      <DeleteIcon src={deleteButton} alt="삭제" onClick={() => onDelete(item.id)} />
-
       <InputGroup>
-        <InputLabel>시간</InputLabel>
+        <TimeLabelRow>
+          <InputLabel>시간</InputLabel>
+          <DeleteIcon src={deleteButton} alt="닫기" onClick={onClose} />
+        </TimeLabelRow>
         <InputContainer>
           <Select value={amPm} onChange={(e) => setAmPm(e.target.value)}>
             <option value="오전">AM</option>
             <option value="오후">PM</option>
           </Select>
+
           <Select value={hour} onChange={(e) => setHour(e.target.value)}>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => {
               const val = num < 10 ? `0${num}` : `${num}`;
@@ -131,7 +132,9 @@ const EditModal = ({ item, onSave, onDelete, onClose }) => {
               );
             })}
           </Select>
+
           <span>:</span>
+
           <Select value={minute} onChange={(e) => setMinute(e.target.value)}>
             {Array.from({ length: 60 }, (_, i) => i).map((num) => {
               const val = num < 10 ? `0${num}` : `${num}`;
@@ -156,10 +159,10 @@ const EditModal = ({ item, onSave, onDelete, onClose }) => {
       </InputGroup>
 
       <ButtonContainer>
-        <ModalButton onClick={handleSave}>완료</ModalButton>
+        <ModalButton onClick={handleSave}>추가</ModalButton>
       </ButtonContainer>
     </ModalContent>
   );
 };
 
-export default EditModal;
+export default AddModal;
