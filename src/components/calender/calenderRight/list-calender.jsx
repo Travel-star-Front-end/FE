@@ -1,68 +1,7 @@
 import { useState } from "react";
 import useFetch from "../../../hooks/useFetch";
-import styled from "styled-components";
-import colors from "../../../styles/common/colors";
+import * as s from "../../../styles/calender/calender";
 import ItemCalender from "./item-calender";
-
-const ListContainer = styled.div`
-    width: 100%;
-    height: 27.85vw;
-    overflow-y: scroll;
-    border: 0.05vw solid ${colors.calenderGray};
-`;
-
-const TitleContainer = styled.div`
-    width: 100%;
-    height: 2.15vw;
-    background: ${({ editvisible }) => (editvisible === "true" ? colors.subMain : colors.white)};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    margin-top: 1.2vw;
-`;
-
-const TitleInnerContainer = styled.div`
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const LeftContainer = styled.div`
-    width: calc(100% - 3vw);
-    display: flex;
-    align-items: center;
-`;
-
-const TitleP = styled.p`
-    width: 25%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.9vw;
-    font-weight: 600;
-    color: ${colors.black};
-`;
-
-const TitleP2 = styled(TitleP)`
-    font-size: 0.5vw;
-    width: 100%;
-    padding-right: 1vw;
-`;
-
-const EditButton = styled.button`
-    width: 3vw;
-    height: 1.3vw;
-    background: ${colors.homeGray};
-    border: none;
-    border-radius: 0.25vw;
-    font-size: 0.8vw;
-    font-weight: 500;
-    color: ${colors.calenderGray4};
-    cursor: pointer;
-    display: ${({ visible }) => (visible === "true" ? "inline-block" : "none")};
-`;
 
 const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => { 
     const [selectedId, setSelectedId] = useState(null);
@@ -94,17 +33,17 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
 
     return (
         <>
-            <TitleContainer editvisible={editVisible.toString()} onClick={handleTitleClick}>
-                <TitleInnerContainer>
-                    <LeftContainer>
-                        <TitleP>{title}</TitleP>
-                        <TitleP2>{subTitle}</TitleP2>
-                    </LeftContainer>
-                    <EditButton visible={editVisible.toString()} onClick={handlePlaceModalOpen}>수정</EditButton>
-                </TitleInnerContainer>
-            </TitleContainer>
+            <s.TitleContainer editvisible={editVisible.toString()} onClick={handleTitleClick}>
+                <s.TitleInnerContainer>
+                    <s.LeftContainer>
+                        <s.TitleP>{title}</s.TitleP>
+                        <s.TitleP2>{subTitle}</s.TitleP2>
+                    </s.LeftContainer>
+                    <s.EditButton visible={editVisible.toString()} onClick={handlePlaceModalOpen}>수정</s.EditButton>
+                </s.TitleInnerContainer>
+            </s.TitleContainer>
 
-            <ListContainer>
+            <s.ListContainer>
                 {safeData.map((item, index) => (
                     <ItemCalender 
                         key={index}
@@ -115,7 +54,7 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
                         onEditClick={handleEditClick}
                     />
                 ))}
-            </ListContainer>
+            </s.ListContainer>
         </>
     );
 };
