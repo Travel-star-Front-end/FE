@@ -15,6 +15,7 @@ import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
 import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
+import Modal from "./modal/modal";
 import IframePlayer from "./iframePlayer";
 
 const WriteForm = () => {
@@ -30,6 +31,7 @@ const WriteForm = () => {
     const [content, setContent] = useState("");
     const [feeling, setFeeling] = useState("");
     const [iframeUrl, setIframeUrl] = useState("");
+    const [subscribeModal, setSubscribeModal] = useState(false);
     const navigate = useNavigate();
 
     // 이미지 선택
@@ -134,9 +136,11 @@ const WriteForm = () => {
             </s.SearchContainer>
 
             <s.SearchContainer>
-                <WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} />
+                <WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} onClick={() => setSubscribeModal(true)}/>
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
             </s.SearchContainer>
+
+            {subscribeModal && <Modal onClose={() => setSubscribeModal(false)} />}
 
             <IframePlayer iframeUrl={iframeUrl} />
 

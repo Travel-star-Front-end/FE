@@ -202,3 +202,60 @@ export const DeleteImg = styled.img`
     position: absolute;
     right: 0;
 `;
+
+// Modal
+export const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(217, 217, 217, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+`;
+
+export const ModalContainer = styled.div`
+    width: 31.55vw;
+    height: 9.65vw;
+    border-radius: 0.75vw;
+    background: ${colors.white};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+`;
+
+export const CloseImg = styled.img`
+    position: absolute;
+    top: 0.5vw;
+    right: 0.8vw;
+    cursor: pointer;
+    width: 0.65vw;
+    height: 0.65vw;
+`;
+
+export const ModalP = styled.p`
+    font-size: 1vw;
+    font-weight: 600;
+    color: ${colors.sideBarGray2};
+    text-align: center;
+    margin-top: 2.15vw;
+`
+
+export const SubscribeButton = styled.div`
+    width: 12.55vw;
+    height: 2.1vw;
+    border-radius: 0.25vw;
+    background: ${colors.main};
+    font-size: 1vw;
+    font-weight: 700;
+    color: ${colors.white};
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.55vw;
+`
