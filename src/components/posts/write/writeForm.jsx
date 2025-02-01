@@ -13,7 +13,6 @@ import ListLocation from "./list-location";
 import ListMusic from "./list-music";
 import useLocation from "../../../hooks/useLocation";
 import useMusic from "../../../hooks/useMusic";
-import Menu from "../../../assets/images/posts/write/menu.png";
 import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
 import IframePlayer from "./iframePlayer";
@@ -117,8 +116,7 @@ const WriteForm = () => {
     return (
         <s.FormContainer>
             <s.TitleContainer>
-                <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
-                <s.MenuImg src={Menu} alt="menu" />
+                <WriteInput width="100%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
             </s.TitleContainer>
 
             <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
