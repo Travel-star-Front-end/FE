@@ -15,7 +15,7 @@ const ItemContainer = styled.div`
 const ItemInnerContainer = styled.div`
     width: 90%;
     display: flex;
-    justify-contnet: space-between;
+    justify-content: space-between;
     align-items: center;
 `
 
@@ -30,11 +30,18 @@ const ItemP = styled.p`
     font-weight: 500;
     color: ${colors.black};
     width: 25%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `
 
 const ItemP2 = styled(ItemP)`
     font-size: 0.8vw;
     width: 100%;
+    padding-right: 1vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `
 
 const EditButton = styled.button`
@@ -50,13 +57,14 @@ const EditButton = styled.button`
     display: ${({ selected }) => (selected ? "inline-block" : "none")};
 `
 
-const ItemCalender = ({ id, username, selected, onItemClick }) => {
+const ItemCalender = ({ id, title, selected, onItemClick }) => {
     return (
         <ItemContainer selected={selected} onClick={onItemClick}>
             <ItemInnerContainer>
                 <LeftContainer>
+                    {/* 나중에 백엔드 명세서 보고 id -> 시간으로 바꾸기 */}
                     <ItemP>{id}</ItemP>
-                    <ItemP2>{username}</ItemP2>
+                    <ItemP2>{title}</ItemP2>
                 </LeftContainer>
                 <EditButton selected={selected}>수정</EditButton>
             </ItemInnerContainer>

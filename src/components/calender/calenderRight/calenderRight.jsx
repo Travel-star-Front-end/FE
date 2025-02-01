@@ -5,6 +5,7 @@ import ListCalender from "./list-calender";
 import useFetch from "../../../hooks/useFetch";
 import PlusButtonImage from "../../../assets/images/calender/add.png";
 import AddModal from "./addModal";
+import PlaceModal from "./placeModal";
 
 const CalenderRightContainer = styled.div`
   width: 33%;
@@ -22,7 +23,7 @@ const PContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const RightP = styled.p`
   font-size: 1.2vw;
@@ -44,7 +45,7 @@ const NotP = styled.p`
   color: ${colors.sideBarGray2};
   opacity: 0.5;
   margin-top: 10.55vw;
-`
+`;
 
 const ModalContainer = styled.div`
   position: absolute;
@@ -54,12 +55,21 @@ const ModalContainer = styled.div`
 
 const CalenderRight = ({ selectedDay }) => {
   const { data, loading, error } = useFetch("/users");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null);
+  const [title, setTitle] = useState('');
+  const [subTitle, setSubTitle] = useState('');
+
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: "numeric", month: "long", day: "numeric" };
     return date.toLocaleDateString("ko-KR", options);
+  };
+
+  const handlePlaceModalOpen = (title, subTitle) => {
+    setTitle(title);
+    setSubTitle(subTitle);
+    setModalType("place");
   };
 
   return (
@@ -71,23 +81,23 @@ const CalenderRight = ({ selectedDay }) => {
           <RightP style={{ fontSize: "1vw", fontWeight: "600", marginTop: "0.8vw" }}>
             {formatDate(selectedDay)}
           </RightP>
-          <PlusButton src={PlusButtonImage} alt="추가 버튼" onClick={() => setIsModalOpen(true)} />
+          <PlusButton src={PlusButtonImage} alt="추가 버튼" onClick={() => setModalType("add")}/>
         </PContainer>
 
         {data && Array.isArray(data) && data.length > 0 ? (
-          <ListCalender data={data} selectedDay={selectedDay} />
+          <ListCalender data={data} selectedDay={selectedDay} onOpenPlaceModal={handlePlaceModalOpen}/>
         ) : (
           <NotP>등록된 일정이 없습니다.</NotP>
         )}
 
-        {isModalOpen && (
+        {modalType && (
           <ModalContainer>
-            <AddModal onClose={() => setIsModalOpen(false)} selectedDay={selectedDay}/>
+            {modalType === "add" && <AddModal onClose={() => setModalType(null)} selectedDay={selectedDay} />}
+            {modalType === "place" && <PlaceModal onClose={() => setModalType(null)} selectedDay={selectedDay} title={title} subTitle={subTitle} />}
           </ModalContainer>
         )}
 
       </InnerCalenderRightContainer>
-
     </CalenderRightContainer>
   );
 };
