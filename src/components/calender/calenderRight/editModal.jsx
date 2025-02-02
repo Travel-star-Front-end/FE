@@ -86,6 +86,11 @@ const EditModal = ({ onClose, selectedDay, id }) => {
     }
   };
 
+  useEffect(() => {
+    setHour("00");
+    setMinute("00");
+  }, [period]);
+
   return (
     <s.AddModalContainer>
       <s.TimeContainer>

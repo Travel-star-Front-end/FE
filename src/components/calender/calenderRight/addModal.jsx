@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as s from "../../../styles/calender/calender";
 import colors from "../../../styles/common/colors";
 import Trash from "../../../assets/images/calender/trash.png";
@@ -66,6 +66,11 @@ const AddModal = ({ onClose, selectedDay }) => {
       alert("일정 추가 중 오류가 발생했습니다.");
     }
   };
+
+  useEffect(() => {
+    setHour("00");
+    setMinute("00");
+  }, [period]);
 
   return (
     <s.AddModalContainer>
