@@ -26,6 +26,8 @@ const colors = {
     calenderGray2: "#F3F3F3",
     calenderGray3: "#ADADAD",
     calenderGray4: "#565656",
+    calenderGray5: "#EEEEEE",
+    calenderGray6: "#E3E3E3",
     black: "#000000",
     white: "#FFFFFF",
 };

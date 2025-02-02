@@ -1,120 +1,50 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import colors from "../../../styles/common/colors";
-import deleteButton from "../../../assets/images/deleteButton.png";
+import { useState } from "react";
+import { API } from "../../../apis/axios";
+import * as s from "../../../styles/calender/calender";
+import Trash from "../../../assets/images/calender/trash.png";
 
-const ModalContainer = styled.div`
-  position: fixed;
-  bottom: 2vw;
-  right: 4.2vw;
-  width: 23vw;
-  height: 20vw;
-  background-color: #eeeeee;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  z-index: 999;
-`;
 
-const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: -0.5rem;
-`;
+const PlaceModal = ({ title, subTitle, selectedDay, onClose }) => {
+  const [modalTitle, setModalTitle] = useState(title);
+  const [modalSubTitle, setModalSubTitle] = useState(subTitle);
 
-const ModalTitle = styled.p`
-  font-size: 1.2vw;
-  font-weight: 700;
-  color: ${colors.black};
-`;
+  const handleTitleChange = (e) => {
+    setModalTitle(e.target.value);
+  };
 
-const CloseButton = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
-  cursor: pointer;
-`;
+  const handleSubTitleChange = (e) => {
+    setModalSubTitle(e.target.value);
+  };
 
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1vw;
-`;
+  const handleSubmit = async () => {
+    try {
+      const response = await API.post("/users", {
+        title: modalTitle,
+        subTitle: modalSubTitle,
+      });
 
-const Label = styled.label`
-  font-size: 1vw;
-  font-weight: 600;
-  color: ${colors.black};
-  margin-bottom: 0.5vw;
-`;
-
-const InputField = styled.input`
-  width: 100%;
-  height: 2.5vw;
-  padding: 0.5vw;
-  font-size: 1vw;
-  border: 1px solid ${colors.gray};
-  border-radius: 5px;
-  background-color: white;
-`;
-
-const SaveButton = styled.button`
-  width: 100%;
-  height: 2.5vw;
-  background-color: #01bcd4;
-  color: white;
-  font-size: 1.2vw;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${colors.darkBlue};
-  }
-`;
-
-const PlaceModal = ({ onClose, onSave, initialTitle, initialPlace }) => {
-  const [title, setTitle] = useState(initialTitle);
-  const [place, setPlace] = useState(initialPlace);
-
-  const handleSave = () => {
-    onSave(title, place);
+      console.log("response", response.data);
+      alert("일지 제목이 수정되었습니다.");
+      onClose();
+    } catch (error) {
+      console.error("서버 에러:", error);
+    }
   };
 
   return (
-    <ModalContainer>
-      <ModalHeader>
-        <ModalTitle>일정 작성</ModalTitle>
-        <CloseButton src={deleteButton} alt="삭제" onClick={onClose} />
-      </ModalHeader>
+    <s.PlaceModalContainer>
+      <s.PlaceTitleContainer>
+        <s.PlaceTitleP>일정제목</s.PlaceTitleP>
+        <s.TrashImg src={Trash} onClick={onClose} alt="delete" />
+      </s.PlaceTitleContainer>
+      <s.PlaceInput value={modalTitle} onChange={handleTitleChange} />
 
-      <InputWrapper>
-        <Label htmlFor="title">여행 제목</Label>
-        <InputField
-          id="title"
-          placeholder="일정 제목을 입력하세요"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </InputWrapper>
+      <s.PlaceTitleP style={{width: "100%", marginTop: "0.6vw"}}>일정설명</s.PlaceTitleP>
+      <s.PlaceInput value={modalSubTitle} onChange={handleSubTitleChange} />
 
-      <InputWrapper>
-        <Label htmlFor="place">여행 장소</Label>
-        <InputField
-          id="place"
-          placeholder="일정 장소를 입력하세요"
-          value={place}
-          onChange={(e) => setPlace(e.target.value)}
-        />
-      </InputWrapper>
-
-      <SaveButton onClick={handleSave}>완료</SaveButton>
-    </ModalContainer>
-  );
-};
+      <s.PlaceButton style={{marginTop: "0.4vw"}} onClick={handleSubmit}>완료</s.PlaceButton>
+    </s.PlaceModalContainer>
+  )
+}
 
 export default PlaceModal;

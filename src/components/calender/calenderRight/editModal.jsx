@@ -1,164 +1,118 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useState, useEffect } from "react";
+import * as s from "../../../styles/calender/calender";
 import colors from "../../../styles/common/colors";
-import deleteButton from "../../../assets/images/deleteButton.png";
+import Trash from "../../../assets/images/calender/trash.png";
+import ModalTime from "./modalTime";
+import { API } from "../../../apis/axios";
 
-const ModalContent = styled.div`
-  background: #eeeeee;
-  padding: 2vw;
-  position: fixed;
-  bottom: 2vw;
-  right: 4.2vw;
-  width: 23vw;
-  height: 18vw;
-  border-radius: 15px;
-  z-index: 1001;
-
-`;
-
-const InputGroup = styled.div`
-  margin-bottom: 1.5vw;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5vw;
-  margin-bottom: 1vw;
-`;
-
-const Select = styled.select`
-  padding: 0.5vw;
-  border: 1px solid ${colors.calenderGray};
-  border-radius: 0.3vw;
-  font-size: 1vw;
-  background-color: white;
-  margin-top: 1vw;
-  width: 13rem;
-`;
-
-const EventInput = styled.input`
-  flex: 1;
-  padding: 0.5vw;
-  border: 1px solid ${colors.calenderGray};
-  border-radius: 0.3vw;
-  font-size: 1vw;
-  width: 100%;
-  background-color: white;
-  margin-top: 0.8vw;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ModalButton = styled.button`
-  flex: 1;
-  margin-right: 0.5rem;
-  background-color: #01bcd4;
-  color: #fff;
-  border: none;
-  padding: 1rem;
-  border-radius: 5px;
-  font-size: 2rem;
-  cursor: pointer;
-  font-weight: bold;
-
-  &:hover {
-    background-color: #00a0bb;
-  }
-`;
-
-const DeleteIcon = styled.img`
-  position: absolute;
-  top: 2.15vw;
-  right: 2.1vw;
-  width: 1.2vw;
-  height: 1.2vw;
-  cursor: pointer;
-`;
-
-const InputLabel = styled.label`
-  font-size: 1vw;
-  font-weight: bold;
-  color: black;
-`;
-
-const EditModal = ({ item, onSave, onDelete, onClose }) => {
-  const [hour, setHour] = useState("12");
+const EditModal = ({ onClose, selectedDay, id }) => {
+  const [period, setPeriod] = useState("오전");
+  const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
-  const [amPm, setAmPm] = useState("오전");
-  const [event, setEvent] = useState(item.event || "");
+  const [location, setLocation] = useState("");
+
+  const formatNumber = (num) => String(num).padStart(2, "0");
 
   useEffect(() => {
-    if (item.time) {
-      const [timePart, meridiem] = item.time.split(" "); 
-      const [h, m] = timePart.split(":"); 
-      setHour(h);
-      setMinute(m);
-      setAmPm(meridiem === "AM" ? "오전" : "오후");
-    }
-  }, [item]);
+    if (id) {
+      const fetchData = async () => {
+        try {
+          const response = await API.get(`/users/${id}`);
+          const data = response.data;
 
-  const handleSave = () => {
-    const newTime = `${hour}:${minute} ${amPm === "오전" ? "AM" : "PM"}`;
-    onSave({
-      ...item,
-      event,
-      time: newTime,
-    });
+          setPeriod(data.period || "오전");
+          setHour(data.hour || "00");
+          setMinute(data.minute || "00");
+          setLocation(data.email || "");
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [id]);
+
+  const getHourOptions = (period) => {
+    if (period === "오전") {
+      return Array.from({ length: 12 }, (_, i) => formatNumber(i));
+    } else {
+      return Array.from({ length: 12 }, (_, i) => formatNumber(i + 12));
+    }
   };
 
+  const convertTo24Hour = (hour) => {
+    return String(parseInt(hour, 10)).padStart(2, "0");
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!location.trim()) {
+        alert("장소를 입력하세요.");
+        return;
+      }
+
+      if (!selectedDay || isNaN(new Date(selectedDay).getTime())) {
+        alert("유효하지 않은 날짜입니다.");
+        return;
+      }
+
+      const hour24 = convertTo24Hour(hour);
+      const dateTimeString = `${selectedDay}T${hour24}:${minute}:00`;
+
+      console.log("날짜 시간 문자열:", dateTimeString);
+      const dateObj = new Date(dateTimeString);
+      
+      if (isNaN(dateObj.getTime())) {
+        alert("날짜 또는 시간이 유효하지 않습니다.");
+        return;
+      }
+
+      const formattedDateTime = dateObj.toISOString();
+
+      const requestData = {
+        location,
+        date_time: formattedDateTime,
+      };
+
+      const response = await API.patch(`/users/${id}`, requestData);
+
+      alert("일정이 수정되었습니다.");
+      console.log(response.data);
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("일정 수정 중 오류가 발생했습니다.");
+    }
+  };
+
+  useEffect(() => {
+    setHour("00");
+    setMinute("00");
+  }, [period]);
+
   return (
-    <ModalContent onClick={(e) => e.stopPropagation()}>
-      <DeleteIcon src={deleteButton} alt="삭제" onClick={() => onDelete(item.id)} />
+    <s.AddModalContainer>
+      <s.TimeContainer>
+        <s.AddTitleP>시간</s.AddTitleP>
+        <s.AddTrashImg src={Trash} onClick={onClose} alt="delete" />
+      </s.TimeContainer>
 
-      <InputGroup>
-        <InputLabel>시간</InputLabel>
-        <InputContainer>
-          <Select value={amPm} onChange={(e) => setAmPm(e.target.value)}>
-            <option value="오전">AM</option>
-            <option value="오후">PM</option>
-          </Select>
-          <Select value={hour} onChange={(e) => setHour(e.target.value)}>
-            {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => {
-              const val = num < 10 ? `0${num}` : `${num}`;
-              return (
-                <option key={val} value={val}>
-                  {val}
-                </option>
-              );
-            })}
-          </Select>
-          <span>:</span>
-          <Select value={minute} onChange={(e) => setMinute(e.target.value)}>
-            {Array.from({ length: 60 }, (_, i) => i).map((num) => {
-              const val = num < 10 ? `0${num}` : `${num}`;
-              return (
-                <option key={val} value={val}>
-                  {val}
-                </option>
-              );
-            })}
-          </Select>
-        </InputContainer>
-      </InputGroup>
+      <s.TimeSelectContainer>
+        <ModalTime value={period} onChange={setPeriod} options={["오전", "오후"]} />
+        
+        <s.TimeSelectInnerContainer>
+          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={getHourOptions(period)} />
+          <s.AddTitleP style={{ color: colors.black }}>:</s.AddTitleP>
+          <ModalTime value={minute} onChange={(value) => setMinute(formatNumber(value))} options={Array.from({ length: 60 }, (_, i) => formatNumber(i))} />
+        </s.TimeSelectInnerContainer>
+      </s.TimeSelectContainer>
 
-      <InputGroup>
-        <InputLabel>장소</InputLabel>
-        <EventInput
-          type="text"
-          value={event}
-          onChange={(e) => setEvent(e.target.value)}
-          placeholder="일정을 입력하세요"
-        />
-      </InputGroup>
+      <s.AddTitleP style={{ marginTop: "6.35vw", width: "100%" }}>장소</s.AddTitleP>
+      <s.PlaceInput value={location} onChange={(e) => setLocation(e.target.value)} placeholder="장소를 입력하세요" />
 
-      <ButtonContainer>
-        <ModalButton onClick={handleSave}>완료</ModalButton>
-      </ButtonContainer>
-    </ModalContent>
+      <s.AddButton onClick={handleSubmit}>완료</s.AddButton>
+    </s.AddModalContainer>
   );
 };
 
