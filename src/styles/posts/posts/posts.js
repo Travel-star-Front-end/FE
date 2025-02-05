@@ -19,6 +19,12 @@ export const BannerContainer = styled.div`
         height: 100%;
         object-fit: cover;
     }
+    
+    .default-banner {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(245, 245, 245, 1);
+    }
 `;
 
 export const BannerInfo = styled.div`
@@ -26,18 +32,21 @@ export const BannerInfo = styled.div`
     flex-direction: column;
     gap: 1.05vw;
     width: 100%;
-
     padding: 0 2.35vw;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 1.15vw;
+    font-weight: 400;
+    font-size: 1.8vw;
+    line-height: 2.1785vw;
 
     .title {
         color: white;
-        font-weight: 400;
-        font-size: 1.8vw;
-        line-height: 2.1785vw;
+    }
+
+    .default-title {
+        color: rgba(85, 85, 85, 0.5);
     }
 `;
 

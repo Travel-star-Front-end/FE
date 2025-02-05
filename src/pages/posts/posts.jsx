@@ -14,7 +14,7 @@ import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 import useFetch from '../../hooks/useFetch';
 
 //example img
-import banner from '../../assets/images/ex-banner.png';
+import bannerImg from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
@@ -25,6 +25,8 @@ const Posts = () => {
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
+    const [banner, setBanner] = useState(null);
+    const [comment, setCommnet] = useState('');
 
     const handleClick = (tab) => {
         setActiveTab((prevTab) => (prevTab === tab ? null : tab));
@@ -33,9 +35,17 @@ const Posts = () => {
     return (
         <S.Container>
             <S.BannerContainer>
-                <img src={banner} alt='banner-img' className='banner-img'/>
+                {banner ? (
+                    <img src={banner} alt="banner-img" className="banner-img" />
+                ) : (
+                    <div className='default-banner' />
+                )}
                 <S.BannerInfo>
-                    <div className='title'>벨라의 세계일주</div>
+                    {comment ? (
+                        <div className='title'>{comment}</div>
+                    ) : (
+                        <div className='default-title'>코멘트 작성이 필요합니다.</div>
+                    )}
                     <S.BannerHeader>
                         <S.InfoContainer>
                             <S.ProfileImg>
@@ -60,7 +70,8 @@ const Posts = () => {
 
                             {activeTab === 'friends' && <FriendsTab/>}
                             {activeTab === 'share' && <ShareTab/>}
-                            {activeTab === 'setting' && <SettingTab setActiveTab={setActiveTab} />}
+                            {activeTab === 'setting' && 
+                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setCommnet={setCommnet} />}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>
@@ -69,7 +80,7 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                    {posts?.data ? (
+                    {posts?.data.length > 0 ? (
                         <>
                         {posts?.data.map((post) => (
                             <TravelPost 
