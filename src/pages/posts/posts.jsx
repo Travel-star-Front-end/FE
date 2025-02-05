@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from '../../styles/posts/posts/posts';
+import default_profile_img from '../../assets/images/ProfileImage.png';
 import setting from '../../assets/images/posts/posts/setting.png';
 import friends from '../../assets/images/posts/posts/friends.png';
 import share from '../../assets/images/posts/posts/share.png';
@@ -10,12 +11,18 @@ import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
 import { ShareTab } from '../../components/posts/posts/Tabs/share-tab';
 import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
+import useFetch from '../../hooks/useFetch';
 
 //example img
 import banner from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
+    //유저 전체 일지 조회(최신순 10개)
+    const userId = localStorage.getItem('userId');
+    const { data: posts, loading, error } = useFetch(`/users/${userId}/posts`);
+    if (error && status === 404) return <div>게시물이 없습니다.</div>;
+
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
 
@@ -62,20 +69,22 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                    <TravelPost
-                        id='1'
-                        nickname="벨라" 
-                        date="2024.09.15 14:58" 
-                        location="베트남, 다낭" 
-                        quickReview="바보 원숭이 !! 다낭여행 (2)"
-                        buttonType="edit"  />
-                    <TravelPost
-                        id='2'
-                        nickname="벨라2" 
-                        date="2024.09.15 14:58" 
-                        location="베트남, 다낭" 
-                        quickReview="바보 원숭이 !! 다낭여행 (2)"
-                        buttonType="edit"  />
+                    {posts?.data ? (
+                        <>
+                        {posts?.data.map((post) => (
+                            <TravelPost 
+                                key={post.id}
+                                id={post.id}
+                                date={post.createdAt}
+                                location={post.region}
+                                quickReview={post.title}
+                            />
+                        ))}                        
+                        </>
+                    ) : (
+                        <S.NothingText>작성된 일지가 없습니다.</S.NothingText>
+                    )}
+
                 </S.PostWrapper>
             </S.DiaryContainer>
         </S.Container>
