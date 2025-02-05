@@ -74,6 +74,21 @@ export const ListTopInnerContainer = styled.div`
     grid-template-columns: repeat(3, 1fr);
 `
 
+export const ListTopInnerContainer2 = styled.div`
+    width: 100%;
+    display: flex;
+    text-align: center;
+    margin-top: 9vw;
+`
+
+export const ErrorP = styled.p`
+    width: 100%;
+    font-size: 1vw;
+    font-weight: 400;
+    color: ${colors.sideBarGray2};
+    opacity: 0.5;
+`
+
 // item-topRanking.jsx
 export const ItemTopContainer = styled.div`
     width: 100%;
@@ -162,6 +177,13 @@ export const ListBottomContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     margin-top: 1vw;
+`
+
+export const ListBottomContainer2 = styled.div`
+    width: 100%;
+    display: flex;
+    text-align: center;
+    margin-top: 6vw;
 `
 
 // item-bottomRanking.jsx
