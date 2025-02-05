@@ -51,3 +51,50 @@ export const EditBtn = styled.button`
     line-height: 1.21vw;
     color: rgba(85, 85, 85, 1);
 `;
+
+export const CommentContainer = styled.div`
+    z-index: 100;   
+    position: absolute;
+    top: 10vw;;
+    left: -40vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vw;
+    justify-content: center;
+    width: 31.55vw;
+    height: 9.65vw;
+    background-color: rgba(255, 255, 255, 0.87);
+    border-radius: 0.75vw;
+`;
+
+export const CloseBtn = styled.img`
+    width: 0.7vw;
+    height: 0.7vw;
+    align-self: flex-end;
+    cursor: pointer;
+`;
+
+export const CommentEditInput = styled.input`
+    width: 28.65vw;
+    height: 2.15vw;
+    padding-left: 0.6vw;
+    border-radius: 0.75vw;
+    background-color: rgba(217, 217, 217, 0.61);
+    font-weight: 300;
+    font-size: 0.75vw;
+    color: rgba(0, 0, 0, 0.3);
+    &::placeholder {
+
+    }
+`;
+
+export const CommentEditBtn = styled.button`
+    width: 12.55vw;
+    height: 2.1vw;
+    border-radius: 0.75vw;
+    background-color: rgba(1, 188, 212, 1);
+    font-weight: 700;
+    font-size: 1vw;
+    color: white;
+`;
