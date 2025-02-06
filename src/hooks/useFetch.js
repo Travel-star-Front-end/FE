@@ -11,7 +11,12 @@ const useFetch = (url) => {
             setLoading(true);
             setError(null);
             try {
-                const response = await API.get(url);
+                const accessToken = localStorage.getItem("accessToken");
+                const response = await API.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 setData(response.data);
             } catch (err) {
                 setError(err.message);

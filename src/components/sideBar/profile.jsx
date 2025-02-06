@@ -3,10 +3,8 @@ import ProfilePng from "../../assets/images/sideBar/profile.png";
 import useFetch from "../../hooks/useFetch";
 
 const Profile = () => {
-    const userId = localStorage.getItem("userId");
-    const fetchUrl = userId ? `/users/${userId}/my_page` : null;
-    const { data, loading, error } = useFetch(fetchUrl);
-    console.log(data);
+    const { data, loading, error } = useFetch("/mypage");
+    // console.log(data);
 
     return (
         <s.ProfileContainer>
@@ -15,8 +13,8 @@ const Profile = () => {
             </s.ProfileImgContainer>
             
             <s.PContainer>
-                <s.ProfileP size="1vw" weight="400">{loading ? "Loading..." : data?.name}</s.ProfileP>
-                <s.ProfileP>{loading ? "Loading..." : data?.nickname}</s.ProfileP>
+                <s.ProfileP size="1vw" weight="400">{loading ? "Loading..." : data.data.name}</s.ProfileP>
+                <s.ProfileP>{loading ? "Loading..." : data.data.nickname}</s.ProfileP>
             </s.PContainer>
         </s.ProfileContainer>
     )
