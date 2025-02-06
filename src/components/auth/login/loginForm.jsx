@@ -16,8 +16,10 @@ import LoginButton from "./button/loginButton";
 
 const LoginForm = () => {
     const navigate = useNavigate();
-    const [userId, setUserId] = useState(null);
     const [loginCompleted, setLoginCompleted] = useState(false);
+
+    const storedUserId = localStorage.getItem("uesrId");
+    const [userId, setUserId] = useState(storedUserId);
 
     const schema = z.object({
         id: z.string().min(1, '아이디는 필수 입력 요소입니다.'),
@@ -66,6 +68,7 @@ const LoginForm = () => {
                 }
 
                 localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("userId", userId);
                 localStorage.setItem("isLoggedIn", "true");
 
                 setUserId(userId);
