@@ -4,7 +4,7 @@ import RankingRight from "../../components/ranking/rankingRight/rankingRight";
 import useFetch from "../../hooks/useFetch";
 
 const Ranking = () => {
-    const { data, loading, error } = useFetch("/users");
+    const { data, loading, error } = useFetch("/stars/ranking");
     // console.log(data);
 
     return (
@@ -14,7 +14,7 @@ const Ranking = () => {
                 <s.RankingBar />
 
                 <s.RankingContentContainer>
-                    <RankingLeft data={data} />
+                    <RankingLeft data={data?.rankings ?? []} /> 
                     <RankingRight />
                 </s.RankingContentContainer>
             </s.RankingInnerContainer>

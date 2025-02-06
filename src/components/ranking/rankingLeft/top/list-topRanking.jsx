@@ -13,7 +13,7 @@ const ListTopRanking = ({ data }) => {
                 <ItemTopRanking 
                     key={index}
                     id={item.id} 
-                    username={item.username}
+                    name={item.name}
                     rank={index + 1}
                 />
             ))}
