@@ -1,6 +1,7 @@
 import { useState } from "react";
 import * as S from '../../../../styles/posts/posts/Tabs/friends-tab';
 import { FriendCard, FriendApplyCard } from "./friend-card";
+import useFetch from "../../../../hooks/useFetch";
 
 //예시 데이터터
 const exampleData = [
@@ -17,6 +18,10 @@ const exampleData = [
 ];
 
 const FriendsTab = ({ friends, requests }) => {
+    const userId = localStorage.getItem('userId');
+    //친구 목록
+    const{data: friendsData, loading, error} = useFetch(`/users/${userId}/friends`);
+
     const [activeTab, setActiveTab] = useState("friends");
 
     return (
