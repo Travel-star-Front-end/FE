@@ -30,10 +30,10 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({id, profileImg, nickname, date, location, travelImages, title, buttonType}) => {
+const TravelPost = ({postId, profileImg, nickname, date, location, travelImages, title, buttonType}) => {
     //일지 상세 조회 api 
     // const userId = localStorage.getItem('userId');
-    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${id}`);
+    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${postId}`);
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
@@ -61,7 +61,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, tit
         <S.Container>
             <S.Hr/>
             <S.InfoWrapper>
-                <S.Info onClick={() => navigate(`/posts/${id}`, {
+                <S.Info onClick={() => navigate(`/posts/${postId}`, {
                     state: { 
                         nickname, 
                         date, 
@@ -100,7 +100,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, tit
                 )}
                 {buttonType === 'edit' && (
                     <S.EditBtnContainer>
-                        <img src={lock} alt='lock' className='lock-icon' />
+                        {/* <img src={lock} alt='lock' className='lock-icon' /> */}
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                         <S.EditButton 
                             type="button" 
