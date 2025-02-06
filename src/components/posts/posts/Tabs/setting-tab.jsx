@@ -9,7 +9,9 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     //코멘트 수정
-    const {data, loading, error, triggerPost} = usePost('/posts/comment');
+    // const {data, loading, error, triggerPost} = usePost('/posts/comment', {
+
+    // });
 
     const handleClick = (tab) => {
         if (activeTab === tab) {
@@ -19,6 +21,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
         }
     };
 
+    //모든 설정 창 닫기
     const handleButtonClick = () => {
         setActiveTabState(null);
         setActiveTab(null);  // 상위 컴포넌트로도 상태를 리셋
@@ -37,7 +40,6 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
                 setBanner(reader.result);
             };
             reader.readAsDataURL(file)
-            //setSelectedImage(URL.createObjectURL(file)); // 이미지 파일을 URL로 변환하여 상태에 저장
         }
     };
 
@@ -47,19 +49,21 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     }
 
     //댓글 등록
-    const handleCommentSubmit = async() => {
-        if (!editComment.trim()) return;
+    // const handleCommentSubmit = async() => {
+    //     if (!editComment.trim()) return;
 
-        const response = await triggerPost({editComment});
-        setComment(editComment)
-        setActiveTabState(null);
-        setEditComment('');
-        if(response) {
-            console.log('댓글 등록 성공', response);
-        } else {
-            console.log('댓글 등록 실패');
-        }
-    }
+    //     const response = await triggerPost({editComment});
+        
+    //     if(response) {
+    //         setComment(editComment)
+    //         console.log('댓글 등록 성공', response);
+    //     } else {
+    //         console.log('댓글 등록 실패');
+    //     }
+
+    //     setEditComment('');
+    //     setActiveTabState(null);
+    // }
 
     return(
         <>
@@ -67,8 +71,21 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
                 <div className="close" onClick={handleButtonClick}>
                     닫기
                 </div>
-                <S.Button type="button" onClick={() => handleClick('background-image-edit')}>배경화면 수정</S.Button>
-                <S.Button type="button" onClick={() => handleClick('comment-edit')}>코멘트 변경</S.Button>
+                {activeTab === 'background-image-edit' || activeTab === 'comment-edit' ? (
+                    <>
+                        <S.Button type="button">적용하기</S.Button>
+                        <S.Button type="button" onClick={handleButtonClick}>취소</S.Button>
+                    </>
+                ) : (
+                    <>
+                        <S.Button type="button" onClick={() => handleClick('background-image-edit')}>
+                            배경화면 수정
+                        </S.Button>
+                        <S.Button type="button" onClick={() => handleClick('comment-edit')}>
+                            코멘트 변경
+                        </S.Button>
+                    </>
+                )}
             </S.Container>       
             {activeTab === 'background-image-edit' && 
                 <S.EditBtnContainer>
@@ -97,7 +114,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
                         onChange={(e) => setEditComment(e.target.value)}/>
                     <S.CommentEditBtn 
                         type='button'
-                        onClick={handleCommentSubmit}
+                        // onClick={handleCommentSubmit}
                     >
                         변경하기
                     </S.CommentEditBtn>
