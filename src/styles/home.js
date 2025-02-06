@@ -61,6 +61,13 @@ export const SearchResultsContainer = styled.div`
         font-weight: 400;
         font-size: 1vw;
         color: rgba(0, 0, 0, 0.49);
+
+        @media (max-width: 768px) {
+            top: 2vw;
+        }
+        @media (max-width: 500px) {
+            top: 2.7vw;
+        }
     }
 `;
 
@@ -77,7 +84,11 @@ export const SuggestionBox = styled.div`
     padding-right: 2.5vw;
 
     @media (max-width: 768px) {
-        grid-gap: 5px;
+        top:4vw;
+        grid-gap: 0.7vw;
+    }
+    @media (max-width: 500px) {
+        grid-gap: 0;
     }
 `;
 
