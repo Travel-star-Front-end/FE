@@ -7,6 +7,8 @@ const useFetch = (url) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (!url) return; 
+
         const fetchData = async () => {
             setLoading(true);
             setError(null);
@@ -17,7 +19,13 @@ const useFetch = (url) => {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
-                setData(response.data);
+
+                if (response.data && (typeof response.data === "object" || Array.isArray(response.data))) {
+                    setData(response.data);
+                } else {
+                    console.error("Error:", response.data);
+                    setError("서버 응답이 올바르지 않습니다.");
+                }
             } catch (err) {
                 setError(err.message);
             } finally {
