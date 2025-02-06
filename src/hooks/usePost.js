@@ -10,7 +10,13 @@ const usePost = (url) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await API.post(url, body);
+            const token = localStorage.getItem('token');
+            const response = await API.post(url, body, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                }
+            });
             setData(response.data);
             return response.data; // 성공 시 데이터 반환
         } catch (err) {
