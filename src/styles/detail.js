@@ -35,7 +35,7 @@ export const InfoWrapper = styled.div`
 
 export const Info = styled.div`
     display: flex;
-    gap: 13px;
+    gap: 0.65vw;
 `;
 
 export const DetailInfo = styled.div`
@@ -46,8 +46,8 @@ export const DetailInfo = styled.div`
 export const TitleDateWrapper = styled.div`
     display: flex;
     align-items: flex-end;
-    gap: 5px;
-    margin-bottom: 7px;
+    gap: 0.25vw;
+    margin-bottom: 0.35vw;
 
     .nickname {
         font-weight: bold;
@@ -63,11 +63,13 @@ export const TitleDateWrapper = styled.div`
 
 export const MetaWrapper = styled.div`
     display: flex;
+    align-items: center;
     gap: 0.5vw;
 `;
 
 export const LocationWrapper = styled.div`
     display: flex;
+    align-items: center;
     gap: 0.25vw;
     color: #555555;
     font-weight: 500;
@@ -92,11 +94,13 @@ export const MusicWrapper = styled.div`
 
 export const MusicName = styled.div`
     display: flex;
-    gap: 0.4vw;
     align-items: center;
+    gap: 0.4vw;
 `;
 
 export const AudioImgWrapper = styled.div`
+    display: flex;
+    align-items: center;
     width: 0.8vw;
     height: 0.9vw;
     overflow: hidden;
@@ -109,7 +113,7 @@ export const AudioImgWrapper = styled.div`
 `;
 
 export const ProfileImg = styled.div`
-    width: 2.5vw;//50px
+    width: 2.5vw;
     height: 2.5vw;
     border-radius: 70%;
     overflow: hidden;
@@ -184,8 +188,8 @@ export const SliderWrapper = styled.div`
 `;
 
 export const TravelImg = styled.div`
-    width: 20vw;//400px
-    height: 16.65vw;//333px
+    width: 20vw;
+    height: 16.65vw;
     overflow: hidden;
 
     .travel-img{
