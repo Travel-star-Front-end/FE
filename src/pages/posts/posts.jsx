@@ -12,6 +12,7 @@ import FriendsTab from '../../components/posts/posts/Tabs/friends-tab';
 import { ShareTab } from '../../components/posts/posts/Tabs/share-tab';
 import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 import useFetch from '../../hooks/useFetch';
+import NotificationBadge from '../../components/posts/posts/notification-badge/notification-badge';
 
 //example img
 import bannerImg from '../../assets/images/ex-banner.png';
@@ -49,20 +50,20 @@ const Posts = () => {
                     <S.BannerHeader>
                         <S.InfoContainer>
                             <S.ProfileImg>
-                                <img src={profile} alt='profile' className='profile-img'/>
+                                <img src={default_profile_img} alt='profile' className='profile-img'/>
                             </S.ProfileImg>
                             <div>
-                                <div className='nickname'>벨라</div>
-                                <div className='planet-name'>깐따삐야 행성</div>
+                                <div className='nickname default'>벨라</div>
+                                <div className='planet-name default'>깐따삐야 행성</div>
                             </div>
                         </S.InfoContainer>
 
                         <S.ToolbarContainer>
                             <S.Toolbar>
                                 <img src={setting} alt='setting' className='toolbar-icon' onClick={() => handleClick('setting')}/>
-                                <img src={friends} alt='friends' className='toolbar-icon' onClick={() => handleClick('friends')} />
+                                <NotificationBadge icon={friends} count={5} onClick={() => handleClick('friends')}/>
                                 <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
-                                <img src={alert} alt='alert' className='toolbar-icon'/>                                
+                                <NotificationBadge icon={alert} count={10} />                 
                             </S.Toolbar>
                             <S.AddToolbar>
                                 <img src={add} alt='add'className='toolbar-icon2' onClick={() => navigate('/posts/write')}/>

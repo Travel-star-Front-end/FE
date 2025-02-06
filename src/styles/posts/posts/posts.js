@@ -75,6 +75,9 @@ export const InfoContainer = styled.div`
         font-size: 0.7vw;
         line-height: 1.05vw;
     }
+    .default {
+        color: rgba(85, 85, 85, 1);
+    }
 `;
 
 export const ProfileImg = styled.div`
@@ -116,8 +119,8 @@ export const ToolbarContainer = styled.div`
 export const Toolbar = styled.div`
     display: flex;
     justify-content: space-between;
-    width: 13.8vw;//276px
-    height: 2.5vw;//50px
+    width: 13.8vw;
+    height: 2.5vw;
     border-radius: 36px;
     line-height: 50px;
     background-color: rgba(255, 255, 255, 0.67);
