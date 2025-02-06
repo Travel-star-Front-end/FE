@@ -25,10 +25,19 @@ export const postPlanetName = async (planetName) => {
 export async function patchPlanetName(userId, newPlanetName) {
   try {
     const authToken = localStorage.getItem('accessToken');
-    const response = await API.patch(`/planet/${userId}`, {
-      name: newPlanetName,
-    });
-    return response.status === 200; // 성공 여부 반환
+    const response = await API.patch(
+      `/planet/${userId}`,
+      {
+        name: newPlanetName,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    console.log(response.data);
+    return response.data?.user.planet_name ?? null;
   } catch (error) {
     console.error('행성 이름 수정 에러:', error);
     return false;
