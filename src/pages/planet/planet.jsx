@@ -322,7 +322,7 @@ const PlanetPage = () => {
 
         <TopBar>
           <RefreshButton>
-            {planetName}
+            <PlanetName>{planetName}</PlanetName>
             <EditButton onClick={handleOpenModal}>수정</EditButton>
           </RefreshButton>
           <TimeDisplay>
@@ -453,6 +453,13 @@ const RefreshButton = styled.div`
   }
 `;
 
+const PlanetName = styled.div`
+  max-width: 15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const TimeDisplay = styled.div`
   display: flex;
   align-items: center;
@@ -487,7 +494,7 @@ const EditButton = styled.button`
 `;
 
 const ModalBackdrop = styled.div`
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -558,6 +565,7 @@ const UpdateButton = styled.img`
   height: 100%;
   margin-right: 4rem;
   max-height: 4rem;
+  cursor: pointer;
   // object-fit: contain;
 `;
 
