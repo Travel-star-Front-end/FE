@@ -5,6 +5,7 @@ import Globe from 'react-globe.gl';
 import { API } from '../../../apis/axios';
 import { postPlanetName } from '../../../apis/planet/planetService';
 import planetCutyVer from '../../../assets/images/planet/planetTexture/planetCutyVer.jpg';
+import Spinner from '../../../components/Spinner/Spinner';
 
 function SettingPage() {
   const globeRef = useRef();
@@ -13,9 +14,12 @@ function SettingPage() {
     localStorage.getItem('planetName') || ''
   );
   const globeContainerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
+  //임시로 로딩 스피너 구현
   const handleSave = async () => {
     try {
+      setIsLoading(true);
       // 행성 이름 로컬 스토리지 저장
       localStorage.setItem('planetName', planetName);
 
@@ -35,7 +39,7 @@ function SettingPage() {
       if (response && typeof response === 'string') {
         console.log('응답 데이터:', response); // 디버깅용 로그
         localStorage.setItem('planetId', response);
-        navigate('/home');
+        navigate('/planet');
       } else {
         throw new Error('API 응답이 null 또는 잘못된 형식입니다.');
       }
@@ -89,6 +93,7 @@ function SettingPage() {
 
   return (
     <>
+      {isLoading && <Spinner />}
       <GlobeWrapper>
         <GlobeContainer ref={globeContainerRef}>
           <TopBar>
