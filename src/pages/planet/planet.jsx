@@ -239,16 +239,16 @@ const PlanetPage = () => {
 
   // 행성 이름 수정
   // 수정 모드로 전환
-  const handleEditPlanetName = () => {
-    setTempPlanetName(planetName);
-    setIsEditMode(true);
-  };
+  // const handleEditPlanetName = () => {
+  //   setTempPlanetName(planetName);
+  //   setIsEditMode(true);
+  // };
 
-  // 수정 취소
-  const handleCancelEdit = () => {
-    setTempPlanetName(planetName);
-    setIsEditMode(false);
-  };
+  // // 수정 취소
+  // const handleCancelEdit = () => {
+  //   setTempPlanetName(planetName);
+  //   setIsEditMode(false);
+  // };
 
   // 수정 후 저장
   const handleSavePlanetName = async () => {
