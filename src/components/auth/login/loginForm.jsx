@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { z } from 'zod';
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -5,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { API } from "../../../apis/axios";
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import useFetch from "../../../hooks/useFetch";
 import * as s from "../../../styles/auth/login/login";
 import colors from '../../../styles/common/colors';
 import Logo from "../../../assets/images/auth/login/logo.png";
@@ -14,6 +16,10 @@ import LoginButton from "./button/loginButton";
 
 const LoginForm = () => {
     const navigate = useNavigate();
+    const [loginCompleted, setLoginCompleted] = useState(false);
+
+    const storedUserId = localStorage.getItem("uesrId");
+    const [userId, setUserId] = useState(storedUserId);
 
     const schema = z.object({
         id: z.string().min(1, '아이디는 필수 입력 요소입니다.'),
@@ -24,13 +30,28 @@ const LoginForm = () => {
         resolver: zodResolver(schema),
     });
 
+    const { data: userData, loading, error } = useFetch(loginCompleted && userId ? `/planet/${userId}` : null);
+    useEffect(() => {
+        if (loginCompleted && userData) {
+            // console.log("유저 데이터:", userData);
+
+            const hasPlanet = userData && typeof userData === "object" && "planet_name" in userData ? userData.planet_name : null;
+            // console.log(hasPlanet);
+
+            if (hasPlanet) {
+                navigate("/home");
+            } else {
+                navigate("/setting");
+            }
+        }
+    }, [userData, loginCompleted, navigate]);
+
     const loginMutation = useMutation({
         mutationFn: (userData) => API.post("/login", userData),
         onSuccess: async (data) => {
             // console.log("로그인 성공: ", data);
 
             const accessToken = data?.data?.token;
-            localStorage.setItem("accessToken", accessToken);
             if (!accessToken) {
                 alert("로그인 실패: 토큰이 없습니다.");
                 return;
@@ -38,8 +59,7 @@ const LoginForm = () => {
 
             try {
                 const decodedToken = jwtDecode(accessToken);
-                console.log("디코딩된 토큰: ", decodedToken);
-
+                // console.log("디코딩된 토큰: ", decodedToken);
 
                 const userId = decodedToken?.id;
                 if (!userId) {
@@ -47,13 +67,14 @@ const LoginForm = () => {
                     return;
                 }
 
+                localStorage.setItem("accessToken", accessToken);
                 localStorage.setItem("userId", userId);
                 localStorage.setItem("isLoggedIn", "true");
-                // 일단 로그인 성공 시 무조건 setting으로 이동
-                navigate("/setting");
+
+                setUserId(userId);
+                setLoginCompleted(true);
             } catch (error) {
-                console.error("토큰 디코딩 실패: ", error);
-                alert("토큰이 유효하지 않습니다.");
+                console.error("Error:", error);
             }
         },
         onError: () => {
@@ -62,7 +83,7 @@ const LoginForm = () => {
     });
 
     const onSubmit = (data) => {
-        // console.log('전송된 데이터:', data);
+        // console.log('로그인 제출 데이터:', data);
         loginMutation.mutate({
             id: data.id,
             pw: data.password,
