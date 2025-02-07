@@ -24,7 +24,6 @@ const ListTopRanking = ({ data }) => {
                     <s.ErrorP>랭킹 정보가 없습니다.</s.ErrorP>
                 </s.ListTopInnerContainer2>
             )}
-            
         </s.ListTopContainer>
     );
 };

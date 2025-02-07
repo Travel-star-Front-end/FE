@@ -93,23 +93,26 @@ const WriteForm = () => {
         const postData = {
             title,
             photos: selectedImages.map(img => img.name), 
-            location: {
-                latitude,
-                longitude,
-                address: selectedLocation || "" 
-            },
+            region: selectedLocation || "",
             music: selectedMusic || null,
             content,
-            feeling
+            feeling,
+            storage: 0,
         };
 
         try {
-            const response = await API.post("/users", postData);
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.post("/posts", postData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             console.log("Response:", response);
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
             console.error("게시글 작성 실패:", error);
+            alert("게시글 작성에 실패했습니다.");
         }
     };
 
