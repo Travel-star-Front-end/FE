@@ -22,7 +22,6 @@ const PlanetPage = () => {
     const processRegionData = async () => {
       if (!data || loading || error) return;
 
-      // 로컬 스토리지에서 현재 저장된 데이터 가져오기
       const storedPointsData = JSON.parse(
         localStorage.getItem('pointsData') || '[]'
       );
@@ -30,7 +29,6 @@ const PlanetPage = () => {
         localStorage.getItem('arcsData') || '[]'
       );
 
-      // 현재 저장된 지역들의 name을 Set으로 관리
       const existingRegions = new Set(
         storedPointsData.map((point) => point.name)
       );
@@ -38,12 +36,10 @@ const PlanetPage = () => {
       let updatedPoints = [...storedPointsData];
       let updatedArcs = [...storedArcsData];
 
-      // data.data 배열이 존재하는지 확인
       if (Array.isArray(data.data)) {
         for (const item of data.data) {
           const region = item.star.region;
 
-          // 이미 저장된 지역이 아닌 경우에만 처리
           if (!existingRegions.has(region)) {
             try {
               const coordinates = await fetchCoordinates(region);
@@ -60,7 +56,6 @@ const PlanetPage = () => {
                 updatedPoints.push(newPoint);
                 existingRegions.add(region);
 
-                // 이전 포인트가 있는 경우에만 arc 추가
                 if (updatedPoints.length > 1) {
                   const prevPoint = updatedPoints[updatedPoints.length - 2];
                   const newArc = {
@@ -79,7 +74,6 @@ const PlanetPage = () => {
         }
       }
 
-      // 데이터가 변경된 경우에만 로컬 스토리지와 상태 업데이트
       if (updatedPoints.length > storedPointsData.length) {
         localStorage.setItem('pointsData', JSON.stringify(updatedPoints));
         localStorage.setItem('arcsData', JSON.stringify(updatedArcs));
@@ -284,6 +278,7 @@ const PlanetPage = () => {
   // }, []);
 
   // pointsData, arcsData가 변경될 때마다 로컬 스토리지에 저장
+  // 근데 이제 이 코드는 필요없을듯? 화요일날 물어보기기
   useEffect(() => {
     localStorage.setItem('pointsData', JSON.stringify(pointsData));
   }, [pointsData]);
