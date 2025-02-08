@@ -25,7 +25,7 @@ const Home = () => {
 
     //추천 일지 조회(최신순 10개)
     const userId = localStorage.getItem('userId');
-    const { data: posts, loading, error } = useFetch(`/users/${userId}/home`);
+    const { data: posts, loading, error } = useFetch(`/posts/user/${userId}`);
     if (error && status === 404) return <div>게시물이 없습니다.</div>;
 
     //검색
@@ -66,32 +66,21 @@ const Home = () => {
             <div>
                 <S.Text>추천 게시글</S.Text>
                 <S.PostWrapper>
-                    <TravelPost
-                        id='1'
-                        nickname="여행별 일지 콩콩" 
-                        date="2024.09.15" 
-                        location="일본, 오사카" 
-                        quickReview="일본 오사카에서 행복했던 여행"
-                        buttonType="friend"  />
-                    <TravelPost
-                        id='2'
-                        nickname="여행별 일지 콩콩" 
-                        date="2024.09.15" 
-                        location="일본, 오사카" 
-                        quickReview="일본 오사카에서 행복했던 여행"
-                        buttonType="friend"  />
-                    {/* {posts?.data.map((post) => (
-                        <TravelPost
-                            key={post.post_id}
-                            id={post.post_id}
-                            title={post.title}
-                            date={post.updated_at}
-                            location={post.region}
-                            travelImages={post.images}
-                            nickname={post.user.nickname}
-                            profileImg={post.user.profileImage}
-                            buttonType="friend"/>
-                    ))} */}
+                {posts?.data.length > 0 ? (
+                        <>
+                        {posts?.data.map((post) => (
+                            <TravelPost 
+                                key={post.id}
+                                id={post.id}
+                                date={post.createdAt}
+                                location={post.region}
+                                quickReview={post.title}
+                            />
+                        ))}                        
+                        </>
+                    ) : (
+                        <S.NothingText>추천 게시글이 없습니다.</S.NothingText>
+                    )}
                 </S.PostWrapper>
             </div>
         </S.Container>
