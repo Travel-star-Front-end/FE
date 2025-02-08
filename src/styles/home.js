@@ -115,4 +115,14 @@ export const Text = styled.div`
 
 export const PostWrapper = styled.div`
    widht: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+export const NothingText = styled.div`
+    margin-top: 2.75vw;
+    font-weight: 400;
+    font-size: 1vw;
+    color: rgba(85, 85, 85, 0.5);
 `;
