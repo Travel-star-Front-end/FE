@@ -96,7 +96,6 @@ const Posts = () => {
                     ) : (
                         <S.NothingText>작성된 일지가 없습니다.</S.NothingText>
                     )}
-
                 </S.PostWrapper>
             </S.DiaryContainer>
         </S.Container>
