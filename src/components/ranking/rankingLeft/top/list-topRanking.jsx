@@ -2,6 +2,7 @@ import * as s from "../../../../styles/ranking/ranking";
 import ItemTopRanking from "./item-topRanking";
 
 const ListTopRanking = ({ data }) => {
+    // console.log(data);
     const topData = data.slice(0, 3);
 
     return (
@@ -14,7 +15,7 @@ const ListTopRanking = ({ data }) => {
                         <ItemTopRanking 
                             key={index}
                             id={item.id} 
-                            username={item.username}
+                            name={item.name}
                             rank={index + 1}
                         />
                     ))}

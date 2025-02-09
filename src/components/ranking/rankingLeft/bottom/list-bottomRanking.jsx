@@ -12,6 +12,7 @@ const ListBottomRanking = ({ data }) => {
                         <ItemBottomRanking 
                             key={index}
                             id={item.id}
+                            name={item.name}
                         />
                     ))}
                 </s.ListBottomContainer>
