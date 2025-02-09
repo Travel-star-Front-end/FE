@@ -172,9 +172,9 @@ const Settinginput = styled.input`
 `;
 
 const Settingbutton = styled.button`
-  width: 100vw;
+  width: 100%;
   max-width: 500px;
-  padding: 1.9rem;
+  padding: 1.5rem;
   border: none;
   border-radius: 1rem;
   background-color: #00bcd4;

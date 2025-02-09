@@ -8,11 +8,83 @@ import updateButton from '../../assets/images/planet/switchButton/updateButton.p
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import ConstellationViewer from '../../components/planet/ConstellationViewer';
 import { checkPlanetExists } from '../../apis/planet/planetService';
+import useFetch from '../../hooks/useFetch';
 
 const PlanetPage = () => {
   const globeRef = useRef();
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
+
+  // 사용자 일지 전체 가져온 데이터로 별 마커 생성
+  const { data, loading, error } = useFetch('/posts');
+
+  useEffect(() => {
+    const processRegionData = async () => {
+      if (!data || loading || error) return;
+
+      const storedPointsData = JSON.parse(
+        localStorage.getItem('pointsData') || '[]'
+      );
+      const storedArcsData = JSON.parse(
+        localStorage.getItem('arcsData') || '[]'
+      );
+
+      const existingRegions = new Set(
+        storedPointsData.map((point) => point.name)
+      );
+
+      let updatedPoints = [...storedPointsData];
+      let updatedArcs = [...storedArcsData];
+
+      if (Array.isArray(data.data)) {
+        for (const item of data.data) {
+          const region = item.star.region;
+
+          if (!existingRegions.has(region)) {
+            try {
+              const coordinates = await fetchCoordinates(region);
+
+              if (coordinates) {
+                const newPoint = {
+                  lat: coordinates.lat,
+                  lng: coordinates.lng,
+                  name: region,
+                  color: getRandomColor(),
+                  size: getRandomStarSize(),
+                };
+
+                updatedPoints.push(newPoint);
+                existingRegions.add(region);
+
+                if (updatedPoints.length > 1) {
+                  const prevPoint = updatedPoints[updatedPoints.length - 2];
+                  const newArc = {
+                    startLat: prevPoint.lat,
+                    startLng: prevPoint.lng,
+                    endLat: coordinates.lat,
+                    endLng: coordinates.lng,
+                  };
+                  updatedArcs.push(newArc);
+                }
+              }
+            } catch (error) {
+              console.error(`Error processing region ${region}:`, error);
+            }
+          }
+        }
+      }
+
+      if (updatedPoints.length > storedPointsData.length) {
+        localStorage.setItem('pointsData', JSON.stringify(updatedPoints));
+        localStorage.setItem('arcsData', JSON.stringify(updatedArcs));
+
+        setPointsData(updatedPoints);
+        setArcsData(updatedArcs);
+      }
+    };
+
+    processRegionData();
+  }, [data, loading, error]);
 
   // 행성 존재 여부 확인 --------------------------------------------------------------
   // const [isPlanetExists, setIsPlanetExists] = useState(false); // 행성 존재 여부 상태
@@ -47,14 +119,11 @@ const PlanetPage = () => {
   const planetId = localStorage.getItem('planetId') || null;
 
   //도시 / 연결선 데이터
-  // const [pointsData, setPointsData] = useState([
-  //   { lat: 37.5665, lng: 126.978, name: '서울', color: '#ff6600' },
-  // ]);
   const [pointsData, setPointsData] = useState(() => {
     const storedData = localStorage.getItem('pointsData');
     return storedData ? JSON.parse(storedData) : [];
   });
-  // const [arcsData, setArcsData] = useState([]);
+
   // 초기 arcsData 설정도 수정
   const [arcsData, setArcsData] = useState(() => {
     const storedData = localStorage.getItem('arcsData');
@@ -155,60 +224,61 @@ const PlanetPage = () => {
   };
 
   // 도시 추가 함수
-  const addCity = async () => {
-    if (!cityName) {
-      alert('도시 이름을 입력해주세요.');
-      return;
-    }
-    const coordinates = await fetchCoordinates(cityName);
-    if (!coordinates) return;
+  // const addCity = async () => {
+  //   if (!cityName) {
+  //     alert('도시 이름을 입력해주세요.');
+  //     return;
+  //   }
+  //   const coordinates = await fetchCoordinates(cityName);
+  //   if (!coordinates) return;
 
-    const newPoint = {
-      ...coordinates,
-      name: cityName,
-      color: getRandomColor(),
-      size: getRandomStarSize(),
-    };
-    // setPointsData((prev) => [...prev, newPoint]);
-    setPointsData((prev) => {
-      const newPointsData = [...prev, newPoint];
-      localStorage.setItem('pointsData', JSON.stringify(newPointsData));
-      return newPointsData;
-    });
+  //   const newPoint = {
+  //     ...coordinates,
+  //     name: cityName,
+  //     color: getRandomColor(),
+  //     size: getRandomStarSize(),
+  //   };
+  //   // setPointsData((prev) => [...prev, newPoint]);
+  //   setPointsData((prev) => {
+  //     const newPointsData = [...prev, newPoint];
+  //     localStorage.setItem('pointsData', JSON.stringify(newPointsData));
+  //     return newPointsData;
+  //   });
 
-    // 이전 여행지와 연결 선 추가
-    if (pointsData.length > 0) {
-      const lastPoint = pointsData[pointsData.length - 1];
-      const newArc = {
-        startLat: lastPoint.lat,
-        startLng: lastPoint.lng,
-        endLat: coordinates.lat,
-        endLng: coordinates.lng,
-      };
-      // setArcsData((prev) => [...prev, newArc]);
-      setArcsData((prev) => {
-        const newArcsData = [...prev, newArc];
-        localStorage.setItem('arcsData', JSON.stringify(newArcsData));
-        return newArcsData;
-      });
-    }
+  //   // 이전 여행지와 연결 선 추가
+  //   if (pointsData.length > 0) {
+  //     const lastPoint = pointsData[pointsData.length - 1];
+  //     const newArc = {
+  //       startLat: lastPoint.lat,
+  //       startLng: lastPoint.lng,
+  //       endLat: coordinates.lat,
+  //       endLng: coordinates.lng,
+  //     };
+  //     // setArcsData((prev) => [...prev, newArc]);
+  //     setArcsData((prev) => {
+  //       const newArcsData = [...prev, newArc];
+  //       localStorage.setItem('arcsData', JSON.stringify(newArcsData));
+  //       return newArcsData;
+  //     });
+  //   }
 
-    setCityName('');
-  };
+  //   setCityName('');
+  // };
 
   // 페이지 로딩 시 로컬 스토리지에서 데이터 불러오기
-  useEffect(() => {
-    const storedPointsData = localStorage.getItem('pointsData');
-    const storedArcsData = localStorage.getItem('arcsData');
-    if (storedPointsData) {
-      setPointsData(JSON.parse(storedPointsData));
-    }
-    if (storedArcsData) {
-      setArcsData(JSON.parse(storedArcsData));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedPointsData = localStorage.getItem('pointsData');
+  //   const storedArcsData = localStorage.getItem('arcsData');
+  //   if (storedPointsData) {
+  //     setPointsData(JSON.parse(storedPointsData));
+  //   }
+  //   if (storedArcsData) {
+  //     setArcsData(JSON.parse(storedArcsData));
+  //   }
+  // }, []);
 
   // pointsData, arcsData가 변경될 때마다 로컬 스토리지에 저장
+  // 근데 이제 이 코드는 필요없을듯? 화요일날 물어보기기
   useEffect(() => {
     localStorage.setItem('pointsData', JSON.stringify(pointsData));
   }, [pointsData]);
@@ -225,7 +295,7 @@ const PlanetPage = () => {
     return `${hours}:${minutes}`;
   };
 
-  // 수정 모달 관련련
+  // 수정 모달 관련
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
@@ -236,19 +306,6 @@ const PlanetPage = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-
-  // 행성 이름 수정
-  // 수정 모드로 전환
-  // const handleEditPlanetName = () => {
-  //   setTempPlanetName(planetName);
-  //   setIsEditMode(true);
-  // };
-
-  // // 수정 취소
-  // const handleCancelEdit = () => {
-  //   setTempPlanetName(planetName);
-  //   setIsEditMode(false);
-  // };
 
   // 수정 후 저장
   const handleSavePlanetName = async () => {
@@ -322,7 +379,7 @@ const PlanetPage = () => {
 
         <TopBar>
           <RefreshButton>
-            {planetName}
+            <PlanetName>{planetName}</PlanetName>
             <EditButton onClick={handleOpenModal}>수정</EditButton>
           </RefreshButton>
           <TimeDisplay>
@@ -453,6 +510,13 @@ const RefreshButton = styled.div`
   }
 `;
 
+const PlanetName = styled.div`
+  max-width: 15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const TimeDisplay = styled.div`
   display: flex;
   align-items: center;
@@ -487,7 +551,7 @@ const EditButton = styled.button`
 `;
 
 const ModalBackdrop = styled.div`
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -558,6 +622,7 @@ const UpdateButton = styled.img`
   height: 100%;
   margin-right: 4rem;
   max-height: 4rem;
+  cursor: pointer;
   // object-fit: contain;
 `;
 
