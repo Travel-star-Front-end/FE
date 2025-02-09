@@ -5,7 +5,7 @@ import useFetch from "../../hooks/useFetch";
 
 const Ranking = () => {
     const { data, loading, error } = useFetch("/stars/ranking");
-    // console.log(data);
+    console.log(data);
 
     return (
         <s.RankingContainer>

@@ -11,7 +11,8 @@ const ListBottomRanking = ({ data }) => {
                     {slicedData.map((item, index) => (
                         <ItemBottomRanking 
                             key={index}
-                            id={item.id}
+                            id={item.stars_id}
+                            name={item.name}
                         />
                     ))}
                 </s.ListBottomContainer>

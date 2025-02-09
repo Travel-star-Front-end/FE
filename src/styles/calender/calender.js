@@ -127,6 +127,12 @@ export const SelectedDateCell = styled.div`
   z-index: -1;
 `;
 
+export const ListP = styled.p`
+  font-size: 0.55vw;
+  font-weight: 300;
+  color: ${colors.black};
+`
+
 // calenderRight.jsx
 export const CalenderRightContainer = styled.div`
   width: 33%;
@@ -178,7 +184,7 @@ export const ModalContainer = styled.div`
 // list-calender.jsx
 export const ListContainer = styled.div`
     width: 100%;
-    height: 27.85vw;
+    max-height: 27.85vw;
     overflow-y: scroll;
     border: 0.05vw solid ${colors.calenderGray};
 `;

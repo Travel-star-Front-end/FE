@@ -8,8 +8,9 @@ import PlaceModal from "./placeModal";
 import EditModal from "./editModal";
 
 
-const CalenderRight = ({ selectedDay }) => {
-  const { data, loading, error } = useFetch("/users");
+const CalenderRight = ({ selectedDay, selectedDayId }) => {
+  const { data } = useFetch(`/day-schedules/${selectedDay}`);
+  console.log(data);
   const [modalType, setModalType] = useState(null);
   const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
@@ -17,7 +18,8 @@ const CalenderRight = ({ selectedDay }) => {
 
   useEffect(() => {
     console.log("선택 날짜 변경: ", selectedDay);
-  }, [selectedDay]);
+    console.log("선택된 날짜의 day_id:", selectedDayId);
+  }, [selectedDay, selectedDayId]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
