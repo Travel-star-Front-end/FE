@@ -9,7 +9,7 @@ const ItemTopRanking = ({ id, name, rank }) => {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
 
-    const handleViewClick = (id) => {
+    const handleViewClick = () => {
         navigate(`/planet/${id}`);
     }
 

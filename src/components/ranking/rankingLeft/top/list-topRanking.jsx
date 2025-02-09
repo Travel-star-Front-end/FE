@@ -14,7 +14,7 @@ const ListTopRanking = ({ data }) => {
                     {topData.map((item, index) => (
                         <ItemTopRanking 
                             key={index}
-                            id={item.id} 
+                            id={item.stars_id} 
                             name={item.name}
                             rank={index + 1}
                         />
