@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import * as S from '../../styles/home';
 import searchIcon from '../../assets/images/home/search.png';
 import upArrow from '../../assets/images/home/search-up-arrow.png';
 import decreaseArrow from '../../assets/images/home/search-decrease-arrow.png';
 import TravelPost from '../../components/posts/posts/travelPost/travel-post';
-import { API } from '../../apis/axios';
+import useFetch from '../../hooks/useFetch';
+import useDebounce from '../../hooks/useDebounce';
 
 //에시 검색어 추천 데이터
 const suggestions = [
@@ -18,11 +20,32 @@ const suggestions = [
 ];
 
 const Home = () => {
+    const [searchValue, setSearchValue] = useState('');
+    const debounceText = useDebounce(searchValue, 500);
+
+    //추천 일지 조회(최신순 10개)
+    const userId = localStorage.getItem('userId');
+    const { data: posts, loading, error } = useFetch(`/posts/user/${userId}`);
+    if (error && status === 404) return <div>게시물이 없습니다.</div>;
+
+    //검색
+    const { data: searchItem, loading: searchLoading, error: searchError } = useFetch(
+        debounceText ? `/users/${userId}/home/search?term=${debounceText}` : null
+    );
+
+    //검색 순위 조회
+    const { data: ranking, loading: rankingLoading, error: rankingError} = useFetch(`/users/${userId}/home/search/rankings`);
+
+
     return (
         <S.Container>
             <S.SearchWrapper>
                 <S.SearchIcon src={searchIcon} alt="검색"/>
-                <S.SearchInput type="text" placeholder="검색어를 입력하시오."/>
+                <S.SearchInput 
+                    type="text" 
+                    placeholder="검색어를 입력하시오."
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}/>
                 <S.SearchResultsContainer>
                     <div className='search-suggesion'>검색어 추천</div>
                     <S.SuggestionBox>
@@ -31,6 +54,11 @@ const Home = () => {
                             <div>{`${item.id}. ${item.text}`}</div>
                         </S.SuggestionItem>
                     ))}
+                    {/* {ranking?.data.map((item) => (
+                        <S.SuggestionItem key={item.number}>
+                            <div>{`${item.number}. ${item.word}`}</div>
+                        </S.SuggestionItem>
+                    ))} */}
                     </S.SuggestionBox>
                 </S.SearchResultsContainer>
             </S.SearchWrapper>
@@ -38,20 +66,21 @@ const Home = () => {
             <div>
                 <S.Text>추천 게시글</S.Text>
                 <S.PostWrapper>
-                    <TravelPost
-                        id='1'
-                        nickname="여행별 일지 콩콩" 
-                        date="2024.09.15" 
-                        location="일본, 오사카" 
-                        quickReview="일본 오사카에서 행복했던 여행"
-                        buttonType="friend"  />
-                    <TravelPost
-                        id='2'
-                        nickname="여행별 일지 콩콩" 
-                        date="2024.09.15" 
-                        location="일본, 오사카" 
-                        quickReview="일본 오사카에서 행복했던 여행"
-                        buttonType="friend"  />
+                {posts?.data.length > 0 ? (
+                        <>
+                        {posts?.data.map((post) => (
+                            <TravelPost 
+                                key={post.id}
+                                id={post.id}
+                                date={post.createdAt}
+                                location={post.region}
+                                quickReview={post.title}
+                            />
+                        ))}                        
+                        </>
+                    ) : (
+                        <S.NothingText>추천 게시글이 없습니다.</S.NothingText>
+                    )}
                 </S.PostWrapper>
             </div>
         </S.Container>

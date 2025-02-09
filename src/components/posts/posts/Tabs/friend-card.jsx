@@ -67,9 +67,9 @@ export const ShareCard = ({id, profileImg, name}) => {
                 <S.Name>{name}</S.Name>                
             </S.FriendContnet>
             {isShared ? (
-                <S.ShareBtn type='button' shared>공유됨</S.ShareBtn>
+                <S.ShareBtn type='button' shared={isShared ? "true" : undefined}>공유됨</S.ShareBtn>
             ) : (
-                <S.ShareBtn type='button' onClick={handleButtonClick('share')}>공유하기</S.ShareBtn>
+                <S.ShareBtn type='button' onClick={handleButtonClick}>공유하기</S.ShareBtn>
             )}
             {/* {activeTab === 'share' && <SharedTab />} */}
         </S.Container2>

@@ -9,6 +9,7 @@ import locationPin from '../../../../assets/images/travel-post/locationPin.png';
 import lock from '../../../../assets/images/travel-post/lock-person.png';
 import share from '../../../../assets/images/posts/posts/share.png';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
+import useFetch from '../../../../hooks/useFetch';
 
 //예시 이미지
 import image1 from '../../../../assets/images/travel-post/image 1.png';
@@ -29,7 +30,10 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({id, profileImg, nickname, date, location, travelImages, quickReview, buttonType}) => {
+const TravelPost = ({postId, profileImg, nickname, date, location, travelImages, title, buttonType}) => {
+    //일지 상세 조회 api 
+    // const userId = localStorage.getItem('userId');
+    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${postId}`);
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
@@ -57,12 +61,12 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
         <S.Container>
             <S.Hr/>
             <S.InfoWrapper>
-                <S.Info onClick={() => navigate(`/posts/${id}`, {
+                <S.Info onClick={() => navigate(`/posts/${postId}`, {
                     state: { 
                         nickname, 
                         date, 
                         location, 
-                        quickReview, 
+                        title, 
                         profileImg 
                     } 
                 })}>
@@ -96,7 +100,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
                 )}
                 {buttonType === 'edit' && (
                     <S.EditBtnContainer>
-                        <img src={lock} alt='lock' className='lock-icon' />
+                        {/* <img src={lock} alt='lock' className='lock-icon' /> */}
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                         <S.EditButton 
                             type="button" 
@@ -131,7 +135,7 @@ const TravelPost = ({id, profileImg, nickname, date, location, travelImages, qui
                 </Slider>
             </S.SliderWrapper>
 
-            <S.QuickReview>{quickReview}</S.QuickReview>
+            <S.QuickReview>{title}</S.QuickReview>
 
         </S.Container>
     )

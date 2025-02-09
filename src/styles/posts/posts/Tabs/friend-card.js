@@ -25,6 +25,9 @@ export const FriendContnet = styled.div`
 `;
 
 export const ProfileWrapper = styled.div`
+    display: flex;
+    align-items: cener;
+    justify-content: center;
     width: 1.092vw;
     height: 1.092vw;
     border-radius: 70%;
@@ -44,6 +47,9 @@ export const Name = styled.div`
 `;
 
 export const CloseBtnWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 0.4vw;
     height: 0.4vw;
     overflow: hidden;

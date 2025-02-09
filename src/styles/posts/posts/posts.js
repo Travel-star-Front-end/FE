@@ -19,6 +19,12 @@ export const BannerContainer = styled.div`
         height: 100%;
         object-fit: cover;
     }
+    
+    .default-banner {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(245, 245, 245, 1);
+    }
 `;
 
 export const BannerInfo = styled.div`
@@ -26,18 +32,21 @@ export const BannerInfo = styled.div`
     flex-direction: column;
     gap: 1.05vw;
     width: 100%;
-
     padding: 0 2.35vw;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 1.15vw;
+    font-weight: 400;
+    font-size: 1.8vw;
+    line-height: 2.1785vw;
 
     .title {
         color: white;
-        font-weight: 400;
-        font-size: 1.8vw;
-        line-height: 2.1785vw;
+    }
+
+    .default-title {
+        color: rgba(85, 85, 85, 0.5);
     }
 `;
 
@@ -65,6 +74,9 @@ export const InfoContainer = styled.div`
         font-weight: 300;
         font-size: 0.7vw;
         line-height: 1.05vw;
+    }
+    .default {
+        color: rgba(85, 85, 85, 1);
     }
 `;
 
@@ -107,8 +119,8 @@ export const ToolbarContainer = styled.div`
 export const Toolbar = styled.div`
     display: flex;
     justify-content: space-between;
-    width: 13.8vw;//276px
-    height: 2.5vw;//50px
+    width: 13.8vw;
+    height: 2.5vw;
     border-radius: 36px;
     line-height: 50px;
     background-color: rgba(255, 255, 255, 0.67);
@@ -152,4 +164,14 @@ export const Text = styled.div`
 
 export const PostWrapper = styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+export const NothingText = styled.div`
+    margin-top: 2.75vw;
+    font-weight: 400;
+    font-size: 1vw;
+    color: rgba(85, 85, 85, 0.5);
 `;
