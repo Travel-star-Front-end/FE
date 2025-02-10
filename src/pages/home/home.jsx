@@ -25,7 +25,7 @@ const Home = () => {
 
     //추천 일지 조회(최신순 10개)
     const userId = localStorage.getItem('userId');
-    const { data: posts, loading, error } = useFetch(`/posts/user/${userId}`);
+    const { data: posts, loading, error } = useFetch(`/users/${userId}/home`);
     if (error && status === 404) return <div>게시물이 없습니다.</div>;
 
     //검색
@@ -66,6 +66,14 @@ const Home = () => {
             <div>
                 <S.Text>추천 게시글</S.Text>
                 <S.PostWrapper>
+                {/* <TravelPost 
+                    key={1}
+                    id={1}
+                    nickname="여행돌이"
+                    date='2024.02.07'
+                    location='일본'
+                    quickReview='일본여행행' 
+                />  */}
                 {posts?.data.length > 0 ? (
                         <>
                         {posts?.data.map((post) => (
@@ -75,6 +83,7 @@ const Home = () => {
                                 date={post.createdAt}
                                 location={post.region}
                                 quickReview={post.title}
+                                travelImages={post.images}
                             />
                         ))}                        
                         </>
