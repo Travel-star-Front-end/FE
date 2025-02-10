@@ -43,13 +43,19 @@ const FriendsTab = ({ friends, requests }) => {
             <S.TabContent>
                 {activeTab === "friends" && (
                 <S.CardListContainer>
-                    {exampleData.map((item) => (
-                        <FriendCard
-                            key={item.id}
-                            profileImg={null}
-                            name={item.name}
-                        />
-                    ))}
+                    {friendsData?.friends?.length > 0 ? (
+                        <>
+                        {friendsData?.map((item) => (
+                            <FriendCard
+                                key={item.id}
+                                profileImg={null}
+                                name={item.name}
+                            />
+                        ))}
+                        </>
+                    ) : (
+                        <S.NoFreinds>친구 목록이 없습니다.</S.NoFreinds>
+                    )}
                 </S.CardListContainer>
                 )}
                 

@@ -57,3 +57,9 @@ export const CardListContainer = styled.div`
     gap: 0.8vw;
     padding: 0.35vw 0.5vw;
 `;
+
+export const NoFreinds = styled.div`
+    font-weight: 400;
+    font-size: 1vw;
+    color: rgba(85, 85, 85, 0.5);
+`;
