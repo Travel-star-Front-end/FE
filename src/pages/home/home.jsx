@@ -72,7 +72,7 @@ const Home = () => {
                     nickname="여행돌이"
                     date='2024.02.07'
                     location='일본'
-                    quickReview='일본여행행' 
+                    title='일본여행행' 
                 />  */}
                 {posts?.data.length > 0 ? (
                         <>
@@ -82,7 +82,7 @@ const Home = () => {
                                 id={post.id}
                                 date={post.createdAt}
                                 location={post.region}
-                                quickReview={post.title}
+                                title={post.title}
                                 travelImages={post.images}
                             />
                         ))}                        
