@@ -2,7 +2,7 @@
 name: "✨ Feature Template"
 about: Feature 작업 상황을 작성해주세요.
 title: "✨ [Feature] "
-labels: "✨ Feature"
+labels: ''
 assignees: ''
 
 ---

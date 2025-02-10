@@ -5,7 +5,7 @@ import Trash from "../../../assets/images/calender/trash.png";
 import ModalTime from "./modalTime";
 import { API } from "../../../apis/axios";
 
-const EditModal = ({ onClose, selectedDay, id }) => {
+const AddModal = ({ onClose, selectedDay }) => {
   const [period, setPeriod] = useState("오전");
   const [hour, setHour] = useState("00");
   const [minute, setMinute] = useState("00");
@@ -13,31 +13,11 @@ const EditModal = ({ onClose, selectedDay, id }) => {
 
   const formatNumber = (num) => String(num).padStart(2, "0");
 
-  useEffect(() => {
-    if (id) {
-      const fetchData = async () => {
-        try {
-          const response = await API.get(`/users/${id}`);
-          const data = response.data;
-
-          setPeriod(data.period || "오전");
-          setHour(data.hour || "00");
-          setMinute(data.minute || "00");
-          setLocation(data.email || "");
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      };
-
-      fetchData();
-    }
-  }, [id]);
-
   const getHourOptions = (period) => {
     if (period === "오전") {
       return Array.from({ length: 12 }, (_, i) => formatNumber(i));
     } else {
-      return Array.from({ length: 12 }, (_, i) => formatNumber(i + 12));
+      return Array.from({ length: 12 }, (_, i) => formatNumber(i + 12)); 
     }
   };
 
@@ -75,14 +55,15 @@ const EditModal = ({ onClose, selectedDay, id }) => {
         date_time: formattedDateTime,
       };
 
-      const response = await API.patch(`/users/${id}`, requestData);
+      console.log("데이터:", requestData);
 
-      alert("일정이 수정되었습니다.");
-      console.log(response.data);
+      await API.post("/day-schedules", requestData);
+
+      alert("일정이 추가되었습니다.");
       onClose();
     } catch (error) {
       console.error("Error:", error);
-      alert("일정 수정 중 오류가 발생했습니다.");
+      alert("일정 추가 중 오류가 발생했습니다.");
     }
   };
 
@@ -100,10 +81,9 @@ const EditModal = ({ onClose, selectedDay, id }) => {
 
       <s.TimeSelectContainer>
         <ModalTime value={period} onChange={setPeriod} options={["오전", "오후"]} />
-        
         <s.TimeSelectInnerContainer>
-          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={getHourOptions(period)} />
-          <s.AddTitleP style={{ color: colors.black }}>:</s.AddTitleP>
+          <ModalTime value={hour} onChange={(value) => setHour(formatNumber(value))} options={getHourOptions(period)}/>
+          <s.TitleP style={{ color: colors.black }}>:</s.TitleP>
           <ModalTime value={minute} onChange={(value) => setMinute(formatNumber(value))} options={Array.from({ length: 60 }, (_, i) => formatNumber(i))} />
         </s.TimeSelectInnerContainer>
       </s.TimeSelectContainer>
@@ -116,4 +96,4 @@ const EditModal = ({ onClose, selectedDay, id }) => {
   );
 };
 
-export default EditModal;
+export default AddModal;

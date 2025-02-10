@@ -23,10 +23,12 @@ const SearchIdForm = () => {
         email: z.string().email("유효한 이메일을 입력해주세요."),
     });
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
         mode: "onChange",
     });
+
+    const email = watch("email");
 
     useEffect(() => {
         let interval;
@@ -44,8 +46,8 @@ const SearchIdForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await API.post("/users", { email: data.email });
-            setCode(response.data.id);
+            const response = await API.post("/email", { email: data.email });
+            setCode(response.data.authCode);
             alert("인증번호가 발송되었습니다.");
             setIsTimerActive(true);
             setTimer(120);
@@ -76,7 +78,7 @@ const SearchIdForm = () => {
     const getErrorStyle = (field) => (errors[field] ? { borderColor: colors.searchRed } : {});
 
     const handleSearchIdClick = () => {
-        navigate("/search/id/completed");
+        navigate("/search/id/completed", { state: { email } });
     }
 
     return (

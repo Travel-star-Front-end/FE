@@ -1,22 +1,61 @@
 // services/planetService.js
 import { API } from '../axios.js';
 
-export async function postPlanetName(name) {
+// 행성 설정
+export const postPlanetName = async (planetName) => {
   try {
-    const response = await API.post('/posts', { planetName: name });
-    return response.data?.id ?? null;
+    const authToken = localStorage.getItem('accessToken');
+    const response = await API.post(
+      '/planet',
+      { name: planetName },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    console.log(response.data);
+    return response.data?.user.user_id ?? null;
   } catch (error) {
-    console.error('jsonplaceholder post 에러:', error);
+    console.error('Error:', error);
     return null;
   }
-}
+};
 
-export async function patchPlanetName(id, name) {
+export async function patchPlanetName(userId, newPlanetName) {
   try {
-    await API.patch(`/posts/${id}`, { planetName: name });
-    return true;
+    const authToken = localStorage.getItem('accessToken');
+    const response = await API.patch(
+      `/planet/${userId}`,
+      {
+        name: newPlanetName,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    console.log(response.data);
+    return response.data?.user.planet_name ?? null;
   } catch (error) {
-    console.error('jsonplaceholder patch 에러:', error);
+    console.error('행성 이름 수정 에러:', error);
     return false;
   }
 }
+
+export const checkPlanetExists = async (userId) => {
+  try {
+    const authToken = localStorage.getItem('accessToken');
+    const response = await API.get(`/prod/planet/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    console.log(response.data);
+    return response.data?.exists ?? false; // API 응답에서 'exists' 여부 반환
+  } catch (error) {
+    console.error('Error checking planet existence:', error);
+    return false;
+  }
+};

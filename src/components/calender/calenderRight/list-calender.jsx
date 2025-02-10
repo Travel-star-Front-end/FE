@@ -1,143 +1,69 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { API } from "../../../apis/axios"; 
-import colors from "../../../styles/common/colors";
-import EditModal from "./editModal"; 
+import { useState } from "react";
+import useFetch from "../../../hooks/useFetch";
+import * as s from "../../../styles/calender/calender";
+import ItemCalender from "./item-calender";
 
-const ListContainer = styled.div`
-  width: 100%;
-  height: 27.85vw;
-  overflow-y: scroll;
-  margin-top: 1.2vw;
-  border: 0.05vw solid ${colors.calenderGray};
+const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => { 
+    const [selectedId, setSelectedId] = useState(null);
+    const [editVisible, setEditVisible] = useState(false);
 
-  &::-webkit-scrollbar {
-    width: 0.6vw;
-  }
-  &::-webkit-scrollbar-track {
-    background: #f9f9f9;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #c4c4c4;
-    border-radius: 0.3vw;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-  }
-`;
+    const safeData = Array.isArray(data) ? data : []; 
 
-const ItemContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1vw;
-  border-bottom: 1px solid #d9d9d9;
-  background-color: ${(props) => (props.selected ? "#AEE0EA" : "white")};
-  cursor: pointer;
-`;
-
-const TimeText = styled.span`
-  font-size: 1.2vw;
-  font-weight: bold;
-`;
-
-const EventText = styled.span`
-  font-size: 1vw;
-  flex-grow: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: calc(100% - 12vw);
-`;
-
-const EditButton = styled.button`
-  font-size: 0.8vw;
-  padding: 0.5vw 1vw;
-  border: none;
-  border-radius: 0.5vw;
-  background-color: #f9f9f9;
-  color: black;
-  cursor: pointer;
-  visibility: ${(props) => (props.$visible ? "visible" : "hidden")};
-`;
-
-const ListCalender = ({ data, selectedDay }) => {
-  const [selectedId, setSelectedId] = useState(null);
-  const [localData, setLocalData] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [currentEdit, setCurrentEdit] = useState({ id: null, time: "", event: "" });
-
-  // 실제로는 백엔드 연결 시 selectedDay에 따라 API를 요청하거나, data를 필터링해서 쓸 수 있음.
-  // 지금은 JSONPlaceholder 예시로 임시 데이터 불러오기
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await API.get("https://jsonplaceholder.typicode.com/todos?_limit=20");
-        const transformedData = response.data.map((item) => ({
-          id: item.id,
-          time: `${item.id % 12 || 12}:00 ${item.id % 24 < 12 ? "AM" : "PM"}`,
-          event: item.title,
-        }));
-        setLocalData(transformedData);
-      } catch (error) {
-        console.error(error);
-      }
+    const handleItemClick = (id) => {
+        console.log(id);
+        setSelectedId(id);
+        setEditVisible(false);
     };
-    fetchData();
-  }, []);
 
-  const handleItemClick = (id) => {
-    setSelectedId(selectedId === id ? null : id);
-  };
+    const handleEditClick = (id) => {
+        onOpenEditModal(id);
+    };
 
-  const handleEditClick = (item) => {
-    setCurrentEdit(item);
-    setModalOpen(true);
-  };
+    const handleTitleClick = () => {
+        setEditVisible(true);
+        setSelectedId(null);
+    };
 
-  const handleSave = (editedItem) => {
-    setLocalData((prevData) =>
-      prevData.map((item) => (item.id === editedItem.id ? editedItem : item))
+    const { data: titleData, loading, error } = useFetch("/posts/1");
+    const title = titleData?.title || "제목";
+    const subTitle = titleData?.body || "부제목";
+
+    const handlePlaceModalOpen = () => {
+        onOpenPlaceModal(title, subTitle);  
+    };
+
+    const sortedData = [...safeData].sort((a, b) => {
+        const timeA = new Date(a.date).getHours() * 60 + new Date(a.date).getMinutes();
+        const timeB = new Date(b.date).getHours() * 60 + new Date(b.date).getMinutes();
+        return timeA - timeB;
+    });
+
+    return (
+        <>
+            <s.TitleContainer editvisible={editVisible.toString()} onClick={handleTitleClick}>
+                <s.TitleInnerContainer>
+                    <s.LeftContainer>
+                        <s.TitleP>{title}</s.TitleP>
+                        <s.TitleP2>{subTitle}</s.TitleP2>
+                    </s.LeftContainer>
+                    <s.EditButton visible={editVisible.toString()} onClick={handlePlaceModalOpen}>수정</s.EditButton>
+                </s.TitleInnerContainer>
+            </s.TitleContainer>
+
+            <s.ListContainer>
+                {sortedData.map((item, index) => (
+                    <ItemCalender 
+                        key={index}
+                        time={item.date} 
+                        title={item.title}
+                        selected={selectedId === item.day_id} 
+                        onItemClick={() => handleItemClick(item.day_id)} 
+                        onEditClick={handleEditClick}
+                    />
+                ))}
+            </s.ListContainer>
+        </>
     );
-    setModalOpen(false);
-  };
-
-  const handleDelete = (id) => {
-    setLocalData((prevData) => prevData.filter((item) => item.id !== id));
-    setModalOpen(false);
-  };
-
-  return (
-    <>
-      <ListContainer>
-        {localData.map((item) => (
-          <ItemContainer
-            key={item.id}
-            selected={selectedId === item.id}
-            onClick={() => handleItemClick(item.id)}
-          >
-            <TimeText>{item.time}</TimeText>
-            <EventText>{item.event}</EventText>
-            <EditButton
-              $visible={selectedId === item.id}
-              onClick={() => handleEditClick(item)}
-            >
-              수정
-            </EditButton>
-          </ItemContainer>
-        ))}
-      </ListContainer>
-
-      {modalOpen && (
-        <EditModal
-          item={currentEdit}
-          onSave={handleSave}
-          onDelete={handleDelete}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
-    </>
-  );
 };
 
 export default ListCalender;

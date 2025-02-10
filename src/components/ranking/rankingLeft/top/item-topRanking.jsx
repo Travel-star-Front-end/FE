@@ -5,11 +5,11 @@ import colors from "../../../../styles/common/colors";
 import View from "../../../../assets/images/ranking/view.png";
 import { API } from "../../../../apis/axios";
 
-const ItemTopRanking = ({ id, username, rank }) => {
+const ItemTopRanking = ({ id, name, rank }) => {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
 
-    const handleViewClick = (id) => {
+    const handleViewClick = () => {
         navigate(`/planet/${id}`);
     }
 
@@ -39,12 +39,12 @@ const ItemTopRanking = ({ id, username, rank }) => {
                 <s.ItemTopPContainer>
                     <s.ItemTopP>
                         이름<br/>
-                        <span style={{fontSize: "0.9vw", fontWeight: "500"}}>{username}</span>
+                        <span style={{fontSize: "0.9vw", fontWeight: "500"}}>{name}</span>
                     </s.ItemTopP>
 
                     <s.ItemTopViewContainer onClick={handleViewClick}>
                         <s.ItemTopViewImg src={View} alt="view" />
-                        <s.ItemTopRankingP style={{fontSize: "0.65vw", fontWeight: "600", color: colors.main}}>{username} 별자리 보러가기</s.ItemTopRankingP>
+                        <s.ItemTopRankingP style={{fontSize: "0.65vw", fontWeight: "600", color: colors.main}}>{name} 별자리 보러가기</s.ItemTopRankingP>
                     </s.ItemTopViewContainer>
 
                     <s.ItemTopVoteButton onClick={handleVoteClick}>투표하기</s.ItemTopVoteButton>

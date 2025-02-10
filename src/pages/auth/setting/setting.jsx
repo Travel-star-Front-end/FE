@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Globe from 'react-globe.gl';
+import { API } from '../../../apis/axios';
 import { postPlanetName } from '../../../apis/planet/planetService';
 import planetCutyVer from '../../../assets/images/planet/planetTexture/planetCutyVer.jpg';
+import Spinner from '../../../components/Spinner/Spinner';
 
 function SettingPage() {
   const globeRef = useRef();
@@ -12,15 +14,39 @@ function SettingPage() {
     localStorage.getItem('planetName') || ''
   );
   const globeContainerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
+  //임시로 로딩 스피너 구현
   const handleSave = async () => {
-    localStorage.setItem('planetName', planetName);
-    const newId = await postPlanetName(planetName);
-    if (newId) {
-      localStorage.setItem('planetId', newId);
-    }
+    try {
+      setIsLoading(true);
+      // 행성 이름 로컬 스토리지 저장
+      localStorage.setItem('planetName', planetName);
 
-    navigate('/planet');
+      // 로컬 스토리지에서 userId 가져오기
+      const userId = localStorage.getItem('userId');
+      if (!userId) throw new Error('사용자 ID를 찾을 수 없습니다.');
+
+      // 행성 생성 API 호출
+      const response = await postPlanetName(planetName);
+      console.log('postPlanetName 응답:', response); // 응답 데이터를 출력
+
+      if (!response) {
+        throw new Error('API 응답이 null입니다.');
+      }
+
+      // 응답으로 받은 행성 ID 저장
+      if (response && typeof response === 'string') {
+        console.log('응답 데이터:', response); // 디버깅용 로그
+        localStorage.setItem('planetId', response);
+        navigate('/planet');
+      } else {
+        throw new Error('API 응답이 null 또는 잘못된 형식입니다.');
+      }
+    } catch (error) {
+      console.error('행성 생성 실패:', error.message);
+      alert(`오류 발생: ${error.message}`);
+    }
   };
 
   useEffect(() => {
@@ -67,6 +93,7 @@ function SettingPage() {
 
   return (
     <>
+      {isLoading && <Spinner />}
       <GlobeWrapper>
         <GlobeContainer ref={globeContainerRef}>
           <TopBar>
@@ -145,9 +172,9 @@ const Settinginput = styled.input`
 `;
 
 const Settingbutton = styled.button`
-  width: 100vw;
+  width: 100%;
   max-width: 500px;
-  padding: 1.9rem;
+  padding: 1.5rem;
   border: none;
   border-radius: 1rem;
   background-color: #00bcd4;

@@ -5,11 +5,11 @@ import * as s from "../../../../styles/ranking/ranking";
 import View from "../../../../assets/images/ranking/view.png";
 
 
-const ItemBottomRanking = ({ id, username }) => {
+const ItemBottomRanking = ({ id, name }) => {
     const navigate = useNavigate();
     const [count, setCount] = useState(0);
 
-    const handleViewClick = (id) => {
+    const handleViewClick = () => {
         navigate(`/planet/${id}`);
     }
 
@@ -35,7 +35,7 @@ const ItemBottomRanking = ({ id, username }) => {
                 <s.ItemBottomPContainer>
                     <s.ItemBottomP>
                         이름<br />
-                        <span style={{fontSize: "0.65vw", fontWeight: "600"}}>{username}</span>
+                        <span style={{fontSize: "0.65vw", fontWeight: "600"}}>{name}</span>
                     </s.ItemBottomP>
                     
                     <s.ItemBottomViewContainer onClick={handleViewClick}>
