@@ -21,8 +21,13 @@ import profile from '../../assets/images/auth/login/logo.png';
 const Posts = () => {
     //유저 전체 일지 조회(최신순 10개)
     const userId = localStorage.getItem('userId');
-    const { data: posts, loading, error } = useFetch(`/users/${userId}/posts`);
-    if (error && status === 404) return <div>게시물이 없습니다.</div>;
+    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/users/${userId}/posts`);
+    if (postsError && status === 404) return <div>게시물이 없습니다.</div>;
+
+    const { data, loading, error } = useFetch("/mypage");
+
+    //행성이름 조회
+    const { data: planetData, loading: planetLoading } = useFetch(userId ? `/planet/${userId}` : null);
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
@@ -53,8 +58,16 @@ const Posts = () => {
                                 <img src={default_profile_img} alt='profile' className='profile-img'/>
                             </S.ProfileImg>
                             <div>
-                                <div className='nickname default'>벨라</div>
-                                <div className='planet-name default'>깐따삐야 행성</div>
+                                <div className='nickname default'>
+                                    {loading ? "Loading..." : data?.data?.nickname || "닉네임 없음"}
+                                </div>
+                                <div className='planet-name default'>
+                                    {planetLoading
+                                    ? "Loading..."
+                                    : planetData?.planet_name
+                                    ? `${planetData.planet_name} 행성`
+                                    : "행성 정보 없음"}
+                                </div>
                             </div>
                         </S.InfoContainer>
 
@@ -87,7 +100,7 @@ const Posts = () => {
                     nickname="여행돌이"
                     date='2024.02.07'
                     location='일본'
-                    quickReview='일본여행행' 
+                    title='일본여행' 
                     isMyPost={true}
                 /> 
                     {posts?.data.length > 0 ? (
@@ -98,7 +111,7 @@ const Posts = () => {
                                 postId={post.id}
                                 date={post.createdAt}
                                 location={post.region}
-                                quickReview={post.title}
+                                title={post.title}
                             />
                         ))}                        
                         </>
