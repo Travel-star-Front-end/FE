@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import * as S from '../../styles/detail';
 import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import Slider from 'react-slick';
@@ -28,14 +28,22 @@ const settings = {
 }
 
 const Detail = () => {
+    const { postId } = useParams();
     const location = useLocation();
     const { pathname } = useLocation();
-    const currentUrl = window.location.origin + pathname;    
+    const currentUrl = window.location.origin + pathname;
+
     const {nickname, date, location: postLocation, quickReview, profileImg } = location.state || {};
 
-    //일지 상세 조회 api 
-    // const userId = localStorage.getItem('userId');
-    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${postId}`);
+    //회원 일지 상세 조회 api 
+    const userId = localStorage.getItem('userId');
+
+    //API 엔드포인트 동적으로 변경
+    const apiEndpoint = nickname === localStorage.getItem('nickname')
+        ? `/posts/${postId}`  // 내가 작성한 일지
+        : `/posts/${postId}/users/${userId}`;  // 다른 회원이 작성한 일지
+
+    const { data, loading, error } = useFetch(apiEndpoint);
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -67,7 +75,7 @@ const Detail = () => {
                             <S.DetailInfo>
                                 <S.TitleDateWrapper>
                                     <div className='nickname'>{nickname}</div>
-                                    <div className='date'>{date}</div>
+                                    <div className='date'>{data.updated_at}</div>
                                 </S.TitleDateWrapper>
                                 <S.MetaWrapper>
                                     <S.LocationWrapper>
@@ -79,7 +87,7 @@ const Detail = () => {
                                             <S.AudioImgWrapper>
                                                 <img src={audio} alt='audio' className='audio_png'/>
                                             </S.AudioImgWrapper>
-                                            <div>검정치마 - 한시오분</div>
+                                            <div>{data.music}</div>
                                         </S.MusicName>
                                         <div>00:30</div>
                                     </S.MusicWrapper>
@@ -91,32 +99,23 @@ const Detail = () => {
 
                     <S.SliderWrapper>
                         <Slider {...settings}>
-                            <S.TravelImg>
-                                <img src={image1} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image2} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image3} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image1} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image2} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image3} className='travel-img' />
-                            </S.TravelImg>
+                            {data?.images?.length > 0 ? (
+                                data.images.map((image, index) => (
+                                    <S.TravelImg key={index}>
+                                        <img src={image} className='travel-img' />
+                                    </S.TravelImg>
+                                ))
+                            ) : (
+                                <div>이미지가 없습니다.</div>
+                            )}
                         </Slider>
                     </S.SliderWrapper>
                     </div>
 
                     <S.ContentWrapper>
-                        <div className='title'>{quickReview}</div>
+                        <div className='title'>{data.title}</div>
                         <div className='content'>
-                            content
+                            {data.content}
                         </div>
                     </S.ContentWrapper>
                 </S.PostWrapper>
