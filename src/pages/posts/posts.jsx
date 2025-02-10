@@ -81,12 +81,21 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
+                <TravelPost 
+                    key={1}
+                    postId={1}
+                    nickname="여행돌이"
+                    date='2024.02.07'
+                    location='일본'
+                    quickReview='일본여행행' 
+                    isMyPost={true}
+                /> 
                     {posts?.data.length > 0 ? (
                         <>
                         {posts?.data.map((post) => (
                             <TravelPost 
                                 key={post.id}
-                                id={post.id}
+                                postId={post.id}
                                 date={post.createdAt}
                                 location={post.region}
                                 quickReview={post.title}
