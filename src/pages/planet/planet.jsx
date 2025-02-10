@@ -110,7 +110,6 @@ const PlanetPage = () => {
   const [planetName, setPlanetName] = useState(
     localStorage.getItem('planetName') || ''
   );
-  const [isEditMode, setIsEditMode] = useState(false);
 
   // 수정 중인 행성 이름을 임시로 저장할 state
   const [tempPlanetName, setTempPlanetName] = useState(planetName);
@@ -194,11 +193,11 @@ const PlanetPage = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (!planetName) {
-  //     navigate('/setting');
-  //   }
-  // }, [planetName, navigate]);
+  useEffect(() => {
+    if (!planetName) {
+      navigate('/setting');
+    }
+  }, [planetName, navigate]);
 
   // Google Geocoding API로 위도와 경도 가져오기
   const fetchCoordinates = async (city) => {
@@ -288,11 +287,65 @@ const PlanetPage = () => {
   }, [arcsData]);
 
   //시간 함수
+  const [currentTime, setCurrentTime] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
+
   const getCurrentTime = () => {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
+  };
+
+  // 현재 위치 기반 시간 업데이트 함수
+  const updateTimeBasedOnLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('위치 정보를 사용할 수 없습니다.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const API_KEY = import.meta.env.VITE_GOOGLE_TOKEN; // 환경 변수에서 API 키 가져오기
+          const timestamp = Math.floor(Date.now() / 1000); // 현재 타임스탬프 (초 단위)
+          const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${timestamp}&key=${API_KEY}`;
+
+          const response = await axios.get(url);
+
+          if (response.data.status === 'OK') {
+            const { rawOffset, dstOffset, timeZoneName } = response.data;
+
+            // UTC 기준 현재 시간 계산
+            const utcTime = new Date(Date.now());
+            const localTime = new Date(
+              utcTime.getTime() + (rawOffset + dstOffset) * 1000 // 오프셋을 밀리초로 변환 후 더함
+            );
+
+            // 시간 포맷팅
+            const hours = String(localTime.getHours()).padStart(2, '0');
+            const minutes = String(localTime.getMinutes()).padStart(2, '0');
+
+            setCurrentTime(`${hours}:${minutes}`);
+            setCurrentLocation(timeZoneName); // 시간대 이름 업데이트
+
+            alert('시간 업데이트가 성공적으로 완료되었습니다!');
+          } else {
+            console.error('API 응답 상태:', response.data.status);
+            alert('시간대를 가져오는 데 실패했습니다.');
+          }
+        } catch (error) {
+          console.error('시간대 정보를 가져오는 중 오류 발생:', error);
+          alert('시간 정보를 업데이트하는 중 오류가 발생했습니다.');
+        }
+      },
+      (error) => {
+        console.error('위치 정보를 가져오는 중 오류 발생:', error);
+        alert('위치 정보를 가져오지 못했습니다.');
+      }
+    );
   };
 
   // 수정 모달 관련
@@ -383,8 +436,13 @@ const PlanetPage = () => {
             <EditButton onClick={handleOpenModal}>수정</EditButton>
           </RefreshButton>
           <TimeDisplay>
-            <UpdateButton src={updateButton} alt="Update" />
-            현재 시각 {getCurrentTime()}
+            <UpdateButton
+              src={updateButton}
+              alt="Update"
+              onClick={updateTimeBasedOnLocation}
+            />
+            현재 시각 {currentTime}{' '}
+            {currentLocation && `${currentLocation} 기준`}
           </TimeDisplay>
         </TopBar>
 
