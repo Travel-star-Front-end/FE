@@ -110,7 +110,6 @@ const PlanetPage = () => {
   const [planetName, setPlanetName] = useState(
     localStorage.getItem('planetName') || ''
   );
-  const [isEditMode, setIsEditMode] = useState(false);
 
   // 수정 중인 행성 이름을 임시로 저장할 state
   const [tempPlanetName, setTempPlanetName] = useState(planetName);
@@ -138,11 +137,6 @@ const PlanetPage = () => {
   });
 
   // console.log(globeContainerRef.current);
-
-  // useEffect(() => {
-  //   const { innerWidth, innerHeight } = window;
-  //   setDimensions({ width: innerWidth, height: innerHeight });
-  // }, []);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -194,11 +188,11 @@ const PlanetPage = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (!planetName) {
-  //     navigate('/setting');
-  //   }
-  // }, [planetName, navigate]);
+  useEffect(() => {
+    if (!planetName) {
+      navigate('/setting');
+    }
+  }, [planetName, navigate]);
 
   // Google Geocoding API로 위도와 경도 가져오기
   const fetchCoordinates = async (city) => {
@@ -288,12 +282,91 @@ const PlanetPage = () => {
   }, [arcsData]);
 
   //시간 함수
-  const getCurrentTime = () => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+  const [currentTime, setCurrentTime] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
+  const [timeZoneId, setTimeZoneId] = useState(null);
+
+  // 현재 위치 기반 시간 업데이트 함수
+  const updateTimeBasedOnLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('위치 정보를 사용할 수 없습니다.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const API_KEY = import.meta.env.VITE_GOOGLE_TOKEN;
+          const timestamp = Math.floor(Date.now() / 1000);
+          const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${timestamp}&key=${API_KEY}`;
+
+          const response = await axios.get(url);
+          if (response.data.status === 'OK') {
+            const { timeZoneId } = response.data;
+            setTimeZoneId(timeZoneId);
+
+            const formatter = new Intl.DateTimeFormat('ko-KR', {
+              timeZone: timeZoneId,
+              timeZoneName: 'long',
+            });
+
+            const localTimeString = formatter.format(new Date());
+
+            // 시간대 이름만 추출하는 로직
+            let locationName = localTimeString.replace(
+              /.*\s(.+?) 표준시/,
+              '$1'
+            );
+            if (!locationName || locationName === localTimeString) {
+              locationName = '알 수 없는 지역';
+            }
+            setCurrentLocation(locationName);
+
+            updateLocalTime(timeZoneId);
+          } else {
+            alert('시간대를 가져오는 데 실패했습니다.');
+          }
+        } catch (error) {
+          console.error('시간대 정보를 가져오는 중 오류 발생:', error);
+          alert('시간 정보를 업데이트하는 중 오류가 발생했습니다.');
+        }
+      },
+      (error) => {
+        console.error('위치 정보를 가져오는 중 오류 발생:', error);
+        alert('위치 정보를 가져오지 못했습니다. 위치 권한을 허용해주세요.');
+      }
+    );
   };
+
+  // 현지 시간 계산 및 업데이트 함수
+  const updateLocalTime = (timeZoneId) => {
+    if (!timeZoneId) return;
+
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: timeZoneId,
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    setCurrentTime(formatter.format(now));
+  };
+
+  // 컴포넌트가 마운트될 때 위치 기반 시간 업데이트
+  useEffect(() => {
+    updateTimeBasedOnLocation();
+  }, []);
+
+  // 일정 간격으로 시간 업데이트
+  useEffect(() => {
+    if (!timeZoneId) return;
+
+    const intervalId = setInterval(() => {
+      updateLocalTime(timeZoneId);
+    }, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [timeZoneId]);
 
   // 수정 모달 관련
   const [showModal, setShowModal] = useState(false);
@@ -383,8 +456,13 @@ const PlanetPage = () => {
             <EditButton onClick={handleOpenModal}>수정</EditButton>
           </RefreshButton>
           <TimeDisplay>
-            <UpdateButton src={updateButton} alt="Update" />
-            현재 시각 {getCurrentTime()}
+            <UpdateButton
+              src={updateButton}
+              alt="Update"
+              onClick={updateTimeBasedOnLocation}
+            />
+            현재 시각 {currentTime}
+            {currentLocation && <SmallText> {currentLocation} 기준</SmallText>}
           </TimeDisplay>
         </TopBar>
 
@@ -483,7 +561,7 @@ const TopBar = styled.div`
   padding: 0 2rem;
   z-index: 10;
   margin-top: 10rem;
-  gap: 5rem;
+  gap: 3rem;
 `;
 
 const RefreshButton = styled.div`
@@ -507,6 +585,11 @@ const RefreshButton = styled.div`
   @media (max-width: 480px) {
     font-size: 3rem;
     padding: 1.7rem 2.04rem;
+  }
+
+  @media (max-width: 445px) {
+    font-size: 2rem;
+    padding: 1.2rem 1.7rem;
   }
 `;
 
@@ -546,7 +629,11 @@ const EditButton = styled.button`
   }
 
   @media (max-width: 480px) {
-    font-size: 3.4rem;
+    font-size: 3rem;
+  }
+
+  @media (max-width: 450px) {
+    font-size: 2rem;
   }
 `;
 
@@ -620,10 +707,19 @@ const ModalButton = styled.button`
 const UpdateButton = styled.img`
   width: auto;
   height: 100%;
-  margin-right: 4rem;
+  margin-right: 3rem;
   max-height: 4rem;
   cursor: pointer;
   // object-fit: contain;
+`;
+
+const SmallText = styled.span`
+  font-size: 1.2rem; /* 원하는 크기로 설정 */
+  margin-left: 1rem;
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-left: 0.2rem;
+  }
 `;
 
 export default PlanetPage;
