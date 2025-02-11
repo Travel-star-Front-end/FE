@@ -32,19 +32,17 @@ const LoginForm = () => {
 
     const { data: userData, loading, error } = useFetch(loginCompleted && userId ? `/planet/${userId}` : null);
     useEffect(() => {
-        if (loginCompleted && userData) {
-            // console.log("유저 데이터:", userData);
-
-            const hasPlanet = userData && typeof userData === "object" && "planet_name" in userData ? userData.planet_name : null;
-            // console.log(hasPlanet);
-
-            if (hasPlanet) {
-                navigate("/home");
-            } else {
-                navigate("/setting");
-            }
+        if (error && error.status === 404) {
+            navigate("/setting");
+            return;
         }
-    }, [userData, loginCompleted, navigate]);
+    
+        if (userData) {
+            navigate("/home");
+        }
+    }, [userData, error, navigate]);
+    
+    
 
     const loginMutation = useMutation({
         mutationFn: (userData) => API.post("/login", userData),
