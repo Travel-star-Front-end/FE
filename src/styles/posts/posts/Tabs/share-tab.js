@@ -44,3 +44,9 @@ export const Container2 = styled.div`
     border-radius: 0.25vw;
     background-color: rgba(255, 255, 255, 0.6);
 `;
+
+export const NothingText = styled.div`
+    font-weight: 400;
+    font-size: 0.6vw;
+    color: rgba(85, 85, 85, 0.5);
+`;
