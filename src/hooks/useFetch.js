@@ -20,14 +20,11 @@ const useFetch = (url) => {
                     },
                 });
 
-                if (response.data && (typeof response.data === "object" || Array.isArray(response.data))) {
-                    setData(response.data);
-                } else {
-                    console.error("Error:", response.data);
-                    setError("서버 응답이 올바르지 않습니다.");
-                }
+                console.log("응답 데이터", response.data);
+                setData(response.data);
             } catch (err) {
-                setError(err.message);
+                console.log("요청 실패", err);
+                setError(err.response || err);
             } finally {
                 setLoading(false);
             }
