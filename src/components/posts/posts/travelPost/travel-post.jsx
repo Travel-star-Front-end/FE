@@ -39,7 +39,7 @@ const TravelPost = ({postId, profileImg, nickname, date, location, images, title
      ? `/posts/${postId}` //유저 일지 상세 조회 
      : `/posts/${postId}/users/${userId}`;//다른 유저 일지 상세 조회
  
-    const { data, loading, error } = useFetch(apiEndpoint);
+    // const { data, loading, error } = useFetch(apiEndpoint);
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
