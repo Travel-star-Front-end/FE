@@ -19,9 +19,9 @@ import bannerImg from '../../assets/images/ex-banner.png';
 import profile from '../../assets/images/auth/login/logo.png';
 
 const Posts = () => {
-    //유저 전체 일지 조회(최신순 10개)
+    //전체 일지 조회(최신순 10개)
     const userId = localStorage.getItem('userId');
-    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/users/${userId}/posts`);
+    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
     if (postsError && status === 404) return <div>게시물이 없습니다.</div>;
 
     const { data, loading, error } = useFetch("/mypage");
@@ -94,7 +94,7 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                <TravelPost 
+                {/* <TravelPost 
                     key={1}
                     postId={1}
                     nickname="여행돌이"
@@ -102,16 +102,19 @@ const Posts = () => {
                     location='일본'
                     title='일본여행' 
                     isMyPost={true}
-                /> 
-                    {posts?.data.length > 0 ? (
+                />  */}
+                    {posts?.data.posts.length > 0 ? (
                         <>
-                        {posts?.data.map((post) => (
+                        {posts?.data.posts.map((post) => (
                             <TravelPost 
-                                key={post.id}
-                                postId={post.id}
-                                date={post.createdAt}
+                                key={post.post_id}
+                                id={post.post_id}
+                                date={post.updated_at}
                                 location={post.region}
                                 title={post.title}
+                                travelImages={post.images}
+                                nickname={post.user.nickname}
+                                profileImg={post.user.profileImg}
                             />
                         ))}                        
                         </>

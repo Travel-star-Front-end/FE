@@ -9,9 +9,9 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     //코멘트 수정
-    // const {data, loading, error, triggerPost} = usePost('/posts/comment', {
+    const {data, loading, error, triggerPost} = usePost('/posts/comment', {
 
-    // });
+    });
 
     const handleClick = (tab) => {
         if (activeTab === tab) {
@@ -49,21 +49,21 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     }
 
     //댓글 등록
-    // const handleCommentSubmit = async() => {
-    //     if (!editComment.trim()) return;
+    const handleCommentSubmit = async() => {
+        if (!editComment.trim()) return;
 
-    //     const response = await triggerPost({editComment});
+        const response = await triggerPost({editComment});
         
-    //     if(response) {
-    //         setComment(editComment)
-    //         console.log('댓글 등록 성공', response);
-    //     } else {
-    //         console.log('댓글 등록 실패');
-    //     }
+        if(response) {
+            setComment(editComment)
+            console.log('댓글 등록 성공', response);
+        } else {
+            console.log('댓글 등록 실패');
+        }
 
-    //     setEditComment('');
-    //     setActiveTabState(null);
-    // }
+        setEditComment('');
+        setActiveTabState(null);
+    }
 
     return(
         <>
@@ -114,7 +114,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
                         onChange={(e) => setEditComment(e.target.value)}/>
                     <S.CommentEditBtn 
                         type='button'
-                        // onClick={handleCommentSubmit}
+                        onClick={handleCommentSubmit}
                     >
                         변경하기
                     </S.CommentEditBtn>
