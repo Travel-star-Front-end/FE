@@ -490,8 +490,8 @@ const PlanetPage = () => {
             ref={globeRef}
             width={dimensions.width}
             height={dimensions.height}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-            // globeImageUrl={planetCutyVer}
+            // globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+            globeImageUrl={planetCutyVer}
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
             pointsData={pointsData}
