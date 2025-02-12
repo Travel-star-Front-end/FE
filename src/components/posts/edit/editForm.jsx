@@ -9,7 +9,6 @@ import WriteButton from "../write/button/writeButton";
 import Toggle from "./toggle/toggle";
 import ImageButton from "../write/button/imageButton";
 import ListImage from "../write/list-image";
-import AIButton from "../write/button/AIButton";
 import ListLocation from "../write/list-location";
 import ListMusic from "../write/list-music";
 import useLocation from "../../../hooks/useLocation";
@@ -146,7 +145,7 @@ const EditForm = ({ data }) => {
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
 
-            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 13vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} AIButton={AIButton} />
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 13vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)}/>
 
             <s.SearchContainer>
                 <WriteInput width="100%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />

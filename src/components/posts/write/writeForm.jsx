@@ -8,7 +8,6 @@ import WriteTextarea from "./textarea/writeTextarea";
 import WriteButton from "./button/writeButton";
 import ImageButton from "./button/imageButton";
 import ListImage from "./list-image";
-import AIButton from "./button/AIButton";
 import ListLocation from "./list-location";
 import ListMusic from "./list-music";
 import useLocation from "../../../hooks/useLocation";
@@ -17,6 +16,7 @@ import Location from "../../../assets/images/posts/write/location.png";
 import Music from "../../../assets/images/posts/write/music.png";
 import Modal from "./modal/modal";
 import IframePlayer from "./iframePlayer";
+import AIModal from "./modal/aiModal";
 
 const WriteForm = () => {
     const [selectedImages, setSelectedImages] = useState([]);
@@ -30,9 +30,40 @@ const WriteForm = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [feeling, setFeeling] = useState("");
+    const [analyzedFeeling, setAnalyzedFeeling] = useState("");
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
+    const [aiModal, setAiModal] = useState(false);
     const navigate = useNavigate();
+
+    // ai 모달
+    const openAIModal = async () => {
+        if (!feeling.trim()) {
+            alert("감정을 작성해주세요.");
+            return;
+        }
+
+        setAiModal(true);
+
+        try {
+            const response = await API.post("/analyze", { text: feeling });
+            console.log("분석 결과:", response.data);
+
+            setAnalyzedFeeling(response.data.feeling);
+        } catch (error) {
+            console.error("감정 분석 실패:", error);
+            alert("감정 분석에 실패했습니다.");
+        }
+    };
+
+    const closeAIModal = () => {
+        setAiModal(false);
+    };
+
+    const handleFeelingSelect = (selectedFeeling) => {
+        setAnalyzedFeeling(selectedFeeling);
+        closeAIModal();
+    };
 
     // 이미지 선택
     const addImage = (file) => {
@@ -131,7 +162,11 @@ const WriteForm = () => {
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
 
-            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 13vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} AIButton={AIButton} />
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
+            
+            {aiModal && (
+                <AIModal onClose={closeAIModal} analyzedFeeling={analyzedFeeling} onFeelingSelect={handleFeelingSelect} />
+            )}
 
             <s.SearchContainer>
                 <WriteInput width="100%" placeholder="위치 설정" padding="0 0.8vw 0 4.1vw" icon={Location} value={selectedLocation || locationQuery} onChange={handleLocationChangeHandler} />
