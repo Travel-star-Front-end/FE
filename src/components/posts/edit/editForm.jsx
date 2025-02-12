@@ -33,6 +33,7 @@ const EditForm = ({ data }) => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [feeling, setFeeling] = useState("");
+    const [analyzedFeeling, setAnalyzedFeeling] = useState("");
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
