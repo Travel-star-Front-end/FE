@@ -14,25 +14,21 @@ import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 import useFetch from '../../hooks/useFetch';
 import NotificationBadge from '../../components/posts/posts/notification-badge/notification-badge';
 
-//example img
-import bannerImg from '../../assets/images/ex-banner.png';
-import profile from '../../assets/images/auth/login/logo.png';
-
 const Posts = () => {
+    const userId = localStorage.getItem('userId'); 
     //전체 일지 조회(최신순 10개)
-    const userId = localStorage.getItem('userId');
     const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
-    if (postsError && status === 404) return <div>게시물이 없습니다.</div>;
-
     const { data, loading, error } = useFetch("/mypage");
-
+    
     //행성이름 조회
     const { data: planetData, loading: planetLoading } = useFetch(userId ? `/planet/${userId}` : null);
+    //코멘트 조회
+    const { data: commentData, loading: commentLoading } = useFetch('posts/comment');
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
     const [banner, setBanner] = useState(null);
-    const [comment, setCommnet] = useState('');
+    const [comment, setComment] = useState(commentData);
 
     const handleClick = (tab) => {
         setActiveTab((prevTab) => (prevTab === tab ? null : tab));
@@ -85,7 +81,7 @@ const Posts = () => {
                             {activeTab === 'friends' && <FriendsTab/>}
                             {activeTab === 'share' && <ShareTab/>}
                             {activeTab === 'setting' && 
-                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setCommnet={setCommnet} />}
+                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setComment={setComment} />}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>
@@ -94,15 +90,6 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                {/* <TravelPost 
-                    key={1}
-                    postId={1}
-                    nickname="여행돌이"
-                    date='2024.02.07'
-                    location='일본'
-                    title='일본여행' 
-                    isMyPost={true}
-                />  */}
                     {posts?.data.posts.length > 0 ? (
                         <>
                         {posts?.data.posts.map((post) => (
