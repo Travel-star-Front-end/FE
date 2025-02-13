@@ -7,18 +7,6 @@ import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import useFetch from '../../hooks/useFetch';
 import useDebounce from '../../hooks/useDebounce';
 
-//에시 검색어 추천 데이터
-const suggestions = [
-    { id: 1, text: '홍콩', arrow: upArrow },
-    { id: 3, text: '일본', arrow: decreaseArrow },
-    { id: 5, text: '싱가포르', arrow: decreaseArrow },
-    { id: 7, text: '다낭', arrow: decreaseArrow },
-    { id: 2, text: '뉴질랜드', arrow: upArrow },
-    { id: 4, text: '베를린', arrow: upArrow },
-    { id: 6, text: '태국', arrow: decreaseArrow },
-    { id: 8, text: '보스턴', arrow: upArrow },
-];
-
 const Home = () => {
     const [searchValue, setSearchValue] = useState('');
     const debounceText = useDebounce(searchValue, 500);
@@ -50,9 +38,9 @@ const Home = () => {
                     <S.SuggestionBox>
                     {rankData?.data.length > 0 ? (
                         <>
-                        {rankData?.data.map((item) => (
+                        {rankData?.data.map((item, index) => (
                             <S.SuggestionItem key={item.search_id}>
-                                <div>{`${item.number}. ${item.word}`}</div>
+                                <div>{`${index + 1}. ${item.word}`}</div>
                             </S.SuggestionItem>
                         ))}
                         </>
@@ -66,14 +54,6 @@ const Home = () => {
             <div>
                 <S.Text>추천 게시글</S.Text>
                 <S.PostWrapper>
-                {/* <TravelPost 
-                    key={1}
-                    id={1}
-                    nickname="여행별"
-                    date='2024.02.07'
-                    location='일본'
-                    title='일본여행' 
-                />  */}
                 {posts?.data.posts.length > 0 ? (
                         <>
                         {posts?.data.posts.map((post) => (
