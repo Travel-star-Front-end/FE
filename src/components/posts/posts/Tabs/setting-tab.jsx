@@ -9,9 +9,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     //코멘트 수정
-    const {data, loading, error, triggerPost} = usePost('/posts/comment', {
-
-    });
+    const {data, loading, error, triggerPost} = usePost('/posts/comment');
 
     const handleClick = (tab) => {
         if (activeTab === tab) {
