@@ -16,7 +16,6 @@ function SettingPage() {
   const globeContainerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  //임시로 로딩 스피너 구현
   const handleSave = async () => {
     try {
       setIsLoading(true);
