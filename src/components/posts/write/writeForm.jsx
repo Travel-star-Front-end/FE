@@ -123,7 +123,6 @@ const WriteForm = () => {
     const handleSubmit = async () => {
         const postData = {
             title,
-            photos: selectedImages.map(img => img.name), 
             region: selectedLocation || "",
             music: selectedMusic || null,
             content,
@@ -138,7 +137,24 @@ const WriteForm = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-            console.log("Response:", response);
+
+            
+            /* 일지 사진 업로드
+            const postId = response.data.data.post_id;
+            
+            if (selectedImages.length > 0) {
+                const imageNames = selectedImages.map(image => image.name);
+
+                console.log("전송될 이미지 파일 이름:", imageNames);
+            
+                await API.post(`/posts/${postId}/photos`, { photos: imageNames }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                console.log("이미지 업로드 완료");
+            }
+            */
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
