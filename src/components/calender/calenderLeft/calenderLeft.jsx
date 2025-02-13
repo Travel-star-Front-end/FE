@@ -1,40 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import * as s from "../../../styles/calender/calender";
 import CalenderButton from "../../../assets/images/calender/button.png";
-import useFetch from "../../../hooks/useFetch";
-import colors from "../../../styles/common/colors";
 
-const CalenderLeft = ({ selectedDay, setSelectedDay, setSelectedDayId }) => {
-  const { data } = useFetch(`/day-schedules`);
+const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth());
-  const [selectedSchedules, setSelectedSchedules] = useState({});
-
-  useEffect(() => {
-    if (data) {
-      const scheduleMap = {};
-
-      data.forEach((schedule) => {
-        const formattedDate = new Date(schedule.date).toISOString().split("T")[0];
-        if (!scheduleMap[formattedDate]) {
-          scheduleMap[formattedDate] = [];
-        }
-        scheduleMap[formattedDate].push({ title: schedule.title, day_id: schedule.day_id });
-      });
-
-      setSelectedSchedules(scheduleMap);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (selectedSchedules[selectedDay]) {
-      const firstSchedule = selectedSchedules[selectedDay][0]; // 첫 번째 일정의 day_id 사용
-      setSelectedDayId(firstSchedule.day_id);
-    } else {
-      setSelectedDayId(null);
-    }
-  }, [selectedDay, selectedSchedules, setSelectedDayId]);
 
   const changeMonth = (direction) => {
     setMonth((prevMonth) => {
@@ -104,11 +75,6 @@ const CalenderLeft = ({ selectedDay, setSelectedDay, setSelectedDayId }) => {
     return selectedDay === formattedDate;
   };
 
-  const getSchedules = (day, month, year) => {
-    const formattedDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return selectedSchedules[formattedDate] || [];
-  };
-
   return (
     <s.CalenderLeftContainer>
       <s.CalendarLeftInnerContainer>
@@ -133,7 +99,6 @@ const CalenderLeft = ({ selectedDay, setSelectedDay, setSelectedDayId }) => {
             const { day, month: cellMonth, year: cellYear, currentMonth } = date;
             const lastrow = index >= calendarDates.length - 7;
             const selected = isSelected(day, cellMonth, cellYear);
-            const schedules = getSchedules(day, cellMonth, cellYear);
 
             return (
               <s.DateCell
@@ -145,13 +110,6 @@ const CalenderLeft = ({ selectedDay, setSelectedDay, setSelectedDayId }) => {
               >
                 {selected && <s.SelectedDateCell lastrow={lastrow.toString()} />}
                 {day}
-                {schedules.length > 0 && (
-                  <div style={{ color: colors.black, height: "100%", paddingTop: "0.5vw" }}>
-                    {schedules.map((schedule, i) => (
-                      <s.ListP key={i}>{schedule.title}</s.ListP>
-                    ))}
-                  </div>
-                )}
               </s.DateCell>
             );
           })}
