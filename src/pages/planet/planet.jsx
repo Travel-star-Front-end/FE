@@ -6,8 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { patchPlanetName } from '../../apis/planet/planetService';
 import updateButton from '../../assets/images/planet/switchButton/updateButton.png';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
-import ConstellationViewer from '../../components/planet/ConstellationViewer';
-import { checkPlanetExists } from '../../apis/planet/planetService';
+import {
+  fetchCoordinates,
+  getRandomColor,
+  getRandomStarSize,
+} from '../../utils/planet/getRandom';
 import useFetch from '../../hooks/useFetch';
 
 const PlanetPage = () => {
@@ -15,9 +18,52 @@ const PlanetPage = () => {
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
 
-  // 사용자 일지 전체 가져온 데이터로 별 마커 생성
-  const { data, loading, error } = useFetch('/posts');
+  const userId = JSON.parse(localStorage.getItem('userId') || '[]');
 
+  // 사용자 전체 일지 조회
+  const { data, loading, error } = useFetch('/posts');
+  //사용자 행성 조회
+  const {
+    data: planetData,
+    loading: planetLoading,
+    error: planetError,
+  } = useFetch(`/planet/${userId}`);
+
+  // 상태관리------------------------------------------------------------------------
+  const [planetName, setPlanetName] = useState('');
+  const [tempPlanetName, setTempPlanetName] = useState(planetName); // 수정 중인 행성 이름을 임시로 저장할 state
+  //시간 함수
+  const [currentTime, setCurrentTime] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
+  const [timeZoneId, setTimeZoneId] = useState(null);
+  // 수정 모달 관련
+  const [showModal, setShowModal] = useState(false);
+  //도시 / 연결선 데이터
+  const [pointsData, setPointsData] = useState(() => {
+    const storedData = localStorage.getItem('pointsData');
+    return storedData ? JSON.parse(storedData) : [];
+  });
+  const [arcsData, setArcsData] = useState(() => {
+    const storedData = localStorage.getItem('arcsData');
+    return storedData ? JSON.parse(storedData) : [];
+  });
+  //반응형 관련
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  // 행성 존재 여부 확인 --------------------------------------------------------------
+
+  useEffect(() => {
+    if (planetData && planetData.planet_name) {
+      setPlanetName(planetData.planet_name);
+    }
+  }, [planetData]);
+
+  // -------------------------------------------------------------------------------
+
+  // 사용자 일지 전체 가져온 데이터로 별 마커 생성
   useEffect(() => {
     const processRegionData = async () => {
       if (!data || loading || error) return;
@@ -84,60 +130,14 @@ const PlanetPage = () => {
     };
 
     processRegionData();
-  }, [data, loading, error]);
-
-  // 행성 존재 여부 확인 --------------------------------------------------------------
-  // const [isPlanetExists, setIsPlanetExists] = useState(false); // 행성 존재 여부 상태
-  // const userId = localStorage.getItem('userId'); // 사용자 ID 가져오기
-
-  // useEffect(() => {
-  //   const fetchPlanetStatus = async () => {
-  //     if (userId) {
-  //       const exists = await checkPlanetExists(userId);
-  //       setIsPlanetExists(exists);
-  //     }
-  //   };
-  //   fetchPlanetStatus();
-  // }, [userId]);
-
-  // if (!isPlanetExists) {
-  //   return;
-  // }
-
-  //-------------------------------------------------------------------------------
-
-  //행성 이름 관련 state와 localStorage 확인
-  const [planetName, setPlanetName] = useState(
-    localStorage.getItem('planetName') || ''
-  );
-
-  // 수정 중인 행성 이름을 임시로 저장할 state
-  const [tempPlanetName, setTempPlanetName] = useState(planetName);
+  }, [data]);
 
   // setting.jsx에서 POST 후 저장했던 planetId
-  const planetId = localStorage.getItem('planetId') || null;
-
-  //도시 / 연결선 데이터
-  const [pointsData, setPointsData] = useState(() => {
-    const storedData = localStorage.getItem('pointsData');
-    return storedData ? JSON.parse(storedData) : [];
-  });
-
-  // 초기 arcsData 설정도 수정
-  const [arcsData, setArcsData] = useState(() => {
-    const storedData = localStorage.getItem('arcsData');
-    return storedData ? JSON.parse(storedData) : [];
-  });
-  const [cityName, setCityName] = useState('');
-
-  //반응형 관련
-  const [dimensions, setDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
+  // const planetId = localStorage.getItem('planetId') || null;
 
   // console.log(globeContainerRef.current);
 
+  // 반응형 관련
   useEffect(() => {
     const updateDimensions = () => {
       if (globeContainerRef.current) {
@@ -188,103 +188,17 @@ const PlanetPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!planetName) {
-      navigate('/setting');
-    }
-  }, [planetName, navigate]);
-
-  // Google Geocoding API로 위도와 경도 가져오기
-  const fetchCoordinates = async (city) => {
-    const API_KEY = import.meta.env.VITE_GOOGLE_TOKEN;
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-      city
-    )}&key=${API_KEY}`;
-
-    try {
-      const response = await axios.get(url);
-      if (response.data.status === 'OK') {
-        const location = response.data.results[0].geometry.location;
-        return { lat: location.lat, lng: location.lng };
-      } else {
-        alert('위치를 찾을 수 없습니다. 다시 시도해주세요.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Geocoding API 요청 중 오류 발생:', error);
-      alert('위치를 가져오는 중 오류가 발생했습니다.');
-      return null;
-    }
-  };
-
-  // 도시 추가 함수
-  // const addCity = async () => {
-  //   if (!cityName) {
-  //     alert('도시 이름을 입력해주세요.');
-  //     return;
-  //   }
-  //   const coordinates = await fetchCoordinates(cityName);
-  //   if (!coordinates) return;
-
-  //   const newPoint = {
-  //     ...coordinates,
-  //     name: cityName,
-  //     color: getRandomColor(),
-  //     size: getRandomStarSize(),
-  //   };
-  //   // setPointsData((prev) => [...prev, newPoint]);
-  //   setPointsData((prev) => {
-  //     const newPointsData = [...prev, newPoint];
-  //     localStorage.setItem('pointsData', JSON.stringify(newPointsData));
-  //     return newPointsData;
-  //   });
-
-  //   // 이전 여행지와 연결 선 추가
-  //   if (pointsData.length > 0) {
-  //     const lastPoint = pointsData[pointsData.length - 1];
-  //     const newArc = {
-  //       startLat: lastPoint.lat,
-  //       startLng: lastPoint.lng,
-  //       endLat: coordinates.lat,
-  //       endLng: coordinates.lng,
-  //     };
-  //     // setArcsData((prev) => [...prev, newArc]);
-  //     setArcsData((prev) => {
-  //       const newArcsData = [...prev, newArc];
-  //       localStorage.setItem('arcsData', JSON.stringify(newArcsData));
-  //       return newArcsData;
-  //     });
-  //   }
-
-  //   setCityName('');
-  // };
-
-  // 페이지 로딩 시 로컬 스토리지에서 데이터 불러오기
   // useEffect(() => {
-  //   const storedPointsData = localStorage.getItem('pointsData');
-  //   const storedArcsData = localStorage.getItem('arcsData');
-  //   if (storedPointsData) {
-  //     setPointsData(JSON.parse(storedPointsData));
+  //   if (!planetName) {
+  //     navigate('/setting');
   //   }
-  //   if (storedArcsData) {
-  //     setArcsData(JSON.parse(storedArcsData));
-  //   }
-  // }, []);
+  // }, [planetName, navigate]);
 
   // pointsData, arcsData가 변경될 때마다 로컬 스토리지에 저장
-  // 근데 이제 이 코드는 필요없을듯? 화요일날 물어보기기
-  useEffect(() => {
-    localStorage.setItem('pointsData', JSON.stringify(pointsData));
-  }, [pointsData]);
-
-  useEffect(() => {
-    localStorage.setItem('arcsData', JSON.stringify(arcsData));
-  }, [arcsData]);
-
-  //시간 함수
-  const [currentTime, setCurrentTime] = useState('');
-  const [currentLocation, setCurrentLocation] = useState('');
-  const [timeZoneId, setTimeZoneId] = useState(null);
+  // useEffect(() => {
+  //   localStorage.setItem('pointsData', JSON.stringify(pointsData));
+  //   localStorage.setItem('arcsData', JSON.stringify(arcsData));
+  // }, [pointsData, arcsData]);
 
   // 현재 위치 기반 시간 업데이트 함수
   const updateTimeBasedOnLocation = async () => {
@@ -363,13 +277,10 @@ const PlanetPage = () => {
 
     const intervalId = setInterval(() => {
       updateLocalTime(timeZoneId);
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(intervalId);
   }, [timeZoneId]);
-
-  // 수정 모달 관련
-  const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
     setTempPlanetName(planetName);
@@ -418,23 +329,6 @@ const PlanetPage = () => {
 
   // 마커 svg
   const markerSvg = `<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="currentColor" d="M62.799,23.737c-0.47-1.399-1.681-2.419-3.139-2.642l-16.969-2.593L35.069,2.265 C34.419,0.881,33.03,0,31.504,0c-1.527,0-2.915,0.881-3.565,2.265l-7.623,16.238L3.347,21.096c-1.458,0.223-2.669,1.242-3.138,2.642 c-0.469,1.4-0.115,2.942,0.916,4l12.392,12.707l-2.935,17.977c-0.242,1.488,0.389,2.984,1.62,3.854 c1.23,0.87,2.854,0.958,4.177,0.228l15.126-8.365l15.126,8.365c0.597,0.33,1.254,0.492,1.908,0.492c0.796,0,1.592-0.242,2.269-0.72 c1.231-0.869,1.861-2.365,1.619-3.854l-2.935-17.977l12.393-12.707C62.914,26.68,63.268,25.138,62.799,23.737z"></path> </g></svg>`;
-
-  const getRandomColor = () => {
-    const colors = [
-      '#ff6600',
-      '#ff9900',
-      '#ffcc00',
-      '#66ff33',
-      '#33ccff',
-      '#cc66ff',
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
-
-  const getRandomStarSize = () => {
-    const sizes = ['7rem', '9rem', '11rem'];
-    return sizes[Math.floor(Math.random() * sizes.length)];
-  };
 
   return (
     <>
