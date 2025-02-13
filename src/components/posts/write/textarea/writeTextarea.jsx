@@ -1,6 +1,10 @@
 import * as s from "../../../../styles/posts/write/write";
+import FeelingData from "../../../../utils/posts/write/feelingData";
 
-const WriteTextarea = ({ width, height, placeholder, value, onChange, AIButton, padding }) => {
+const WriteTextarea = ({ width, height, placeholder, value, onChange, padding, onAIClick, analyzedFeeling }) => {
+    const matchedFeeling = FeelingData.find(item => item.feeling === analyzedFeeling);
+    const feelingImage = matchedFeeling ? matchedFeeling.smallimage : null;
+
     return (
         <s.TextareaWrapper width={width} height={height}>
             <s.TextareaContainer 
@@ -12,8 +16,14 @@ const WriteTextarea = ({ width, height, placeholder, value, onChange, AIButton, 
                 padding={padding}
             />
 
-            {AIButton && (
-                <s.AIButtonContainer>
+            {feelingImage && (
+                <s.FeelingImgContainer>
+                    <s.FeelingImg src={feelingImage} alt={matchedFeeling.text} />
+                </s.FeelingImgContainer>
+            )}
+
+            {onAIClick && (
+                <s.AIButtonContainer onClick={onAIClick}>
                     분석하기
                 </s.AIButtonContainer>
             )}

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import colors from "../../common/colors";
 
 // write.jsx
@@ -122,7 +122,26 @@ export const TextareaContainer = styled.textarea`
     outline: none;
 `;
 
-// AIButton.jsx
+export const FeelingImgContainer = styled.div`
+    width: 2.9vw;
+    height: 2.9vw;
+    border-radius: 0.25vw;
+    border: 0.05vw solid ${colors.writeGray5};
+    position: absolute;
+    top: 50%;
+    right: 13vw;
+    transform: translateY(-50%); 
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
+export const FeelingImg = styled.img`
+    width: 2.3vw;
+    height: 2.3vw;
+`
+
 export const AIButtonContainer = styled.button`
     width: 8.55vw;
     height: 1.65vw;
@@ -259,3 +278,120 @@ export const SubscribeButton = styled.div`
     align-items: center;
     margin-top: 1.55vw;
 `
+
+// loadingModal.jsx
+export const LoadingModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 15vw;
+    width: calc(100vw - 15vw);
+    height: 100vh;
+    background: rgba(217, 217, 217, 0.83);
+    display: flex;
+    justify-content: center;
+    padding-top: 12.6vw;
+    z-index: 1000;
+`;
+
+export const LoadingModalContainer = styled.div`
+    width: 47.45vw;
+    height: 28.75vw;
+    border-radius: 0.75vw;
+    background: rgba(255, 255, 255, 0.8);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+export const LoadingDeleteImg = styled.img`
+    width: 1vw;
+    height: 1vw;
+    position: absolute;
+    right: 1vw;
+    top: 1vw;
+    cursor: pointer;
+`
+
+export const LoadingP = styled.p`
+    font-size: 1.25vw;
+    font-weight: 600;
+    color: ${colors.sideBarGray2};
+    margin-top: 5.01vw;
+`
+
+// feelingModal.jsx
+export const FeelingModalContainer = styled(LoadingModalContainer)`
+    justify-content: center;
+`;
+
+export const AIContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1vw;
+    margin-top: 1vw;
+`
+
+export const FeelingP = styled.p`
+    font-size: 2vw;
+    font-weight: 800;
+    color: ${colors.sideBarGray2};
+`;
+
+export const StarImg = styled.img`
+    width: 12.25vw;
+    height: 12.25vw;
+`
+
+export const PContainer = styled.div`
+    display: flex;
+    gap: 0.5vw;
+`
+
+export const FeelingP2 = styled.p`
+    font-size: 1.25vw;
+    font-weight: 500;
+    color: ${colors.sideBarGray2};
+`
+
+export const FeelingP3 = styled.p`
+    font-size: 1.25vw;
+    font-weight: 600;
+    color: ${({ color }) => color || colors.sideBarGray2};
+`
+
+// spinner.jsx
+export const rotate = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+`;
+
+export const SpinnerContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.85vw;
+    height: 4.85vw;
+    position: relative;
+    margin-top: 10.65vw;
+`;
+
+export const SpinnerBackground = styled.div`
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 0.4vw solid ${colors.writeGray};
+    position: absolute;
+`;
+
+export const SpinnerForeground = styled.div`
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 0.4vw solid transparent;
+    border-top-color: ${colors.writeGray4};
+    animation: ${rotate} 1.5s linear infinite;
+    position: absolute;
+`;

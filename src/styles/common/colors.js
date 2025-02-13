@@ -18,6 +18,8 @@ const colors = {
     writeGray: "#D9D9D9",
     writeGray2: "#ECECEC",
     writeGray3: "#B3B3B3",
+    writeGray4: "#A6A6A6",
+    writeGray5: "#D6D6D6",
     writeRed: "#FF4F4F",
     writeRed2: "#FF7070",
     rankingGray: "#B4B4B4",
@@ -30,6 +32,12 @@ const colors = {
     calenderGray6: "#E3E3E3",
     black: "#000000",
     white: "#FFFFFF",
+
+    feeling1: "#FF576B",
+    feeling2: "#FFA357",
+    feeling3: "#FFDD00",
+    feeling4: "#B2E762",
+    feeling5: "#57AEFF",
 };
 
 export default colors;
