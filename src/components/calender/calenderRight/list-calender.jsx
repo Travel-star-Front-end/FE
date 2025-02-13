@@ -10,7 +10,6 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
     const safeData = Array.isArray(data) ? data : []; 
 
     const handleItemClick = (id) => {
-        console.log(id);
         setSelectedId(id);
         setEditVisible(false);
     };
@@ -30,13 +29,7 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
 
     const handlePlaceModalOpen = () => {
         onOpenPlaceModal(title, subTitle);  
-    };
-
-    const sortedData = [...safeData].sort((a, b) => {
-        const timeA = new Date(a.date).getHours() * 60 + new Date(a.date).getMinutes();
-        const timeB = new Date(b.date).getHours() * 60 + new Date(b.date).getMinutes();
-        return timeA - timeB;
-    });
+    }
 
     return (
         <>
@@ -51,13 +44,13 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
             </s.TitleContainer>
 
             <s.ListContainer>
-                {sortedData.map((item, index) => (
+                {safeData.map((item, index) => (
                     <ItemCalender 
                         key={index}
-                        time={item.date} 
-                        title={item.title}
-                        selected={selectedId === item.day_id} 
-                        onItemClick={() => handleItemClick(item.day_id)} 
+                        id={item.id} 
+                        title={item.email}
+                        selected={selectedId === item.id} 
+                        onItemClick={() => handleItemClick(item.id)} 
                         onEditClick={handleEditClick}
                     />
                 ))}

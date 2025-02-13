@@ -57,7 +57,7 @@ const AddModal = ({ onClose, selectedDay }) => {
 
       console.log("데이터:", requestData);
 
-      await API.post("/day-schedules", requestData);
+      await API.post("/users", requestData);
 
       alert("일정이 추가되었습니다.");
       onClose();
