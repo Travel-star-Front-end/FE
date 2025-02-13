@@ -3,6 +3,7 @@ import Globe from 'react-globe.gl';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
+import useFetch from '../../hooks/useFetch';
 
 const OthersPlanet = () => {
   const { id } = useParams();
@@ -19,6 +20,57 @@ const OthersPlanet = () => {
     width: 0,
     height: 0,
   });
+
+  const fetchCoordinates = async (city) => {
+    const API_KEY = import.meta.env.VITE_GOOGLE_TOKEN;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      city
+    )}&key=${API_KEY}`;
+
+    try {
+      const response = await axios.get(url);
+      if (response.data.status === 'OK') {
+        const location = response.data.results[0].geometry.location;
+        return { lat: location.lat, lng: location.lng };
+      } else {
+        alert('위치를 찾을 수 없습니다. 다시 시도해주세요.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Geocoding API 요청 중 오류 발생:', error);
+      alert('위치를 가져오는 중 오류가 발생했습니다.');
+      return null;
+    }
+  };
+
+  const { data, loading, error } = useFetch(`/stars/${id}/regions`);
+
+  useEffect(() => {
+    if (!data || loading || error) return;
+
+    const loadPointsData = async () => {
+      const pointsDataPromises = data.regions.map(async (regionName) => {
+        const coordinates = await fetchCoordinates(regionName);
+        if (coordinates) {
+          return {
+            lat: coordinates.lat,
+            lng: coordinates.lng,
+            name: regionName,
+            color: '#ff6600',
+            size: '9rem',
+          };
+        }
+        return null;
+      });
+
+      const resolvedPointsData = (await Promise.all(pointsDataPromises)).filter(
+        (point) => point !== null
+      );
+      setPlanetData({ planetName: id, pointsData: resolvedPointsData });
+    };
+
+    loadPointsData();
+  }, [data, loading, error, id]);
 
   // useEffect(() => {
   //   const { innerWidth, innerHeight } = window;
@@ -70,29 +122,29 @@ const OthersPlanet = () => {
   }, []);
 
   // 백엔드 연동 전이라서 임시 데이터 만듬
-  useEffect(() => {
-    // 일단 임시 데이터
-    const mockData = {
-      planetName: '테스트 행성',
-      pointsData: [
-        {
-          lat: 37.5665,
-          lng: 126.978,
-          name: '서울',
-          color: '#ff6600',
-          size: '9rem',
-        },
-        {
-          lat: 35.6762,
-          lng: 139.6503,
-          name: '도쿄',
-          color: '#33ccff',
-          size: '7rem',
-        },
-      ],
-    };
-    setPlanetData(mockData);
-  }, [id]);
+  // useEffect(() => {
+  //   // 일단 임시 데이터
+  //   const mockData = {
+  //     planetName: '테스트 행성',
+  //     pointsData: [
+  //       {
+  //         lat: 37.5665,
+  //         lng: 126.978,
+  //         name: '서울',
+  //         color: '#ff6600',
+  //         size: '9rem',
+  //       },
+  //       {
+  //         lat: 35.6762,
+  //         lng: 139.6503,
+  //         name: '도쿄',
+  //         color: '#33ccff',
+  //         size: '7rem',
+  //       },
+  //     ],
+  //   };
+  //   setPlanetData(mockData);
+  // }, [id]);
 
   useEffect(() => {
     if (globeRef.current) {
