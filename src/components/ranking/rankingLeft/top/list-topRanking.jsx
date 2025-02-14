@@ -2,7 +2,7 @@ import * as s from "../../../../styles/ranking/ranking";
 import ItemTopRanking from "./item-topRanking";
 
 const ListTopRanking = ({ data }) => {
-    // console.log(data);
+    // console.log("top 데이터", data);
     const topData = data.slice(0, 3);
 
     return (
@@ -14,7 +14,8 @@ const ListTopRanking = ({ data }) => {
                     {topData.map((item, index) => (
                         <ItemTopRanking 
                             key={index}
-                            id={item.stars_id} 
+                            id={item.stars_id}
+                            user_id={item.user_id}
                             name={item.name}
                             rank={index + 1}
                         />
