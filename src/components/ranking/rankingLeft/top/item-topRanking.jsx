@@ -4,7 +4,7 @@ import colors from "../../../../styles/common/colors";
 import View from "../../../../assets/images/ranking/view.png";
 import { API } from "../../../../apis/axios";
 
-const ItemTopRanking = ({ id, name, rank, user_id }) => {
+const ItemTopRanking = ({ id, name, rank, user_id, imageUrl }) => {
     const navigate = useNavigate();
 
     const handleViewClick = () => {
@@ -44,7 +44,7 @@ const ItemTopRanking = ({ id, name, rank, user_id }) => {
     return (
         <s.ItemTopContainer id={id}>
             <s.ItemTopInnerContainer>
-                <s.ItemTopImgContainer>
+            <s.ItemTopImgContainer imageurl={imageUrl}>
                     <s.ItemTopRankingContainer>
                         <s.ItemTopRankingP>{rank}<span style={{fontSize: "1.2vw"}}>위</span></s.ItemTopRankingP>
                     </s.ItemTopRankingContainer>

@@ -14,6 +14,7 @@ const ListBottomRanking = ({ data }) => {
                             id={item.stars_id}
                             name={item.name}
                             user_id={item.user_id}
+                            imageUrl={item.imageUrl}
                         />
                     ))}
                 </s.ListBottomContainer>

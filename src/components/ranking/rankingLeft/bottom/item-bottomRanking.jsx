@@ -4,7 +4,7 @@ import * as s from "../../../../styles/ranking/ranking";
 import View from "../../../../assets/images/ranking/view.png";
 
 
-const ItemBottomRanking = ({ id, name, user_id }) => {
+const ItemBottomRanking = ({ id, name, user_id, imageUrl }) => {
     const navigate = useNavigate();
 
     const handleViewClick = () => {
@@ -43,7 +43,7 @@ const ItemBottomRanking = ({ id, name, user_id }) => {
     return (
         <s.ItemBottomContainer id={id}>
             <s.ItemBottomInnerContainer>
-                <s.ItemBottomImgContainer />
+                <s.ItemBottomImgContainer imageurl={imageUrl} />
 
                 <s.ItemBottomPContainer>
                     <s.ItemBottomP>

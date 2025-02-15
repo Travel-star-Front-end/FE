@@ -18,6 +18,7 @@ const ListTopRanking = ({ data }) => {
                             user_id={item.user_id}
                             name={item.name}
                             rank={index + 1}
+                            imageUrl={item.imageUrl}
                         />
                     ))}
                 </s.ListTopInnerContainer>
