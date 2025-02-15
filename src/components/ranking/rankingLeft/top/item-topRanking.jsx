@@ -1,13 +1,11 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as s from "../../../../styles/ranking/ranking";
 import colors from "../../../../styles/common/colors";
 import View from "../../../../assets/images/ranking/view.png";
 import { API } from "../../../../apis/axios";
 
-const ItemTopRanking = ({ id, name, rank }) => {
+const ItemTopRanking = ({ id, name, rank, user_id, imageUrl }) => {
     const navigate = useNavigate();
-    const [count, setCount] = useState(0);
 
     const handleViewClick = () => {
         navigate(`/planet/${id}`);
@@ -15,22 +13,38 @@ const ItemTopRanking = ({ id, name, rank }) => {
 
     const handleVoteClick = async () => {
         try {
-            const response = await API.patch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-                count: count + 1,
-            });
-
-            console.log(response.data);
-            setCount(count + 1);
+            const accessToken = localStorage.getItem("accessToken");
+            if (!accessToken) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+    
+            const response = await API.post(
+                "/stars/vote",
+                {
+                    stars_id: id,
+                    post_user_id: user_id,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+    
+            // console.log(response.data);
             alert("투표가 반영되었습니다.");
         } catch (error) {
-            console.error("Error", error);
+            // console.error("Error", error);
+            alert("이미 투표하셨습니다.");
         }
-    }
+    };
+    
 
     return (
         <s.ItemTopContainer id={id}>
             <s.ItemTopInnerContainer>
-                <s.ItemTopImgContainer>
+            <s.ItemTopImgContainer imageurl={imageUrl}>
                     <s.ItemTopRankingContainer>
                         <s.ItemTopRankingP>{rank}<span style={{fontSize: "1.2vw"}}>위</span></s.ItemTopRankingP>
                     </s.ItemTopRankingContainer>

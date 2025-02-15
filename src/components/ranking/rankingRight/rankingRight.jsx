@@ -18,11 +18,11 @@ const RankingRight = () => {
   useEffect(() => {
     const storedPointsData = localStorage.getItem('pointsData');
     const storedArcsData = localStorage.getItem('arcsData');
-    const completedStatus = localStorage.getItem('isCompleted'); // 신청 여부 확인
+    const completedStatus = localStorage.getItem('isCompleted');
 
     if (storedPointsData) setPointsData(JSON.parse(storedPointsData));
     if (storedArcsData) setArcsData(JSON.parse(storedArcsData));
-    if (completedStatus === 'true') setIsCompleted(true); // 'true' 문자열로 저장됨
+    if (completedStatus === 'true') setIsCompleted(true); 
   }, []);
 
   const handleChange = (e) => {
@@ -31,9 +31,9 @@ const RankingRight = () => {
 
   const handleSubmit = async () => {
     if (!name) return alert('이름을 입력해주세요.');
-
+  
     setLoading(true);
-
+  
     try {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
@@ -41,37 +41,42 @@ const RankingRight = () => {
         setLoading(false);
         return;
       }
-
+  
       const canvas = await html2canvas(imgContainerRef.current);
       canvas.toBlob(async (blob) => {
-        const filename = `${Date.now()}_constellation.png`;
+        if (!blob) {
+          alert('이미지 캡처에 실패했습니다.');
+          setLoading(false);
+          return;
+        }
 
-        const response = await API.patch(
-          '/stars/name',
-          {
-            name: name,
-            constellationImage: filename,
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('image', blob, `${Date.now()}_constellation.png`);
+  
+        
+        const response = await API.patch('/stars/name', formData, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
           },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
+        });
+  
         alert('별자리 신청이 완료되었습니다.');
         console.log(response.data);
-
+  
         setIsCompleted(true);
-        localStorage.setItem('isCompleted', 'true'); // 신청 완료 상태 저장
+        localStorage.setItem('isCompleted', 'true');
+        window.location.reload();
       });
     } catch (err) {
-      alert('이미지 캡처 중 오류 발생');
+      alert('이미지 업로드 중 오류 발생');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <s.RightContainer>
