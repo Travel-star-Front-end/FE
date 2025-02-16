@@ -30,14 +30,9 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({postId, profileImg, nickname, date, location, images, title, buttonType, isMyPost}) => {
+const TravelPost = ({postId, profileImg, nickname, date, location, images, title, buttonType}) => {
 
     const userId = localStorage.getItem('userId'); 
-
-     //isMyPost 값에 따라 API 요청 변경
-     const apiEndpoint = isMyPost 
-     ? `/posts/${postId}` //유저 일지 상세 조회 
-     : `/posts/${postId}/users/${userId}`;//다른 유저 일지 상세 조회
  
     // const { data, loading, error } = useFetch(apiEndpoint);
 

@@ -37,13 +37,7 @@ const Detail = () => {
 
     //회원 일지 상세 조회 api 
     const userId = localStorage.getItem('userId');
-
-    //API 엔드포인트 동적으로 변경
-    const apiEndpoint = nickname === localStorage.getItem('nickname')
-        ? `/posts/${postId}`  // 내가 작성한 일지
-        : `/posts/${postId}/users/${userId}`;  // 다른 회원이 작성한 일지
-
-    const { data, loading, error } = useFetch(apiEndpoint);
+    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${userId}`);
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -75,7 +69,7 @@ const Detail = () => {
                             <S.DetailInfo>
                                 <S.TitleDateWrapper>
                                     <div className='nickname'>{nickname}</div>
-                                    <div className='date'>{data.updated_at}</div>
+                                    <div className='date'>{postData.updated_at}</div>
                                 </S.TitleDateWrapper>
                                 <S.MetaWrapper>
                                     <S.LocationWrapper>
@@ -87,7 +81,7 @@ const Detail = () => {
                                             <S.AudioImgWrapper>
                                                 <img src={audio} alt='audio' className='audio_png'/>
                                             </S.AudioImgWrapper>
-                                            <div>{data.music}</div>
+                                            <div>{postData.music}</div>
                                         </S.MusicName>
                                         <div>00:30</div>
                                     </S.MusicWrapper>
@@ -99,8 +93,8 @@ const Detail = () => {
 
                     <S.SliderWrapper>
                         <Slider {...settings}>
-                            {data?.images?.length > 0 ? (
-                                data.images.map((image, index) => (
+                            {postData?.images?.length > 0 ? (
+                                postData.images.map((image, index) => (
                                     <S.TravelImg key={index}>
                                         <img src={image} className='travel-img' />
                                     </S.TravelImg>
@@ -113,9 +107,9 @@ const Detail = () => {
                     </div>
 
                     <S.ContentWrapper>
-                        <div className='title'>{data.title}</div>
+                        <div className='title'>{postData.title}</div>
                         <div className='content'>
-                            {data.content}
+                            {postData.content}
                         </div>
                     </S.ContentWrapper>
                 </S.PostWrapper>
