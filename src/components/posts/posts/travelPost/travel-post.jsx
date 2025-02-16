@@ -10,6 +10,7 @@ import lock from '../../../../assets/images/travel-post/lock-person.png';
 import share from '../../../../assets/images/posts/posts/share.png';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
 import useFetch from '../../../../hooks/useFetch';
+import usePost from '../../../../hooks/usePost';
 
 //예시 이미지
 import image1 from '../../../../assets/images/travel-post/image 1.png';
@@ -30,11 +31,21 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({postId, profileImg, nickname, date, location, images, title, buttonType}) => {
+const TravelPost = ({
+    postId,
+    postUserId,
+    profileImg,
+    nickname, 
+    date, 
+    location, 
+    images, 
+    title, 
+    buttonType
+}) => {
 
     const userId = localStorage.getItem('userId'); 
- 
-    // const { data, loading, error } = useFetch(apiEndpoint);
+    //친구 요청
+    const { triggerPost } = usePost(`friends/request`);
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
@@ -42,8 +53,20 @@ const TravelPost = ({postId, profileImg, nickname, date, location, images, title
     const currentUrl = window.location.origin + pathname;
 
     //친구 추가 버튼 상태
-    const handleButtonClick = () => {
-        setIsFriend((prevState) => !prevState);
+    const handleButtonClick = async() => {
+        try {
+            // 친구 요청 API 호출
+            const response = await triggerPost({ toUserId: postUserId });
+    
+            if (response?.resultType === 'success') {
+                setIsFriend(true); // 성공하면 친구 상태 변경
+                console.log("친구 요청 성공:", response);
+            } else {
+                console.log("친구 요청 실패");
+            }
+        } catch (error) {
+            console.error("친구 요청 중 오류 발생:", error);
+        }
     };
 
     //현재 url복사
@@ -62,7 +85,16 @@ const TravelPost = ({postId, profileImg, nickname, date, location, images, title
         <S.Container>
             <S.Hr/>
             <S.InfoWrapper>
-                <S.Info onClick={() => navigate(`/posts/${postId}`)}>
+                <S.Info onClick={() => navigate(`/posts/${postId}`, {
+                    state: {
+                        postId: postId,
+                        nickname: nickname,
+                        date: date,
+                        location: location,
+                        profileImg: profileImg,
+                        images: images
+                    }
+                })}>
                     <S.ProfileImg>
                         {profileImg ? (
                             <img src={profileImg} alt="프로필" className="profile-img" />
@@ -105,19 +137,17 @@ const TravelPost = ({postId, profileImg, nickname, date, location, images, title
 
             </S.InfoWrapper>
 
-            <S.SliderWrapper>
-                <Slider {...settings}>
-                    {images && images.length > 0 ? (
-                        images.map((image, index) => (
+            {images && images.length > 0 && (
+                <S.SliderWrapper>
+                    <Slider {...settings}>
+                        {images.map((image, index) => (
                             <S.TravelImg key={index}>
                                 <img src={image} className='travel-img' />
                             </S.TravelImg>
-                        ))
-                    ) : (
-                        <div>이미지가 없습니다.</div>
-                    )}
-                </Slider>
-            </S.SliderWrapper>
+                        ))}
+                    </Slider>
+                </S.SliderWrapper>
+            )}
 
             <S.QuickReview>{title}</S.QuickReview>
 
