@@ -19,7 +19,11 @@ const PlanetPage = () => {
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
 
-  const userId = JSON.parse(localStorage.getItem('userId') || '[]');
+  const storedUserId = localStorage.getItem('userId');
+  const userId =
+    storedUserId && storedUserId.startsWith('{')
+      ? JSON.parse(storedUserId)
+      : storedUserId;
 
   // 사용자 전체 일지 조회
   const { data, loading, error } = useFetch('/posts');
