@@ -9,7 +9,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     //코멘트 수정
-    const {data, loading, error, triggerPost} = usePost('/posts/comment');
+    const { triggerPost } = usePost('/comment');
 
     const handleClick = (tab) => {
         if (activeTab === tab) {
@@ -50,7 +50,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const handleCommentSubmit = async() => {
         if (!editComment.trim()) return;
 
-        const response = await triggerPost({editComment});
+        const response = await triggerPost({ comment: editComment });
         
         if(response) {
             setComment(editComment)

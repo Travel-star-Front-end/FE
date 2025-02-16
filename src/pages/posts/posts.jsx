@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from '../../styles/posts/posts/posts';
 import default_profile_img from '../../assets/images/ProfileImage.png';
@@ -18,17 +18,24 @@ const Posts = () => {
     const userId = localStorage.getItem('userId'); 
     //전체 일지 조회(최신순 10개)
     const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
+    //닉네임 조회회
     const { data, loading, error } = useFetch("/mypage");
-    
     //행성이름 조회
     const { data: planetData, loading: planetLoading } = useFetch(userId ? `/planet/${userId}` : null);
     //코멘트 조회
-    const { data: commentData, loading: commentLoading } = useFetch('posts/comment');
+    const { data: commentData, loading: commentLoading } = useFetch('/comment');
+    //배경화면 조회
+    // const { data: backgroundData, loading: backgroundLoading } = useFetch('/background');
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
     const [banner, setBanner] = useState(null);
-    const [comment, setComment] = useState(commentData);
+    const [comment, setComment] = useState(commentData?.data.comment || '');
+    useEffect(() => {
+        if (commentData?.data.comment) {
+            setComment(commentData.data.comment);
+        }
+    }, [commentData]);
 
     const handleClick = (tab) => {
         setActiveTab((prevTab) => (prevTab === tab ? null : tab));
@@ -95,13 +102,14 @@ const Posts = () => {
                         {posts?.data.posts.map((post) => (
                             <TravelPost 
                                 key={post.post_id}
-                                id={post.post_id}
+                                postId={post.post_id}
+                                postUserId={post.user_id}
+                                profileImg={post.user.profileImg}
+                                nickname={post.user.nickname}
                                 date={post.updated_at}
                                 location={post.region}
+                                travelImages={post.images}                                
                                 title={post.title}
-                                travelImages={post.images}
-                                nickname={post.user.nickname}
-                                profileImg={post.user.profileImg}
                                 buttonType='edit'
                             />
                         ))}                        
