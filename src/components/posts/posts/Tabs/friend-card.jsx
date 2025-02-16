@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 import * as S from '../../../../styles/posts/posts/Tabs/friend-card';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
@@ -23,6 +24,23 @@ export const FriendCard = ({id, profileImg, name}) => {
 
 //친구 신청 리스트 컴포넌트
 export const FriendApplyCard = ({id, profileImg, name}) => {
+    const [accepted, setAccepted] = useState(false);
+
+    const handleAcceptRequest = async() => {
+        try {
+            const response = await axios.patch(`friends/request/${id}`, { requestId: id });
+
+            if (response.data.resultType === "success") {
+                alert("친구 요청이 수락되었습니다!");
+                setAccepted(true);
+            } else {
+                alert("친구 요청 수락에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("친구 요청 수락 오류:", error);
+            alert("오류가 발생했습니다.");
+        }
+    };
 
     return (
         <S.Container2>
@@ -39,7 +57,11 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
                 </S.ProfileWrapper>
                 <S.Name>{name}</S.Name>                
             </S.FriendContnet>
-            <S.AccpetBtn type='button'>요청 수락</S.AccpetBtn>
+            {accepted ? (
+                <S.AcceptedText>수락됨</S.AcceptedText>
+            ) : (
+                <S.AccpetBtn type='button' onClick={handleAcceptRequest}>요청 수락</S.AccpetBtn>
+            )}
         </S.Container2>
     );
 }

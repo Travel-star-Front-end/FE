@@ -30,17 +30,18 @@ const settings = {
 }
 
 //추천 게시글 컴포넌트
-const TravelPost = ({postId, profileImg, nickname, date, location, travelImages, title, buttonType}) => {
-    //일지 상세 조회 api 
-    // const userId = localStorage.getItem('userId');
-    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${postId}`);
+const TravelPost = ({postId, profileImg, nickname, date, location, images, title, buttonType}) => {
+
+    const userId = localStorage.getItem('userId'); 
+ 
+    // const { data, loading, error } = useFetch(apiEndpoint);
 
     const [isFriend, setIsFriend] = useState(false);
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
 
-    //친구 추가 버튼 상태태
+    //친구 추가 버튼 상태
     const handleButtonClick = () => {
         setIsFriend((prevState) => !prevState);
     };
@@ -61,15 +62,7 @@ const TravelPost = ({postId, profileImg, nickname, date, location, travelImages,
         <S.Container>
             <S.Hr/>
             <S.InfoWrapper>
-                <S.Info onClick={() => navigate(`/posts/${postId}`, {
-                    state: { 
-                        nickname, 
-                        date, 
-                        location, 
-                        title, 
-                        profileImg 
-                    } 
-                })}>
+                <S.Info onClick={() => navigate(`/posts/${postId}`)}>
                     <S.ProfileImg>
                         {profileImg ? (
                             <img src={profileImg} alt="프로필" className="profile-img" />
@@ -114,24 +107,15 @@ const TravelPost = ({postId, profileImg, nickname, date, location, travelImages,
 
             <S.SliderWrapper>
                 <Slider {...settings}>
-                    <S.TravelImg>
-                        <img src={image1} className='travel-img' />
-                    </S.TravelImg>
-                    <S.TravelImg>
-                        <img src={image2} className='travel-img' />
-                    </S.TravelImg>
-                    <S.TravelImg>
-                        <img src={image3} className='travel-img' />
-                    </S.TravelImg>
-                    <S.TravelImg>
-                        <img src={image1} className='travel-img' />
-                    </S.TravelImg>
-                    <S.TravelImg>
-                        <img src={image2} className='travel-img' />
-                    </S.TravelImg>
-                    <S.TravelImg>
-                        <img src={image3} className='travel-img' />
-                    </S.TravelImg>
+                    {images && images.length > 0 ? (
+                        images.map((image, index) => (
+                            <S.TravelImg key={index}>
+                                <img src={image} className='travel-img' />
+                            </S.TravelImg>
+                        ))
+                    ) : (
+                        <div>이미지가 없습니다.</div>
+                    )}
                 </Slider>
             </S.SliderWrapper>
 

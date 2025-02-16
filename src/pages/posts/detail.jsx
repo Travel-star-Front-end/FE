@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import * as S from '../../styles/detail';
 import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import Slider from 'react-slick';
@@ -28,14 +28,16 @@ const settings = {
 }
 
 const Detail = () => {
+    const { postId } = useParams();
     const location = useLocation();
     const { pathname } = useLocation();
-    const currentUrl = window.location.origin + pathname;    
+    const currentUrl = window.location.origin + pathname;
+
     const {nickname, date, location: postLocation, quickReview, profileImg } = location.state || {};
 
-    //일지 상세 조회 api 
-    // const userId = localStorage.getItem('userId');
-    // const { data, loading, error } = useFetch(`/users/${userId}/posts/${postId}`);
+    //회원 일지 상세 조회 api 
+    const userId = localStorage.getItem('userId');
+    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${userId}`);
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -67,7 +69,7 @@ const Detail = () => {
                             <S.DetailInfo>
                                 <S.TitleDateWrapper>
                                     <div className='nickname'>{nickname}</div>
-                                    <div className='date'>{date}</div>
+                                    <div className='date'>{postData.updated_at}</div>
                                 </S.TitleDateWrapper>
                                 <S.MetaWrapper>
                                     <S.LocationWrapper>
@@ -79,7 +81,7 @@ const Detail = () => {
                                             <S.AudioImgWrapper>
                                                 <img src={audio} alt='audio' className='audio_png'/>
                                             </S.AudioImgWrapper>
-                                            <div>검정치마 - 한시오분</div>
+                                            <div>{postData.music}</div>
                                         </S.MusicName>
                                         <div>00:30</div>
                                     </S.MusicWrapper>
@@ -91,32 +93,23 @@ const Detail = () => {
 
                     <S.SliderWrapper>
                         <Slider {...settings}>
-                            <S.TravelImg>
-                                <img src={image1} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image2} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image3} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image1} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image2} className='travel-img' />
-                            </S.TravelImg>
-                            <S.TravelImg>
-                                <img src={image3} className='travel-img' />
-                            </S.TravelImg>
+                            {postData?.images?.length > 0 ? (
+                                postData.images.map((image, index) => (
+                                    <S.TravelImg key={index}>
+                                        <img src={image} className='travel-img' />
+                                    </S.TravelImg>
+                                ))
+                            ) : (
+                                <div>이미지가 없습니다.</div>
+                            )}
                         </Slider>
                     </S.SliderWrapper>
                     </div>
 
                     <S.ContentWrapper>
-                        <div className='title'>{quickReview}</div>
+                        <div className='title'>{postData.title}</div>
                         <div className='content'>
-                            content
+                            {postData.content}
                         </div>
                     </S.ContentWrapper>
                 </S.PostWrapper>

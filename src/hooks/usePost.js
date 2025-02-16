@@ -10,10 +10,10 @@ const usePost = (url) => {
         setLoading(true);
         setError(null);
         try {
-            const token = localStorage.getItem('token');
+            const accessToken = localStorage.getItem("accessToken");
             const response = await API.post(url, body, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${accessToken}`,
                     "Content-Type": "application/json",
                 }
             });
