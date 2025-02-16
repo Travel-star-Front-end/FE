@@ -69,12 +69,12 @@ const WriteForm = () => {
     const addImage = (file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-            setSelectedImages(prevImages => [
+            setSelectedImages((prevImages) => [
                 ...prevImages,
-                { name: file.name, preview: reader.result }
+                { name: file.name, preview: reader.result, file },
             ]);
         };
-        reader.readAsDataURL(file); 
+        reader.readAsDataURL(file);
     };
 
     // 이미지 삭제
@@ -132,38 +132,34 @@ const WriteForm = () => {
     
         try {
             const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) {
-                alert("로그인이 필요합니다.");
-                return;
-            }
     
             const response = await API.post("/posts", postData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
                 },
             });
     
-            /*
             const postId = response.data.data.post_id;
-            console.log("게시글 저장 완료, post_id:", postId);
     
             if (selectedImages.length > 0) {
                 const formData = new FormData();
                 
                 selectedImages.forEach((image, index) => {
-                    const file = dataURLtoFile(image.preview, image.name);
-                    formData.append("images", file);
+                    formData.append("images", image.file); 
                 });
     
-                await API.post(`/posts/${postId}/photos`, formData, {
+                console.log("업로드할 이미지 데이터:", formData);
+
+                await API.post(`/posts/${postId}/image`, formData, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
                     },
                 });
     
                 console.log("이미지 업로드 완료");
             }
-            */
     
             alert("일지가 저장되었습니다.");
             navigate("/posts");
@@ -172,24 +168,6 @@ const WriteForm = () => {
             alert("게시글 작성에 실패했습니다.");
         }
     };
-    
-    /*
-    const dataURLtoFile = (dataurl, filename) => {
-        let arr = dataurl.split(",");
-        let mime = arr[0].match(/:(.*?);/)[1];
-        let bstr = atob(arr[1]);
-        let n = bstr.length;
-        let u8arr = new Uint8Array(n);
-        
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-    
-        return new File([u8arr], filename, { type: mime });
-    };    
-    */
-
-
     const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
