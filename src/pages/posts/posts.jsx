@@ -102,6 +102,7 @@ const Posts = () => {
                                 travelImages={post.images}
                                 nickname={post.user.nickname}
                                 profileImg={post.user.profileImg}
+                                buttonType='edit'
                             />
                         ))}                        
                         </>
