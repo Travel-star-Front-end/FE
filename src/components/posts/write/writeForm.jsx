@@ -46,15 +46,29 @@ const WriteForm = () => {
         setAiModal(true);
 
         try {
-            const response = await API.post("/analyze", { text: feeling });
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.post("/posts/feeling", { review: feeling },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
             console.log("분석 결과:", response.data);
 
-            setAnalyzedFeeling(response.data.feeling);
+            setAnalyzedFeeling(response.data.data.feel_color);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
         }
     };
+
+    useEffect(() => {
+        if (analyzedFeeling) {
+            setAiModal(true);
+        }
+    }, [analyzedFeeling]);
+    
 
     const closeAIModal = () => {
         setAiModal(false);
@@ -62,6 +76,7 @@ const WriteForm = () => {
 
     const handleFeelingSelect = (selectedFeeling) => {
         setAnalyzedFeeling(selectedFeeling);
+        console.log("전달된 감정", analyzedFeeling);
         closeAIModal();
     };
 
@@ -126,12 +141,13 @@ const WriteForm = () => {
             region: selectedLocation || "",
             music: selectedMusic || null,
             content,
-            feeling,
+            feel_color: analyzedFeeling,
             storage: 0,
         };
     
         try {
             const accessToken = localStorage.getItem("accessToken");
+            console.log("전송할 데이터", postData);
     
             const response = await API.post("/posts", postData, {
                 headers: {
