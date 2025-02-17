@@ -6,7 +6,7 @@ import usePost from '../../../../hooks/usePost';
 const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [activeTab, setActiveTabState] = useState(null);
     const [editComment, setEditComment] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [backgroundImage, setBackgroundImage] = useState('');
 
     //코멘트 수정
     const { triggerPost } = usePost('/comment');
@@ -30,15 +30,36 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     }
 
     // 앨범에서 이미지 선택
-    const handleImageSelect = (event) => {
-        const file = event.target.files[0]; // 사용자가 선택한 첫 번째 파일
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setBanner(reader.result);
-            };
-            reader.readAsDataURL(file)
+    const handleImageSelect = async(event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("background", file);
+
+        try {
+            const response = await fetch("/background", {
+                method: "PATCH",
+                body: formData,
+            });
+    
+            if (!response.ok) {
+                throw new Error("이미지 업로드에 실패했습니다.");
+            }
+    
+            const data = await response.json();
+            setBackgroundImage(data.fileUrl);
+        } catch (error) {
+            console.error("이미지 업로드 오류:", error);
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
+        // if (file) {
+        //     const reader = new FileReader();
+        //     reader.onloadend = () => {
+        //         setBanner(reader.result);
+        //     };
+        //     reader.readAsDataURL(file)
+        // }
     };
 
     //기본 배경화면 설정
