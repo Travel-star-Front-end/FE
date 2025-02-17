@@ -59,3 +59,19 @@ export const checkPlanetExists = async (userId) => {
     return false;
   }
 };
+
+export const getCalenderData = async (selectedID) => {
+  try {
+    const authToken = localStorage.getItem('accessToken');
+    const response = await API.get(`/schedule/${selectedID}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    console.log(response.data);
+    return response.data ?? false; // API 응답에서 'exists' 여부 반환
+  } catch (error) {
+    console.error('Error checking planet existence:', error);
+    return false;
+  }
+};
