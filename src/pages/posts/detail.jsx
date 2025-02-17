@@ -28,15 +28,13 @@ const settings = {
 }
 
 const Detail = () => {
-    const userId = localStorage.getItem('userId');
-    // const { postId } = useParams();
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
-    const {postId, nickname, date, location: region, profileImg, images } = location.state || {};
+    const {postId, postUserId, nickname, date, location: region, profileImg, images } = location.state || {};
 
     //회원 일지 상세 조회 api 
-    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${userId}`);
+    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${postUserId}`);
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -49,6 +47,10 @@ const Detail = () => {
             console.error('주소 복사 실패:', err);
         });
     };
+
+    if (postLoading) {
+        return <div>로딩 중...</div>;
+    }
 
     return (
         <S.Container>
@@ -80,7 +82,7 @@ const Detail = () => {
                                             <S.AudioImgWrapper>
                                                 <img src={audio} alt='audio' className='audio_png'/>
                                             </S.AudioImgWrapper>
-                                            <div>{postData.data.music}</div>
+                                            {/* <div>{postData.data.music}</div> */}
                                         </S.MusicName>
                                         <div>00:30</div>
                                     </S.MusicWrapper>
@@ -104,10 +106,10 @@ const Detail = () => {
                     </div>
 
                     <S.ContentWrapper>
-                        <div className='title'>{postData.data.title}</div>
+                        {/* <div className='title'>{postData.data.title}</div>
                         <div className='content'>
                             {postData.data.content}
-                        </div>
+                        </div> */}
                     </S.ContentWrapper>
                 </S.PostWrapper>
         </S.Container>
