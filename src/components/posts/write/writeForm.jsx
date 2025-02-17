@@ -141,7 +141,7 @@ const WriteForm = () => {
             region: selectedLocation || "",
             music: selectedMusic || null,
             content,
-            feel_color: analyzedFeeling,
+            feel_color: String(analyzedFeeling),
             storage: 0,
         };
     
@@ -165,16 +165,14 @@ const WriteForm = () => {
                     formData.append("images", image.file); 
                 });
     
-                console.log("업로드할 이미지 데이터:", formData);
-
-                await API.post(`/posts/${postId}/image`, formData, {
+                const response = await API.post(`/posts/${postId}/image`, formData, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         "Content-Type": "multipart/form-data",
                     },
                 });
     
-                console.log("이미지 업로드 완료");
+                console.log("이미지 업로드 완료", response);
             }
     
             alert("일지가 저장되었습니다.");
