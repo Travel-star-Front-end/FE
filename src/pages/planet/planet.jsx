@@ -13,6 +13,7 @@ import {
 } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
 import useFetch from '../../hooks/useFetch';
+import spinner from '../../components/Spinner/Spinner';
 
 const PlanetPage = () => {
   const globeRef = useRef();
@@ -44,19 +45,23 @@ const PlanetPage = () => {
   // 수정 모달 관련
   const [showModal, setShowModal] = useState(false);
   //도시 / 연결선 데이터
-  const [pointsData, setPointsData] = useState(() => {
-    const storedData = localStorage.getItem('pointsData');
-    return storedData ? JSON.parse(storedData) : [];
-  });
-  const [arcsData, setArcsData] = useState(() => {
-    const storedData = localStorage.getItem('arcsData');
-    return storedData ? JSON.parse(storedData) : [];
-  });
+  // const [pointsData, setPointsData] = useState(() => {
+  //   const storedData = localStorage.getItem('pointsData');
+  //   return storedData ? JSON.parse(storedData) : [];
+  // });
+  // const [arcsData, setArcsData] = useState(() => {
+  //   const storedData = localStorage.getItem('arcsData');
+  //   return storedData ? JSON.parse(storedData) : [];
+  // });
+
+  const [pointsData, setPointsData] = useState([]);
+  const [arcsData, setArcsData] = useState([]);
   //반응형 관련
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
   });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // 행성 존재 여부 확인 --------------------------------------------------------------
 
@@ -71,65 +76,48 @@ const PlanetPage = () => {
     const processRegionData = async () => {
       if (!data || loading || error) return;
 
-      const storedPointsData = JSON.parse(
-        localStorage.getItem('pointsData') || '[]'
-      );
-      const storedArcsData = JSON.parse(
-        localStorage.getItem('arcsData') || '[]'
-      );
+      setIsProcessing(true); // 로딩 시작
 
-      const existingRegions = new Set(
-        storedPointsData.map((point) => point.name)
-      );
-
-      let updatedPoints = [...storedPointsData];
-      let updatedArcs = [...storedArcsData];
+      let updatedPoints = [];
+      let updatedArcs = [];
 
       if (Array.isArray(data.data)) {
         for (const item of data.data) {
           const region = item.star.region;
 
-          if (!existingRegions.has(region)) {
-            try {
-              const coordinates = await fetchCoordinates(region);
+          try {
+            const coordinates = await fetchCoordinates(region);
+            if (coordinates) {
+              const newPoint = {
+                lat: coordinates.lat,
+                lng: coordinates.lng,
+                name: region,
+                color: getRandomColor(),
+                size: getRandomStarSize(),
+              };
+              updatedPoints.push(newPoint);
 
-              if (coordinates) {
-                const newPoint = {
-                  lat: coordinates.lat,
-                  lng: coordinates.lng,
-                  name: region,
-                  color: getRandomColor(),
-                  size: getRandomStarSize(),
+              if (updatedPoints.length > 1) {
+                const prevPoint = updatedPoints[updatedPoints.length - 2];
+                const newArc = {
+                  startLat: prevPoint.lat,
+                  startLng: prevPoint.lng,
+                  endLat: coordinates.lat,
+                  endLng: coordinates.lng,
                 };
-
-                updatedPoints.push(newPoint);
-                existingRegions.add(region);
-
-                if (updatedPoints.length > 1) {
-                  const prevPoint = updatedPoints[updatedPoints.length - 2];
-                  const newArc = {
-                    startLat: prevPoint.lat,
-                    startLng: prevPoint.lng,
-                    endLat: coordinates.lat,
-                    endLng: coordinates.lng,
-                  };
-                  updatedArcs.push(newArc);
-                }
+                updatedArcs.push(newArc);
               }
-            } catch (error) {
-              console.error(`Error processing region ${region}:`, error);
             }
+          } catch (error) {
+            console.error(`Error processing region ${region}:`, error);
           }
         }
       }
 
-      if (updatedPoints.length > storedPointsData.length) {
-        localStorage.setItem('pointsData', JSON.stringify(updatedPoints));
-        localStorage.setItem('arcsData', JSON.stringify(updatedArcs));
+      setPointsData(updatedPoints);
+      setArcsData(updatedArcs);
 
-        setPointsData(updatedPoints);
-        setArcsData(updatedArcs);
-      }
+      setIsProcessing(false); // 로딩 종료
     };
 
     processRegionData();
@@ -311,6 +299,8 @@ const PlanetPage = () => {
     altitude: 0.1,
     name: point.name,
   }));
+
+  console.log(pointsData);
 
   return (
     <>
