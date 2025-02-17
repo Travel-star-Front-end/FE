@@ -28,8 +28,8 @@ const PostList = () => {
                         postUserId={post.user_id}
                         profileImg={post.user.profileImg}
                         nickname={post.user.nickname}
-                        date={post.updated_at}
-                        location={post.region}
+                        date={post.created_at}
+                        location={post.star.region}
                         travelImages={post.images}                                
                         title={post.title}
                         buttonType='friend'
