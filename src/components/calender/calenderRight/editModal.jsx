@@ -108,11 +108,27 @@ const EditModal = ({ onClose, selectedDay, id }) => {
     setMinute('00');
   }, [period]);
 
+  const handleDelete = async () => {
+    try {
+      const accssToken = localStorage.getItem('accessToken');
+      const response = await API.delete(`/schedule/${selectedDay}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accssToken}`,
+        },
+      });
+      if (response) {
+        alert('일지 삭제 완료');
+      }
+    } catch (err) {
+      console.log('error', err);
+    }
+  };
+
   return (
     <s.AddModalContainer>
       <s.TimeContainer>
         <s.AddTitleP>시간</s.AddTitleP>
-        <s.AddTrashImg src={Trash} onClick={onClose} alt="delete" />
+        <s.AddTrashImg src={Trash} onClick={handleDelete} alt="delete" />
       </s.TimeContainer>
 
       <s.TimeSelectContainer>
