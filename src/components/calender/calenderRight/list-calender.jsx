@@ -3,7 +3,12 @@ import useFetch from '../../../hooks/useFetch';
 import * as s from '../../../styles/calender/calender';
 import ItemCalender from './item-calender';
 
-const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
+const ListCalender = ({
+  data,
+  selectedDay,
+  onOpenPlaceModal,
+  onOpenEditModal,
+}) => {
   const [selectedId, setSelectedId] = useState(null);
   const [editVisible, setEditVisible] = useState(false);
 
@@ -14,8 +19,9 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
     setEditVisible(false);
   };
 
-  const handleEditClick = (id) => {
-    onOpenEditModal(id);
+  // 파라미터 추가함
+  const handleEditClick = (id, selecteDay) => {
+    onOpenEditModal(id, selecteDay);
   };
 
   const handleTitleClick = () => {
@@ -23,14 +29,26 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
     setSelectedId(null);
   };
 
-  const { data: titleData, loading, error } = useFetch(`/schedule/${id}`);
-  const title = titleData?.location || '제목';
-  const subTitle = titleData?.body || '부제목';
-
-  const handlePlaceModalOpen = () => {
-    onOpenPlaceModal(title, subTitle);
+  // 시/분 추출하는 함수 추가함
+  const extractTime = (dateTime) => {
+    const date = new Date(dateTime);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   };
-  console.log(titleData);
+
+  // const {
+  //   data: titleData,
+  //   loading,
+  //   error,
+  // } = useFetch(`/schedule/${selectedDay}`);
+  // const title = titleData?.[0]?.location || '제목';
+  // const subTitle = titleData?.[0]?.body || '부제목';
+
+  // const handlePlaceModalOpen = () => {
+  //   onOpenPlaceModal(title, subTitle);
+  // };
+  // console.log('safe Data', safeData);
 
   return (
     <>
@@ -39,8 +57,8 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
         onClick={handleTitleClick}
       >
         <s.TitleInnerContainer>
-          <s.LeftContainer>
-            <s.TitleP>{title}</s.TitleP>
+          {/* <s.LeftContainer> */}
+          {/* <s.TitleP>{title}</s.TitleP>
             <s.TitleP2>{subTitle}</s.TitleP2>
           </s.LeftContainer>
           <s.EditButton
@@ -48,18 +66,21 @@ const ListCalender = ({ data, onOpenPlaceModal, onOpenEditModal }) => {
             onClick={handlePlaceModalOpen}
           >
             수정
-          </s.EditButton>
+          </s.EditButton> */}
         </s.TitleInnerContainer>
       </s.TitleContainer>
 
+      {/* time, location, selectedDay 추가함, ket 값 변경함*/}
       <s.ListContainer>
         {safeData.map((item, index) => (
           <ItemCalender
-            key={index}
-            id={item.id}
-            title={item.email}
-            selected={selectedId === item.id}
-            onItemClick={() => handleItemClick(item.id)}
+            key={item.schedule_id}
+            id={item.schedule_id}
+            time={extractTime(item.date_time)}
+            location={item.location}
+            selectedDay={selectedDay}
+            selected={item.schedule_id === selectedId}
+            onItemClick={() => handleItemClick(item.schedule_id)}
             onEditClick={handleEditClick}
           />
         ))}

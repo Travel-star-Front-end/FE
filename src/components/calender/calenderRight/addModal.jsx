@@ -58,7 +58,7 @@ const AddModal = ({ onClose, selectedDay }) => {
       console.log('데이터:', requestData);
 
       const accessToken = localStorage.getItem('accessToken');
-      const response = await API.post('/posts', requestData, {
+      const response = await API.post('/schedule', requestData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

@@ -9,7 +9,7 @@ import EditModal from './editModal';
 import { getCalenderData } from '../../../apis/planet/planetService';
 
 const CalenderRight = ({ selectedDay }) => {
-  const { data, loading, error } = useFetch('/schedule');
+  const { data, loading, error } = useFetch(`/schedule/${selectedDay}`);
   const [modalType, setModalType] = useState(null);
   const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
