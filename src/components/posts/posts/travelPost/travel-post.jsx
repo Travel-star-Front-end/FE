@@ -88,6 +88,7 @@ const TravelPost = ({
                 <S.Info onClick={() => navigate(`/posts/${postId}`, {
                     state: {
                         postId: postId,
+                        postUserId: postUserId,
                         nickname: nickname,
                         date: date,
                         location: location,
