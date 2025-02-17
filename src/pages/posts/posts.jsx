@@ -21,11 +21,11 @@ const Posts = () => {
     //닉네임 조회회
     const { data, loading, error } = useFetch("/mypage");
     //행성이름 조회
-    const { data: planetData, loading: planetLoading } = useFetch(userId ? `/planet/${userId}` : null);
+    const { data: planetData, loading: planetLoading } = useFetch('/planet');
     //코멘트 조회
     const { data: commentData, loading: commentLoading } = useFetch('/comment');
     //배경화면 조회
-    // const { data: backgroundData, loading: backgroundLoading } = useFetch('/background');
+    const { data: backgroundData, loading: backgroundLoading } = useFetch('/background');
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
