@@ -69,12 +69,12 @@ const WriteForm = () => {
     const addImage = (file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-            setSelectedImages(prevImages => [
+            setSelectedImages((prevImages) => [
                 ...prevImages,
-                { name: file.name, preview: reader.result }
+                { name: file.name, preview: reader.result, file },
             ]);
         };
-        reader.readAsDataURL(file); 
+        reader.readAsDataURL(file);
     };
 
     // 이미지 삭제
@@ -129,32 +129,38 @@ const WriteForm = () => {
             feeling,
             storage: 0,
         };
-
+    
         try {
             const accessToken = localStorage.getItem("accessToken");
+    
             const response = await API.post("/posts", postData, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
                 },
             });
-
-            
-            /* 일지 사진 업로드
+    
             const postId = response.data.data.post_id;
-            
+    
             if (selectedImages.length > 0) {
-                const imageNames = selectedImages.map(image => image.name);
+                const formData = new FormData();
+                
+                selectedImages.forEach((image, index) => {
+                    formData.append("images", image.file); 
+                });
+    
+                console.log("업로드할 이미지 데이터:", formData);
 
-                console.log("전송될 이미지 파일 이름:", imageNames);
-            
-                await API.post(`/posts/${postId}/photos`, { photos: imageNames }, {
+                await API.post(`/posts/${postId}/image`, formData, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
                     },
                 });
+    
                 console.log("이미지 업로드 완료");
             }
-            */
+    
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
@@ -162,7 +168,6 @@ const WriteForm = () => {
             alert("게시글 작성에 실패했습니다.");
         }
     };
-
     const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (

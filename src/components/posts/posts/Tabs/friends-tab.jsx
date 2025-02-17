@@ -18,9 +18,9 @@ const exampleData = [
 ];
 
 const FriendsTab = ({ friends, requests }) => {
-    const userId = localStorage.getItem('userId');
     //친구 목록
-    const{data: friendsData, loading, error} = useFetch(`/users/${userId}/friends`);
+    const{data: friendsData, loading, error} = useFetch(`/friends/list`);
+    const{data: applyFriendData, loading: applyFriendLoading, error:applyFriendError } = useFetch(`/friends/list/received`);
 
     const [activeTab, setActiveTab] = useState("friends");
 
@@ -43,25 +43,46 @@ const FriendsTab = ({ friends, requests }) => {
             <S.TabContent>
                 {activeTab === "friends" && (
                 <S.CardListContainer>
-                    {exampleData.map((item) => (
-                        <FriendCard
-                            key={item.id}
-                            profileImg={null}
-                            name={item.name}
-                        />
-                    ))}
+                    {friendsData?.friends?.length > 0 ? (
+                        <>
+                        {friendsData?.map((item) => (
+                            <FriendCard
+                                key={item.friend_id}
+                                id={item.friend_id}
+                                profileImg={item.profile_image}
+                                name={item.friend_name}
+                            />
+                        ))}
+                        </>
+                    ) : (
+                        <S.NoFreinds>친구 목록이 없습니다.</S.NoFreinds>
+                    )}
                 </S.CardListContainer>
                 )}
                 
                 {activeTab === "requests" && (
                 <S.CardListContainer>
+                    {/* {friendsData?.data?.length > 0 ? (
+                        <>
+                        {friendsData?.data.map((item) => (
+                            <FriendApplyCard
+                                key={item.requestId}
+                                id={item.requestId}
+                                profileImg={item.fromUserImage}
+                                name={item.fromUserNickname}
+                            />
+                        ))}
+                        </>
+                    ) : (
+                        <S.NoFreinds>친구 신청 목록이 없습니다.</S.NoFreinds>
+                    )} */}
                     {exampleData.map((item) => (
-                        <FriendApplyCard
-                            key={item.id}
-                            profileImg={null}
-                            name={item.name}
-                        />
-                    ))}
+                            <FriendApplyCard
+                                key={item.id}
+                                id={item.id}
+                                name={item.name}
+                            />
+                        ))}
                 </S.CardListContainer>
                 )}
             </S.TabContent>

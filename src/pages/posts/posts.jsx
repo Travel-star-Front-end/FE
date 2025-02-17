@@ -14,20 +14,21 @@ import SettingTab from '../../components/posts/posts/Tabs/setting-tab';
 import useFetch from '../../hooks/useFetch';
 import NotificationBadge from '../../components/posts/posts/notification-badge/notification-badge';
 
-//example img
-import bannerImg from '../../assets/images/ex-banner.png';
-import profile from '../../assets/images/auth/login/logo.png';
-
 const Posts = () => {
-    //유저 전체 일지 조회(최신순 10개)
-    const userId = localStorage.getItem('userId');
-    const { data: posts, loading, error } = useFetch(`/users/${userId}/posts`);
-    if (error && status === 404) return <div>게시물이 없습니다.</div>;
+    const userId = localStorage.getItem('userId'); 
+    //전체 일지 조회(최신순 10개)
+    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
+    const { data, loading, error } = useFetch("/mypage");
+    
+    //행성이름 조회
+    const { data: planetData, loading: planetLoading } = useFetch(userId ? `/planet/${userId}` : null);
+    //코멘트 조회
+    const { data: commentData, loading: commentLoading } = useFetch('posts/comment');
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
     const [banner, setBanner] = useState(null);
-    const [comment, setCommnet] = useState('');
+    const [comment, setComment] = useState(commentData);
 
     const handleClick = (tab) => {
         setActiveTab((prevTab) => (prevTab === tab ? null : tab));
@@ -53,8 +54,16 @@ const Posts = () => {
                                 <img src={default_profile_img} alt='profile' className='profile-img'/>
                             </S.ProfileImg>
                             <div>
-                                <div className='nickname default'>벨라</div>
-                                <div className='planet-name default'>깐따삐야 행성</div>
+                                <div className='nickname default'>
+                                    {loading ? "Loading..." : data?.data?.nickname || "닉네임 없음"}
+                                </div>
+                                <div className='planet-name default'>
+                                    {planetLoading
+                                    ? "Loading..."
+                                    : planetData?.planet_name
+                                    ? `${planetData.planet_name} 행성`
+                                    : "행성 정보 없음"}
+                                </div>
                             </div>
                         </S.InfoContainer>
 
@@ -72,7 +81,7 @@ const Posts = () => {
                             {activeTab === 'friends' && <FriendsTab/>}
                             {activeTab === 'share' && <ShareTab/>}
                             {activeTab === 'setting' && 
-                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setCommnet={setCommnet} />}
+                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setComment={setComment} />}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>
@@ -81,15 +90,19 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                    {posts?.data.length > 0 ? (
+                    {posts?.data.posts.length > 0 ? (
                         <>
-                        {posts?.data.map((post) => (
+                        {posts?.data.posts.map((post) => (
                             <TravelPost 
-                                key={post.id}
-                                id={post.id}
-                                date={post.createdAt}
+                                key={post.post_id}
+                                id={post.post_id}
+                                date={post.updated_at}
                                 location={post.region}
-                                quickReview={post.title}
+                                title={post.title}
+                                travelImages={post.images}
+                                nickname={post.user.nickname}
+                                profileImg={post.user.profileImg}
+                                buttonType='edit'
                             />
                         ))}                        
                         </>

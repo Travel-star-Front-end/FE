@@ -74,6 +74,17 @@ export const AccpetBtn = styled.button`
     color: #555555;
 `;
 
+export const AcceptedText = styled.div`
+    width: 2.95vw;
+    height: 0.75vw;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.4vw;
+    line-height: 0.484vw;
+    color: #555555;
+`;
+
 export const ShareBtn = styled.button`
     width: 2.95vw;
     height: 0.75vw;

@@ -7,34 +7,21 @@ import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import useFetch from '../../hooks/useFetch';
 import useDebounce from '../../hooks/useDebounce';
 
-//에시 검색어 추천 데이터
-const suggestions = [
-    { id: 1, text: '홍콩', arrow: upArrow },
-    { id: 3, text: '일본', arrow: decreaseArrow },
-    { id: 5, text: '싱가포르', arrow: decreaseArrow },
-    { id: 7, text: '다낭', arrow: decreaseArrow },
-    { id: 2, text: '뉴질랜드', arrow: upArrow },
-    { id: 4, text: '베를린', arrow: upArrow },
-    { id: 6, text: '태국', arrow: decreaseArrow },
-    { id: 8, text: '보스턴', arrow: upArrow },
-];
-
 const Home = () => {
     const [searchValue, setSearchValue] = useState('');
     const debounceText = useDebounce(searchValue, 500);
 
     //추천 일지 조회(최신순 10개)
     const userId = localStorage.getItem('userId');
-    const { data: posts, loading, error } = useFetch(`/posts/user/${userId}`);
-    if (error && status === 404) return <div>게시물이 없습니다.</div>;
+    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
 
     //검색
     const { data: searchItem, loading: searchLoading, error: searchError } = useFetch(
-        debounceText ? `/users/${userId}/home/search?term=${debounceText}` : null
+        debounceText ? `/home/search?term=${debounceText}` : null
     );
 
     //검색 순위 조회
-    const { data: ranking, loading: rankingLoading, error: rankingError} = useFetch(`/users/${userId}/home/search/rankings`);
+    const { data: rankData, loading: rankingLoading, error: rankingError} = useFetch(`/home/search/rankings`);
 
 
     return (
@@ -49,16 +36,17 @@ const Home = () => {
                 <S.SearchResultsContainer>
                     <div className='search-suggesion'>검색어 추천</div>
                     <S.SuggestionBox>
-                    {suggestions.map((item) => (
-                        <S.SuggestionItem key={item.id}>
-                            <div>{`${item.id}. ${item.text}`}</div>
-                        </S.SuggestionItem>
-                    ))}
-                    {/* {ranking?.data.map((item) => (
-                        <S.SuggestionItem key={item.number}>
-                            <div>{`${item.number}. ${item.word}`}</div>
-                        </S.SuggestionItem>
-                    ))} */}
+                    {rankData?.data.length > 0 ? (
+                        <>
+                        {rankData?.data.map((item, index) => (
+                            <S.SuggestionItem key={item.search_id}>
+                                <div>{`${index + 1}. ${item.word}`}</div>
+                            </S.SuggestionItem>
+                        ))}
+                        </>
+                    ) : (
+                        <S.NothingSearch>검색어 추천 결과가 없습니다.</S.NothingSearch>
+                    )}
                     </S.SuggestionBox>
                 </S.SearchResultsContainer>
             </S.SearchWrapper>
@@ -66,15 +54,19 @@ const Home = () => {
             <div>
                 <S.Text>추천 게시글</S.Text>
                 <S.PostWrapper>
-                {posts?.data.length > 0 ? (
+                {posts?.data.posts.length > 0 ? (
                         <>
-                        {posts?.data.map((post) => (
+                        {posts?.data.posts.map((post) => (
                             <TravelPost 
-                                key={post.id}
-                                id={post.id}
-                                date={post.createdAt}
+                                key={post.post_id}
+                                id={post.post_id}
+                                date={post.updated_at}
                                 location={post.region}
-                                quickReview={post.title}
+                                title={post.title}
+                                travelImages={post.images}
+                                nickname={post.user.nickname}
+                                profileImg={post.user.profileImg}
+                                buttonType='friend'
                             />
                         ))}                        
                         </>

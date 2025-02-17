@@ -1,5 +1,6 @@
 import * as S from '../../../../styles/posts/posts/Tabs/share-tab';
 import { ShareCard } from './friend-card';
+import useFetch from '../../../../hooks/useFetch';
 
 //예시 공유 리스트트
 const shareCardData = [
@@ -17,17 +18,27 @@ const shareCardData = [
 
 
 export const ShareTab = () => {
+    const{data: friendsData, loading, error} = useFetch(`/friends/list`);
+
     return(
         <S.Container>
             <S.Title>공유하기</S.Title>
             <S.TabContnet>
-                {shareCardData.map((item) => (
-                    <ShareCard
-                        key={item.id}
-                        profileImg={null}
-                        name={item.name}
-                    />
-                ))}
+                {friendsData?.data.length > 0 ? (
+                    <>
+                    {friendsData?.data.map((item) => (
+                        <ShareCard
+                            key={item.requestId}
+                            id={item.requestId}
+                            profileImg={item.friendImage}
+                            name={item.friendNickname}
+                        />
+                    ))}                    
+                    </>
+                ) :(
+                    <S.NothingText>공유 할 친구가 없습니다.</S.NothingText>
+                )}
+
             </S.TabContnet>
         </S.Container>
     );

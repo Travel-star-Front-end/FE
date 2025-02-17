@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import colors from "../common/colors";
 
 // ranking.jsx
@@ -108,9 +108,15 @@ export const ItemTopImgContainer = styled.div`
     position: relative;
     width: 13.65vw;
     height: 13.65vw;
-    background: ${colors.black};
     border-radius: 50%;
-`
+    ${({ imageurl }) => imageurl && css`
+        background-image: url(${imageurl});
+        background-size: cover;
+        background-position: center;
+    `}
+    background-color: ${colors.black};
+`;
+
 
 export const ItemTopRankingContainer = styled.div`
     position: absolute;
@@ -205,9 +211,15 @@ export const ItemBottomImgContainer = styled.div`
     position: relative;
     width: 10.65vw;
     height: 10.65vw;
-    background: ${colors.black};
     border-radius: 50%;
-`
+    ${({ imageurl }) => imageurl && css`
+        background-image: url(${imageurl});
+        background-size: cover;
+        background-position: center;
+    `}
+    background-color: ${colors.black};
+`;
+
 
 export const ItemBottomPContainer = styled.div`
     display: flex;

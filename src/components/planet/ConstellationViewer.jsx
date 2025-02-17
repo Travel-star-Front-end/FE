@@ -7,13 +7,12 @@ const ConstellationViewer = ({ pointsData }) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
     canvas.width = 400;
     canvas.height = 400;
 
     const radius = canvas.width / 2 - 20;
 
-    // 배경색
+    // 배경색 설정
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -21,6 +20,8 @@ const ConstellationViewer = ({ pointsData }) => {
     const initialLng = pointsData[0]?.lng || 0;
 
     let maxDistance = 0;
+
+    // 최대 거리 계산
     pointsData.forEach((point) => {
       const dx = point.lng - initialLng;
       const dy = point.lat - initialLat;
@@ -30,6 +31,7 @@ const ConstellationViewer = ({ pointsData }) => {
 
     const scale = radius / (maxDistance || 1);
 
+    // 위치 조정
     const adjustedPointsData = adjustPointPositions(
       pointsData.map((point, index) => ({ ...point, id: index })),
       scale,
@@ -39,29 +41,25 @@ const ConstellationViewer = ({ pointsData }) => {
       initialLat
     );
 
-    const pointsWithDistance = adjustedPointsData.map((point) => {
-      const distance = Math.sqrt(
-        Math.pow(point.x - canvas.width / 2, 2) +
-          Math.pow(point.y - canvas.height / 2, 2)
-      );
-      return { ...point, distance };
-    });
+    // 별들을 MST로 연결
+    const edges = calculateEdges(adjustedPointsData);
+    const mstEdges = kruskalMST(edges, adjustedPointsData.length);
 
-    pointsWithDistance.sort((a, b) => b.distance - a.distance);
-
-    // 리뉴얼한 별자리 생성 로직. 진짜 별자리가 되어버려~
+    // 선 그리기
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
-    for (let i = 0; i < pointsWithDistance.length - 1; i++) {
-      const startPoint = pointsWithDistance[i];
-      const endPoint = pointsWithDistance[i + 1];
+
+    mstEdges.forEach(([startIdx, endIdx]) => {
+      const startPoint = adjustedPointsData[startIdx];
+      const endPoint = adjustedPointsData[endIdx];
 
       ctx.beginPath();
       ctx.moveTo(startPoint.x, startPoint.y);
       ctx.lineTo(endPoint.x, endPoint.y);
       ctx.stroke();
-    }
+    });
 
+    // 별 그리기
     adjustedPointsData.forEach((point) => {
       ctx.fillStyle = point.color;
       drawStar(ctx, point.x, point.y, point.outerRadius);
@@ -138,6 +136,60 @@ const ConstellationViewer = ({ pointsData }) => {
       }
     }
     return adjustedPoints;
+  };
+
+  // 두 점 간의 거리 계산 함수
+  const calculateDistance = (point1, point2) => {
+    return Math.sqrt(
+      Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
+    );
+  };
+
+  // 모든 점들 간의 거리 계산하여 간선 리스트 생성
+  const calculateEdges = (points) => {
+    const edges = [];
+
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        edges.push([i, j, calculateDistance(points[i], points[j])]);
+      }
+    }
+
+    return edges.sort((a, b) => a[2] - b[2]); // 거리 기준으로 정렬
+  };
+
+  // Kruskal 알고리즘으로 MST 생성
+  const kruskalMST = (edges, numPoints) => {
+    const parent = Array(numPoints)
+      .fill(0)
+      .map((_, idx) => idx);
+
+    // Find 함수: 루트를 찾음
+    const findRoot = (node) => {
+      if (parent[node] !== node) parent[node] = findRoot(parent[node]);
+      return parent[node];
+    };
+
+    // Union 함수: 두 트리를 합침
+    const unionNodes = (node1, node2) => {
+      const root1 = findRoot(node1);
+      const root2 = findRoot(node2);
+
+      if (root1 !== root2) parent[root2] = root1;
+    };
+
+    const mstEdges = [];
+
+    for (const [startIdx, endIdx, _] of edges) {
+      if (findRoot(startIdx) !== findRoot(endIdx)) {
+        unionNodes(startIdx, endIdx);
+        mstEdges.push([startIdx, endIdx]);
+
+        if (mstEdges.length === numPoints - 1) break; // MST 완성 시 종료
+      }
+    }
+
+    return mstEdges;
   };
 
   return (

@@ -6,7 +6,7 @@ export const Container = styled.div`
     margin: auto;
     margin-top: 2.85vw;
     width: 80%;
-    height: 100vh;
+    height: 100%;
     box-sizing: border-box;
 `;
 
@@ -122,6 +122,13 @@ export const PostWrapper = styled.div`
 
 export const NothingText = styled.div`
     margin-top: 2.75vw;
+    font-weight: 400;
+    font-size: 1vw;
+    color: rgba(85, 85, 85, 0.5);
+`;
+
+export const NothingSearch = styled.div`
+    maring: 0 auto;
     font-weight: 400;
     font-size: 1vw;
     color: rgba(85, 85, 85, 0.5);
