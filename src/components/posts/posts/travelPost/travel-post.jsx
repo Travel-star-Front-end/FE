@@ -42,8 +42,6 @@ const TravelPost = ({
     title, 
     buttonType
 }) => {
-
-    const userId = localStorage.getItem('userId'); 
     //친구 요청
     const { triggerPost } = usePost(`friends/request`);
 
@@ -130,7 +128,7 @@ const TravelPost = ({
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                         <S.EditButton 
                             type="button" 
-                            onClick={() => navigate('edit')}>
+                            onClick={() => navigate(`/edit/${postId}`)}>
                                 수정하기
                         </S.EditButton>
                     </S.EditBtnContainer>
