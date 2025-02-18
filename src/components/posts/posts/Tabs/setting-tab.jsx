@@ -2,6 +2,7 @@ import { useState } from 'react';
 import * as S from '../../../../styles/posts/posts/Tabs/setting-tab';
 import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 import usePost from '../../../../hooks/usePost';
+import { API } from '../../../../apis/axios';
 
 const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [activeTab, setActiveTabState] = useState(null);
@@ -32,34 +33,28 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     // 앨범에서 이미지 선택
     const handleImageSelect = async(event) => {
         const file = event.target.files[0];
+        console.log(file)
         if (!file) return;
 
         const formData = new FormData();
-        formData.append("background", file);
+        formData.append("images", file);
 
         try {
-            const response = await fetch("/background", {
-                method: "PATCH",
-                body: formData,
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.patch("/background", formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "multipart/form-data",
+                },
             });
     
-            if (!response.ok) {
-                throw new Error("이미지 업로드에 실패했습니다.");
-            }
-    
-            const data = await response.json();
-            setBackgroundImage(data.fileUrl);
+            console.log("업로드 성공:", response.data);
+            setBanner(response.data.fileUrl);
+            setBackgroundImage(response.data.fileUrl);
         } catch (error) {
             console.error("이미지 업로드 오류:", error);
             alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
-        // if (file) {
-        //     const reader = new FileReader();
-        //     reader.onloadend = () => {
-        //         setBanner(reader.result);
-        //     };
-        //     reader.readAsDataURL(file)
-        // }
     };
 
     //기본 배경화면 설정
