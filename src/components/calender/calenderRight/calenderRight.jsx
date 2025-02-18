@@ -36,7 +36,7 @@ const CalenderRight = ({ selectedDay }) => {
     setEditItemId(id);
     setModalType('edit');
   };
-  console.log(data);
+  // console.log(data);
 
   return (
     <s.CalenderRightContainer>
