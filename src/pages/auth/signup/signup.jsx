@@ -77,7 +77,6 @@ const signUpFn = async (formData) => {
 
   try {
     const response = await API.post('/register', payload);
-
     console.log('응답 데이터(요청 함수 내부):', response.data);
     return response.data;
   } catch (error) {
@@ -129,59 +128,86 @@ const SignUp = () => {
   });
 
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const currentDay = new Date().getDate();
+
   const years = [];
   for (let y = 1900; y <= currentYear; y++) {
     years.push(y);
   }
 
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-
-  const getDaysInMonth = (y, m) => {
-    if (!y || !m) return [];
-    const yearNum = Number(y);
-    const monthNum = Number(m);
-
-    const now = new Date();
-    const nowYear = now.getFullYear();
-    const nowMonth = now.getMonth() + 1;
-    const nowDay = now.getDate();
-
-    if (yearNum > nowYear) {
+  const getMonthsInYear = (selectedYear) => {
+    const yearNum = Number(selectedYear);
+    if (!yearNum) return [];
+    if (yearNum < currentYear) {
+      return Array.from({ length: 12 }, (_, i) => i + 1);
+    } else if (yearNum === currentYear) {
+      return Array.from({ length: currentMonth }, (_, i) => i + 1);
+    } else {
       return [];
     }
+  };
 
-    if (yearNum === nowYear) {
-      if (monthNum > nowMonth) {
-        return [];
-      }
-      if (monthNum === nowMonth) {
-        return Array.from({ length: nowDay }, (_, i) => i + 1);
-      }
+  const getDaysInMonth = (selectedYear, selectedMonth) => {
+    if (!selectedYear || !selectedMonth) return [];
+
+    const yearNum = Number(selectedYear);
+    const monthNum = Number(selectedMonth);
+
+    if (yearNum > currentYear) {
+      return [];
+    }
+    if (yearNum < currentYear) {
       const lastDay = new Date(yearNum, monthNum, 0).getDate();
       return Array.from({ length: lastDay }, (_, i) => i + 1);
     }
-
-    const lastDay = new Date(yearNum, monthNum, 0).getDate();
-    return Array.from({ length: lastDay }, (_, i) => i + 1);
+    if (monthNum > currentMonth) {
+      return [];
+    } else if (monthNum < currentMonth) {
+      const lastDay = new Date(yearNum, monthNum, 0).getDate();
+      return Array.from({ length: lastDay }, (_, i) => i + 1);
+    } else {
+      return Array.from({ length: currentDay }, (_, i) => i + 1);
+    }
   };
 
-  const days = getDaysInMonth(watch('year'), watch('month'));
+  const selectedYear = watch('year');
+  const selectedMonth = watch('month');
+  const months = getMonthsInYear(selectedYear);
+  const days = getDaysInMonth(selectedYear, selectedMonth);
 
-  const handleCheckId = () => {
+  const [idCheckResult, setIdCheckResult] = useState(null);
+
+  const handleCheckId = async () => {
     const userIdValue = watch('userId');
     if (!userIdValue) {
       alert('아이디를 입력해주세요.');
       return;
     }
-    // 실제로는 백엔드에 아이디 중복 확인 요청을 보내야 합니다.
-    // 여기서는 예시로만 처리
-    alert('중복확인에 성공하셨습니다. (예시)');
+    try {
+      const response = await API.post('/check-id', { user_id: userIdValue });
+
+      if (response.data.isAvailable) {
+        setIdCheckResult('invalid');
+      } else {
+        setIdCheckResult('valid');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('아이디 중복 확인에 실패했습니다.');
+    }
   };
 
   const onSubmit = (data) => {
+    // 아이디 중복 체크를 안 했거나 invalid 라면 회원가입 막기
+    if (idCheckResult !== 'valid') {
+      alert('아이디 중복확인을 진행해주세요.');
+      return;
+    }
     mutate(data);
   };
 
+  // 약관 모달 관련
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [termsAgreement, setTermsAgreement] = useState({
@@ -225,6 +251,7 @@ const SignUp = () => {
           <Title>회원가입</Title>
 
           <Form onSubmit={handleSubmit(onSubmit)}>
+            {/* 아이디 */}
             <FormGroup>
               <Label>아이디</Label>
               <InputContainer>
@@ -232,18 +259,37 @@ const SignUp = () => {
                   <Input
                     type="text"
                     placeholder="아이디 입력"
+                    // 아이디 중복 체크 결과에 따라 border 색상 분기
+                    style={{
+                      borderColor:
+                        idCheckResult === 'valid'
+                          ? 'green'
+                          : idCheckResult === 'invalid'
+                          ? 'red'
+                          : '#ddd',
+                    }}
                     {...register('userId')}
                   />
                   <CheckButton type="button" onClick={handleCheckId}>
                     중복확인
                   </CheckButton>
                 </InputWrapper>
+                {/* 에러 메시지 (zod 검증) */}
                 {errors.userId && (
                   <ErrorText>{errors.userId.message}</ErrorText>
+                )}
+
+                {/* 중복 확인 후 결과 메시지 */}
+                {idCheckResult === 'valid' && !errors.userId && (
+                  <ValidMessage>사용 가능한 아이디입니다.</ValidMessage>
+                )}
+                {idCheckResult === 'invalid' && !errors.userId && (
+                  <InvalidMessage>중복된 아이디입니다.</InvalidMessage>
                 )}
               </InputContainer>
             </FormGroup>
 
+            {/* 닉네임 */}
             <FormGroup>
               <Label>닉네임</Label>
               <InputContainer>
@@ -258,6 +304,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 비밀번호 */}
             <FormGroup>
               <Label>비밀번호</Label>
               <InputContainer>
@@ -272,6 +319,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 비밀번호 확인 */}
             <FormGroup>
               <Label>비밀번호 확인</Label>
               <InputContainer>
@@ -286,6 +334,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 이름 */}
             <FormGroup>
               <Label>이름</Label>
               <InputContainer>
@@ -298,10 +347,12 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 생년월일 */}
             <FormGroup>
               <Label>생년월일</Label>
               <InputContainer>
                 <DateInputGroup>
+                  {/* 연도 */}
                   <Select {...register('year')}>
                     <option value="">년</option>
                     {years.map((y) => (
@@ -310,6 +361,7 @@ const SignUp = () => {
                       </option>
                     ))}
                   </Select>
+                  {/* 월 (선택된 연도에 따라 달라짐) */}
                   <Select {...register('month')}>
                     <option value="">월</option>
                     {months.map((m) => (
@@ -318,6 +370,7 @@ const SignUp = () => {
                       </option>
                     ))}
                   </Select>
+                  {/* 일 (선택된 연도/월에 따라 달라짐) */}
                   <Select {...register('day')}>
                     <option value="">일</option>
                     {days.map((d) => (
@@ -337,6 +390,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 전화번호 */}
             <FormGroup>
               <Label>전화번호</Label>
               <InputContainer>
@@ -369,6 +423,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 이메일 */}
             <FormGroup>
               <Label>이메일</Label>
               <InputContainer>
@@ -419,6 +474,7 @@ const SignUp = () => {
               </InputContainer>
             </FormGroup>
 
+            {/* 약관동의 */}
             <AgreementSection>
               <AgreementTitle>약관동의</AgreementTitle>
 
@@ -674,6 +730,21 @@ const Input = styled.input`
   }
 `;
 
+// 아이디 중복 확인 결과 메시지
+const ValidMessage = styled.div`
+  color: green;
+  font-size: 1.5rem;
+  margin-top: 5rem;
+  position: absolute;
+`;
+
+const InvalidMessage = styled.div`
+  color: red;
+  font-size: 1.5rem;
+  margin-top: 5rem;
+  position: absolute;
+`;
+
 const CheckButton = styled.button`
   padding: 1rem 2rem;
   background: white;
@@ -872,7 +943,7 @@ const RadioGroup = styled.div`
 
 const RadioLabel = styled.label`
   display: flex;
-  align-items: center; /* 수직 정렬 */
+  align-items: center;
   gap: 0.625rem;
   font-size: 1.75rem;
   color: #333;
@@ -913,7 +984,8 @@ const RadioLabel = styled.label`
 const ErrorText = styled.div`
   color: red;
   font-size: 1.5rem;
-  margin-top: 0.5rem;
+  margin-top: 4.6rem;
+  position: absolute;
 
   @media (max-width: 768px) {
     font-size: 1.3rem;
