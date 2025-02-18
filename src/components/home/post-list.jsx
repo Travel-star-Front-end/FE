@@ -2,23 +2,13 @@ import styled from "styled-components";
 import TravelPost from "../posts/posts/travelPost/travel-post";
 import useFetch from "../../hooks/useFetch";
 
-const PostList = () => {
+const PostList = ({text}) => {
     const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
 
     return (
         <div>
-            <Text>추천 게시글</Text>
+            <Text>{text}</Text>
             <PostWrapper>
-            {/* <TravelPost 
-                key={1}
-                postId={1}
-                postUserId={1}
-                date='2022'
-                location='japan'
-                title='travle of japan'
-                nickname='totoro'
-                buttonType='friend'
-            /> */}
             {posts?.data.posts.length > 0 ? (
                 <>
                 {posts?.data.posts.map((post) => (
@@ -30,8 +20,9 @@ const PostList = () => {
                         nickname={post.user.nickname}
                         date={post.created_at}
                         location={post.star.region}
-                        travelImages={post.images}                                
+                        images={post.images}                                
                         title={post.title}
+                        isFriend={post.isFriend}
                         buttonType='friend'
                     />
                 ))}                        
