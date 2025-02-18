@@ -2,14 +2,15 @@ import { useState } from 'react';
 import * as S from '../../../../styles/posts/posts/Tabs/setting-tab';
 import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 import usePost from '../../../../hooks/usePost';
+import { API } from '../../../../apis/axios';
 
 const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [activeTab, setActiveTabState] = useState(null);
     const [editComment, setEditComment] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [backgroundImage, setBackgroundImage] = useState('');
 
     //코멘트 수정
-    const {data, loading, error, triggerPost} = usePost('/posts/comment');
+    const { triggerPost } = usePost('/comment');
 
     const handleClick = (tab) => {
         if (activeTab === tab) {
@@ -30,14 +31,29 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     }
 
     // 앨범에서 이미지 선택
-    const handleImageSelect = (event) => {
-        const file = event.target.files[0]; // 사용자가 선택한 첫 번째 파일
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setBanner(reader.result);
-            };
-            reader.readAsDataURL(file)
+    const handleImageSelect = async(event) => {
+        const file = event.target.files[0];
+        console.log(file)
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("images", file);
+
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.patch("/background", formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+    
+            console.log("업로드 성공:", response.data);
+            setBanner(response.data.fileUrl);
+            setBackgroundImage(response.data.fileUrl);
+        } catch (error) {
+            console.error("이미지 업로드 오류:", error);
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
     };
 
@@ -50,7 +66,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const handleCommentSubmit = async() => {
         if (!editComment.trim()) return;
 
-        const response = await triggerPost({editComment});
+        const response = await triggerPost({ comment: editComment });
         
         if(response) {
             setComment(editComment)

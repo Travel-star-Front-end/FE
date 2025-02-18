@@ -62,7 +62,7 @@ const FriendsTab = ({ friends, requests }) => {
                 
                 {activeTab === "requests" && (
                 <S.CardListContainer>
-                    {/* {friendsData?.data?.length > 0 ? (
+                    {applyFriendData?.data?.length > 0 ? (
                         <>
                         {friendsData?.data.map((item) => (
                             <FriendApplyCard
@@ -75,14 +75,14 @@ const FriendsTab = ({ friends, requests }) => {
                         </>
                     ) : (
                         <S.NoFreinds>친구 신청 목록이 없습니다.</S.NoFreinds>
-                    )} */}
-                    {exampleData.map((item) => (
+                    )}
+                    {/* {exampleData.map((item) => (
                             <FriendApplyCard
                                 key={item.id}
                                 id={item.id}
                                 name={item.name}
                             />
-                        ))}
+                        ))} */}
                 </S.CardListContainer>
                 )}
             </S.TabContent>

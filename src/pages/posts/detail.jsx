@@ -28,16 +28,13 @@ const settings = {
 }
 
 const Detail = () => {
-    const { postId } = useParams();
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
-
-    const {nickname, date, location: postLocation, quickReview, profileImg } = location.state || {};
+    const {postId, postUserId, nickname } = location.state || {};
 
     //회원 일지 상세 조회 api 
-    const userId = localStorage.getItem('userId');
-    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${userId}`);
+    const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${postUserId}`);
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -51,6 +48,10 @@ const Detail = () => {
         });
     };
 
+    if (postLoading) {
+        return <div>로딩 중...</div>;
+    }
+
     return (
         <S.Container>
             <S.Text>일지 보기</S.Text>
@@ -60,8 +61,8 @@ const Detail = () => {
                     <S.InfoWrapper>
                         <S.Info>
                             <S.ProfileImg>
-                                {profileImg ? (
-                                    <img src={profileImg} alt="프로필" className="profile-img" />
+                                {postData.data.user.u_image ? (
+                                    <img src={postData.data.user.u_image} alt="프로필" className="profile-img" />
                                 ) : (
                                     <img src={default_profile_img} alt="프로필" className="profile-img" />
                                 )}
@@ -69,47 +70,47 @@ const Detail = () => {
                             <S.DetailInfo>
                                 <S.TitleDateWrapper>
                                     <div className='nickname'>{nickname}</div>
-                                    <div className='date'>{postData.updated_at}</div>
+                                    <div className='date'>{postData.data.created_at}</div>
                                 </S.TitleDateWrapper>
                                 <S.MetaWrapper>
                                     <S.LocationWrapper>
                                         <S.LocPin src={locationPin} alt="위치" />
-                                        <div>{postLocation}</div>                                        
+                                        <div>{postData.data.star.region}</div>                                        
                                     </S.LocationWrapper>
-                                    <S.MusicWrapper>
-                                        <S.MusicName>
-                                            <S.AudioImgWrapper>
-                                                <img src={audio} alt='audio' className='audio_png'/>
-                                            </S.AudioImgWrapper>
-                                            <div>{postData.music}</div>
-                                        </S.MusicName>
-                                        <div>00:30</div>
-                                    </S.MusicWrapper>
+                                    {postData.data.music && (
+                                        <S.MusicWrapper>
+                                            <S.MusicName>
+                                                <S.AudioImgWrapper>
+                                                    <img src={audio} alt="audio" className="audio_png" />
+                                                </S.AudioImgWrapper>
+                                                <div>{postData.data.music}</div>
+                                            </S.MusicName>
+                                            <div>00:30</div>
+                                        </S.MusicWrapper>
+                                    )}
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                     </S.InfoWrapper>
 
-                    <S.SliderWrapper>
-                        <Slider {...settings}>
-                            {postData?.images?.length > 0 ? (
-                                postData.images.map((image, index) => (
+                    {postData.data.post_images && postData.data.post_images.length > 0 && (
+                        <S.SliderWrapper>
+                            <Slider {...settings}>
+                                {postData.data.post_images.map((image, index) => (
                                     <S.TravelImg key={index}>
-                                        <img src={image} className='travel-img' />
+                                        <img src={image.imageUrl} className='travel-img' />
                                     </S.TravelImg>
-                                ))
-                            ) : (
-                                <div>이미지가 없습니다.</div>
-                            )}
-                        </Slider>
-                    </S.SliderWrapper>
+                                ))}
+                            </Slider>
+                        </S.SliderWrapper>
+                    )}
                     </div>
 
                     <S.ContentWrapper>
-                        <div className='title'>{postData.title}</div>
+                        <div className='title'>{postData.data.title}</div>
                         <div className='content'>
-                            {postData.content}
+                            {postData.data.content}
                         </div>
                     </S.ContentWrapper>
                 </S.PostWrapper>

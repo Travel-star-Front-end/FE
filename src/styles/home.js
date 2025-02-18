@@ -78,7 +78,7 @@ export const SuggestionBox = styled.div`
     left: 5%;
     bottom: 2%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     align-items:center;
     grid-gap: 0.5vw 3vw;
     padding-right: 2.5vw;
