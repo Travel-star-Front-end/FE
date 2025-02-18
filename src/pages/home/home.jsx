@@ -40,7 +40,8 @@ const Home = () => {
                 </S.SearchResultsContainer>
             </S.SearchWrapper>
 
-            {searchValue ? <SearchTravelPost searchValue={debounceText} /> : <PostList />}
+            {debounceText && <SearchTravelPost searchValue={debounceText} />}
+            {!debounceText && <PostList text={'추천 게시글'} />}
         </S.Container>
     )
 }
