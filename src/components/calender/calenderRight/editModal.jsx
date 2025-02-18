@@ -118,6 +118,7 @@ const EditModal = ({ onClose, selectedDay, id }) => {
       });
       if (response) {
         alert('일지 삭제 완료');
+        onClose();
       }
     } catch (err) {
       console.log('error', err);

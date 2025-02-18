@@ -2,46 +2,123 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Profile from '../../../assets/images/ProfileImage.png';
 import { useNavigate } from 'react-router-dom';
-import { API } from '../../../apis/axios';
-import ConfirmModal from './confirmmodal'; 
+import { API } from '../../../apis/axios'; // axios 인스턴스
+import ConfirmModal from './confirmmodal';
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  return dateString.split('T')[0];
+};
 
 const MyPage = () => {
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
-    userId: 'BBbbe.1',
-    nickname: '벨라',
-    password: '******',
-    name: '김은수',
-    birth: '2003년 02월 14일',
-    phoneNumber: '010-5479-8234',
-    email: 'yoonsu0214@naver.com',
-    planetName: '깐따삐야 행성',
+    user_id: '',      
+    nickname: '',
+    password: '',
+    name: '',
+    birth: '',
+    phonenum: '',
+    email: '',
+    planetName: '',  
   });
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [profileImage, setProfileImage] = useState(Profile);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [clickedButton, setClickedButton] = useState(null);
 
   useEffect(() => {
     fetchUserData();
+    fetchProfileImage();
   }, []);
 
   const fetchUserData = async () => {
     try {
-      const response = await API.get('https://jsonplaceholder.typicode.com/users/1');
-      const result = response.data;
-
+      const token = localStorage.getItem('accessToken'); 
+      if (!token) {
+        console.error('No token found, redirecting to login...');
+        navigate('/login');
+        return;
+      }
+      const response = await API.get('/mypage', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      const { data } = response.data; 
+      
       setUserData((prev) => ({
         ...prev,
-        userId: result.username || prev.userId,
-        nickname: result.name || prev.nickname,
-        name: result.name || prev.name,
-        phoneNumber: result.phone || prev.phoneNumber,
-        email: result.email || prev.email,
+        user_id: data.user_id,
+        nickname: data.nickname,
+        password: data.password,
+        name: data.name,
+        birth: data.birth,
+        phonenum: data.phonenum,
+        email: data.email,
       }));
+
+      if (data.user_id) {
+        fetchPlanetData(data.user_id);
+      }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      if (error.response && error.response.status === 401) {
+        console.error('401 Unauthorized - 토큰 만료 혹은 인증 실패');
+        navigate('/login');
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  const fetchPlanetData = async (user_id) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.get(`/planet?user_id=${user_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.status === 200) {
+        const { planets } = response.data;
+        if (planets && planets.length > 0) {
+          setUserData((prev) => ({
+            ...prev,
+            planetName: planets[0].name,
+          }));
+        } else {
+          setUserData((prev) => ({
+            ...prev,
+            planetName: '행성 이름 미지정',
+          }));
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setUserData((prev) => ({
+          ...prev,
+          planetName: '행성 이름 미지정',
+        }));
+      } else {
+        console.error('Error fetching planet data:', error);
+      }
+    }
+  };
+
+  const fetchProfileImage = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.get('/profile-image', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200 && response.data.data) {
+        setProfileImage(response.data.data);
+      }
+    } catch (error) {
+      setProfileImage(Profile);
     }
   };
 
@@ -54,8 +131,9 @@ const MyPage = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await API.get('https://jsonplaceholder.typicode.com/posts/1');
-      console.log('로그아웃 요청 응답:', response.status);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userId');
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -65,11 +143,19 @@ const MyPage = () => {
   const onDeleteClick = () => {
     setShowDeleteModal(true);
   };
-
+ 
   const handleDeleteAccount = async () => {
     try {
-      const response = await API.delete('https://jsonplaceholder.typicode.com/posts/1');
+      const token = localStorage.getItem('accessToken');
+      const response = await API.delete('/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       console.log('회원탈퇴 요청 응답:', response.status);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userId');
       navigate('/login');
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -80,6 +166,10 @@ const MyPage = () => {
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
+  };
+
+  const maskPassword = (password) => {
+    return password ? '*'.repeat(password.length) : '';
   };
 
   return (
@@ -93,10 +183,12 @@ const MyPage = () => {
       <MainContent>
         <Header>마이페이지</Header>
         <ProfileSection>
-          <ProfileImage src={Profile} alt="Profile" />
+          <ProfileImage src={profileImage} alt="Profile" />
           <ProfileInfo>
             <UserNickname>{userData.nickname}</UserNickname>
-            <UserPlanet>{userData.planetName}</UserPlanet>
+            <UserPlanet>
+              {userData.planetName || '행성 이름 미지정'}
+            </UserPlanet>
           </ProfileInfo>
           <ProfileEditButton
             onClick={() => handleClick('edit')}
@@ -129,7 +221,7 @@ const MyPage = () => {
           <InfoDetails>
             <InfoRow>
               <InfoLabel>아이디</InfoLabel>
-              <InfoValue>{userData.userId}</InfoValue>
+              <InfoValue>{userData.user_id}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>닉네임</InfoLabel>
@@ -137,7 +229,7 @@ const MyPage = () => {
             </InfoRow>
             <InfoRow>
               <InfoLabel>비밀번호</InfoLabel>
-              <InfoValue>{userData.password}</InfoValue>
+              <InfoValue>{maskPassword(userData.password)}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>이름</InfoLabel>
@@ -145,11 +237,12 @@ const MyPage = () => {
             </InfoRow>
             <InfoRow>
               <InfoLabel>생년월일</InfoLabel>
-              <InfoValue>{userData.birth}</InfoValue>
+              {/* formatDate 함수를 사용하여 날짜만 표시 */}
+              <InfoValue>{formatDate(userData.birth)}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>전화번호</InfoLabel>
-              <InfoValue>{userData.phoneNumber}</InfoValue>
+              <InfoValue>{userData.phonenum}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>이메일</InfoLabel>
@@ -387,6 +480,10 @@ const InfoValue = styled.div`
   text-align: left;
   padding-left: 22.5rem;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
   @media (max-width: 768px) {
     padding-left: 0;
     font-size: 1.5rem;

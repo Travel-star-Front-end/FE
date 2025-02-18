@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { API } from '../../../apis/axios'; 
+import { API } from '../../../apis/axios';
 
 function ArchivedPosts() {
   const [posts, setPosts] = useState([]);
@@ -9,28 +9,56 @@ function ArchivedPosts() {
     fetchArchivedPosts();
   }, []);
 
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  };
+
   const fetchArchivedPosts = async () => {
     try {
-      const response = await API.get('https://jsonplaceholder.typicode.com/posts?_limit=4');
-      const data = response.data;
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.error('토큰이 존재하지 않습니다.');
+        setPosts([]);
+        return;
+      }
+      const response = await API.get('/mypage/storaged-posts', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = response.data;
+      
+      if (result.resultType === 'success' && result.data) {
+        const postsData = Array.isArray(result.data) ? result.data : [result.data];
 
-      //JSONPlaceholder에 date 필드가 없어서, 일단 임의로 날짜를 넣었습니다.
-      const mappedPosts = data.map((post) => ({
-        id: post.id,
-        date: '2025.01.20', 
-        title: post.title,
-      }));
+        const mappedPosts = postsData.map((post) => ({
+          id: post.post_id,
+          date: formatDate(post.created_at),
+          title: post.title,
+        }));
 
-      setPosts(mappedPosts);
+        setPosts(mappedPosts);
+      } else {
+        setPosts([]);
+      }
     } catch (error) {
       console.error('Error fetching archived posts:', error);
+      setPosts([]);
     }
   };
 
   const handleCancel = async (id) => {
     try {
-      await API.delete(`https://jsonplaceholder.typicode.com/posts/1`);
-      // 요청 성공하면 로컬 상태에서 해당 항목을 제거합니다.
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.error('토큰이 존재하지 않습니다.');
+        return;
+      }
+      await API.patch(`/mypage/storaged-posts/${id}`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
     } catch (error) {
       console.error('Error removing post:', error);
@@ -47,15 +75,19 @@ function ArchivedPosts() {
         <TableHeaderItem>제목</TableHeaderItem>
       </TableHeader>
 
-      {posts.map((post) => (
-        <ListRow key={post.id}>
-          <Date>{post.date}</Date>
-          <Title>{post.title}</Title>
-          <CancelButton onClick={() => handleCancel(post.id)}>
-            보관 취소
-          </CancelButton>
-        </ListRow>
-      ))}
+      {posts.length === 0 ? (
+        <NoPostsMessage>보관 중인 글이 없습니다.</NoPostsMessage>
+      ) : (
+        posts.map((post) => (
+          <ListRow key={post.id}>
+            <Date>{post.date}</Date>
+            <Title>{post.title}</Title>
+            <CancelButton onClick={() => handleCancel(post.id)}>
+              보관 취소
+            </CancelButton>
+          </ListRow>
+        ))
+      )}
     </Container>
   );
 }
@@ -134,6 +166,9 @@ const Date = styled.div`
 const Title = styled.div`
   flex: 1;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -166,4 +201,11 @@ const CancelButton = styled.button`
     padding: 0.5rem 1rem;
     align-self: flex-start;
   }
+`;
+
+const NoPostsMessage = styled.div`
+  padding: 2rem;
+  font-size: 1.75rem;
+  color: #777;
+  text-align: center;
 `;

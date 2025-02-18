@@ -2,7 +2,7 @@ import * as s from "../../../../styles/posts/write/write";
 import FeelingData from "../../../../utils/posts/write/feelingData";
 
 const WriteTextarea = ({ width, height, placeholder, value, onChange, padding, onAIClick, analyzedFeeling }) => {
-    const matchedFeeling = FeelingData.find(item => item.feeling === analyzedFeeling);
+    const matchedFeeling = analyzedFeeling ? FeelingData.find(item => item.id === analyzedFeeling) : null;
     const feelingImage = matchedFeeling ? matchedFeeling.smallimage : null;
 
     return (

@@ -4,16 +4,13 @@ import Delete from "../../../../assets/images/posts/write/delete3.png";
 import FeelingData from "../../../../utils/posts/write/feelingData";
 
 const FeelingModal = ({ analyzedFeeling, onFeelingSelect }) => {
-    const defaultFeeling = "happy";
-
-    const matchedFeeling = FeelingData.find(item => item.feeling === defaultFeeling);
+    const matchedFeeling = FeelingData.find(item => item.id == analyzedFeeling);
     const displayText = matchedFeeling ? matchedFeeling.text : "분석 실패";
-    const displayFeeling = matchedFeeling ? matchedFeeling.feeling : "분석 실패";
     const displayColor = matchedFeeling ? colors[matchedFeeling.pcolor] : colors.sideBarGray2;
     const displayImage = matchedFeeling ? matchedFeeling.bigimage : null;
 
     const handleSelectFeeling = () => {
-        onFeelingSelect(displayFeeling);
+        onFeelingSelect(analyzedFeeling);
     };
 
     return (
