@@ -40,21 +40,19 @@ const TravelPost = ({
     location, 
     images, 
     title, 
+    isFriend : initialIsFriend,
     buttonType
 }) => {
     //친구 요청
-    const { triggerPost } = usePost(`friends/request`);
+    const { triggerPost } = usePost(`friends/request/${postUserId}`);
 
-    const [isFriend, setIsFriend] = useState(false);
+    const [isFriend, setIsFriend] = useState(initialIsFriend);
     const navigate = useNavigate();
-    const { pathname } = useLocation();
-    const currentUrl = window.location.origin + pathname;
 
     //친구 추가 버튼 상태
     const handleButtonClick = async() => {
         try {
-            // 친구 요청 API 호출
-            const response = await triggerPost({ toUserId: postUserId });
+            const response = await triggerPost();
     
             if (response?.resultType === 'success') {
                 setIsFriend(true); // 성공하면 친구 상태 변경
@@ -69,6 +67,7 @@ const TravelPost = ({
 
     //현재 url복사
     const handleCopyUrl = () => {
+        const currentUrl = `${window.location.origin}/posts/${postId}`;
         navigator.clipboard.writeText(currentUrl)
         .then(() => {
             alert(`주소가 복사되었습니다.\n${currentUrl}`);
@@ -88,10 +87,6 @@ const TravelPost = ({
                         postId: postId,
                         postUserId: postUserId,
                         nickname: nickname,
-                        date: date,
-                        location: location,
-                        profileImg: profileImg,
-                        images: images
                     }
                 })}>
                     <S.ProfileImg>
