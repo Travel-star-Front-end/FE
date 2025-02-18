@@ -20,7 +20,7 @@ import Modal from "../write/modal/modal";
 import IframePlayer from "../write/iframePlayer";
 import AIModal from "../write/modal/aiModal";
 
-const EditForm = ({ data }) => {
+const EditForm = ({ postId, data }) => {
     const [menu, setMenu] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
     const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
@@ -49,10 +49,17 @@ const EditForm = ({ data }) => {
         setAiModal(true);
     
         try {
-            const response = await API.post("/analyze", { text: feeling });
-            console.log("분석 결과:", response.data);
-    
-            setAnalyzedFeeling(response.data.feeling);
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.post("/posts/feeling", { review: feeling },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            // console.log("분석 결과:", response.data);
+
+            setAnalyzedFeeling(response.data.data.feel_color);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
@@ -72,7 +79,21 @@ const EditForm = ({ data }) => {
         if (data) {
             setTitle(data.post.title);
             setContent(data.post.content);
-            setFeeling(data.body);
+            setFeeling(data.post.feeling);
+            setAnalyzedFeeling(data.post.feel_color);
+            setSelectedLocation(data.post.region);
+            setSelectedMusic(data.post.music);
+            setSelectedImages(data.post.images);
+
+            if (data.post.images?.length > 0) {
+                const imagePreviews = data.post.images.map((url) => ({
+                    name: url.split("/").pop(),
+                    preview: url,
+                    file: null,
+                }));
+    
+                setSelectedImages(imagePreviews);
+            }
         }
     }, [data]);
 
@@ -86,7 +107,7 @@ const EditForm = ({ data }) => {
         reader.onloadend = () => {
             setSelectedImages(prevImages => [
                 ...prevImages,
-                { name: file.name, preview: reader.result }
+                { name: file.name, preview: reader.result, file }
             ]);
         };
         reader.readAsDataURL(file); 
@@ -138,24 +159,45 @@ const EditForm = ({ data }) => {
     const handleSubmit = async () => {
         const postData = {
             title,
-            photos: selectedImages.map(img => img.name), 
-            location: {
-                latitude,
-                longitude,
-                address: selectedLocation || "" 
-            },
+            region: selectedLocation || "",
             music: selectedMusic || null,
             content,
-            feeling
+            feeling,
+            feel_color: String(analyzedFeeling),
         };
 
         try {
-            const response = await API.post("/users", postData);
-            console.log("Response:", response);
+            const accessToken = localStorage.getItem("accessToken");
+    
+            const response = await API.patch(`/posts/${postId}`, postData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            if (selectedImages.length > 0) {
+                const formData = new FormData();
+                
+                selectedImages.forEach((image, index) => {
+                    formData.append("images", image.file); 
+                });
+    
+                const response = await API.post(`/posts/${postId}/image`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+    
+                // console.log("이미지 업로드 완료", response);
+            }
+    
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
             console.error("게시글 작성 실패:", error);
+            alert("게시글 작성에 실패했습니다.");
         }
     };
 

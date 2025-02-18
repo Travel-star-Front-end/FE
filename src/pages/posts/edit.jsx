@@ -13,7 +13,7 @@ const Edit = () => {
                 <s.WriteP>일지 수정</s.WriteP>
                 <s.WriteBar />
 
-                <EditForm data={data} />
+                <EditForm data={data} postId={id}/>
             </s.WriteInnerContainer>
         </s.WriteContainer>
     )
