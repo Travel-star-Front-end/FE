@@ -70,8 +70,8 @@ const EditForm = ({ data }) => {
 
     useEffect(() => {
         if (data) {
-            setTitle(data.title);
-            setContent(data.body);
+            setTitle(data.post.title);
+            setContent(data.post.content);
             setFeeling(data.body);
         }
     }, [data]);

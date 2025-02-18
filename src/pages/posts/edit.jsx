@@ -1,10 +1,12 @@
+import { useParams } from "react-router-dom";
 import * as s from "../../styles/posts/write/write";
 import EditForm from "../../components/posts/edit/editForm";
 import useFetch from "../../hooks/useFetch";
 
 const Edit = () => {
-    const { data, loading, error } = useFetch("/posts/1");
-
+    const { id } = useParams();
+    const { data, loading, error } = useFetch(`/posts/${id}`);
+    
     return (
         <s.WriteContainer>
             <s.WriteInnerContainer>
