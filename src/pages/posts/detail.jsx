@@ -77,15 +77,17 @@ const Detail = () => {
                                         <S.LocPin src={locationPin} alt="위치" />
                                         <div>{region}</div>                                        
                                     </S.LocationWrapper>
-                                    <S.MusicWrapper>
-                                        <S.MusicName>
-                                            <S.AudioImgWrapper>
-                                                <img src={audio} alt='audio' className='audio_png'/>
-                                            </S.AudioImgWrapper>
-                                            {/* <div>{postData.data.music}</div> */}
-                                        </S.MusicName>
-                                        <div>00:30</div>
-                                    </S.MusicWrapper>
+                                    {postData.data.music && (
+                                        <S.MusicWrapper>
+                                            <S.MusicName>
+                                                <S.AudioImgWrapper>
+                                                    <img src={audio} alt="audio" className="audio_png" />
+                                                </S.AudioImgWrapper>
+                                                <div>{postData.data.music}</div>
+                                            </S.MusicName>
+                                            <div>00:30</div>
+                                        </S.MusicWrapper>
+                                    )}
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
@@ -106,10 +108,10 @@ const Detail = () => {
                     </div>
 
                     <S.ContentWrapper>
-                        {/* <div className='title'>{postData.data.title}</div>
+                        <div className='title'>{postData.data.title}</div>
                         <div className='content'>
                             {postData.data.content}
-                        </div> */}
+                        </div>
                     </S.ContentWrapper>
                 </S.PostWrapper>
         </S.Container>
