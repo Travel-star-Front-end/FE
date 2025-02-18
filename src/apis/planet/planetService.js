@@ -26,7 +26,7 @@ export async function patchPlanetName(userId, newPlanetName) {
   try {
     const authToken = localStorage.getItem('accessToken');
     const response = await API.patch(
-      `/planet/${userId}`,
+      `/planet`,
       {
         name: newPlanetName,
       },
@@ -44,21 +44,21 @@ export async function patchPlanetName(userId, newPlanetName) {
   }
 }
 
-export const checkPlanetExists = async (userId) => {
-  try {
-    const authToken = localStorage.getItem('accessToken');
-    const response = await API.get(`/prod/planet/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    console.log(response.data);
-    return response.data?.exists ?? false; // API 응답에서 'exists' 여부 반환
-  } catch (error) {
-    console.error('Error checking planet existence:', error);
-    return false;
-  }
-};
+// export const checkPlanetExists = async (userId) => {
+//   try {
+//     const authToken = localStorage.getItem('accessToken');
+//     const response = await API.get(`/prod/planet/${userId}`, {
+//       headers: {
+//         Authorization: `Bearer ${authToken}`,
+//       },
+//     });
+//     console.log(response.data);
+//     return response.data?.exists ?? false; // API 응답에서 'exists' 여부 반환
+//   } catch (error) {
+//     console.error('Error checking planet existence:', error);
+//     return false;
+//   }
+// };
 
 export const getCalenderData = async (selectedID) => {
   try {
@@ -69,7 +69,7 @@ export const getCalenderData = async (selectedID) => {
       },
     });
     console.log(response.data);
-    return response.data ?? false; // API 응답에서 'exists' 여부 반환
+    return response.data ?? false;
   } catch (error) {
     console.error('Error checking planet existence:', error);
     return false;
