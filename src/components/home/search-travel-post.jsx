@@ -1,13 +1,22 @@
 import styled from "styled-components";
 import useFetch from "../../hooks/useFetch";
-import useDebounce from "../../hooks/useDebounce";
 import TravelPost from "../posts/posts/travelPost/travel-post";
 
 const SearchTravelPost = ({ searchValue }) => {
+    if (!searchValue) return null;
+    
     const url =  `/home/search?term=${encodeURIComponent(searchValue)}`
     const { data: posts, loading: searchLoading, error: searchError } = useFetch(url);
+    
+    if (searchLoading) {
+        return <div>로딩 중...</div>;
+    }
 
-    if(searchValue && posts.data?.length === 0){
+    if (searchError) {
+        return <div>오류가 발생했습니다. 다시 시도해주세요.</div>;
+    }
+
+    if(posts.data?.length === 0){
         <Container>
             <h3>검색 결과가 없습니다.</h3>
         </Container>
