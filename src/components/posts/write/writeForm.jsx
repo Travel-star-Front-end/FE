@@ -54,7 +54,7 @@ const WriteForm = () => {
                     },
                 }
             );
-            console.log("분석 결과:", response.data);
+            // console.log("분석 결과:", response.data);
 
             setAnalyzedFeeling(response.data.data.feel_color);
         } catch (error) {
@@ -76,7 +76,7 @@ const WriteForm = () => {
 
     const handleFeelingSelect = (selectedFeeling) => {
         setAnalyzedFeeling(selectedFeeling);
-        console.log("전달된 감정", analyzedFeeling);
+        // console.log("전달된 감정", analyzedFeeling);
         closeAIModal();
     };
 
@@ -141,13 +141,13 @@ const WriteForm = () => {
             region: selectedLocation || "",
             music: selectedMusic || null,
             content,
+            feeling,
             feel_color: String(analyzedFeeling),
             storage: 0,
         };
     
         try {
             const accessToken = localStorage.getItem("accessToken");
-            console.log("전송할 데이터", postData);
     
             const response = await API.post("/posts", postData, {
                 headers: {
@@ -155,6 +155,8 @@ const WriteForm = () => {
                     "Content-Type": "application/json",
                 },
             });
+
+            // console.log("데이터 전송 완료", response);
     
             const postId = response.data.data.post_id;
     
@@ -172,7 +174,7 @@ const WriteForm = () => {
                     },
                 });
     
-                console.log("이미지 업로드 완료", response);
+                // console.log("이미지 업로드 완료", response);
             }
     
             alert("일지가 저장되었습니다.");
