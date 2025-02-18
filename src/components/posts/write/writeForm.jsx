@@ -46,15 +46,29 @@ const WriteForm = () => {
         setAiModal(true);
 
         try {
-            const response = await API.post("/analyze", { text: feeling });
-            console.log("분석 결과:", response.data);
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.post("/posts/feeling", { review: feeling },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            // console.log("분석 결과:", response.data);
 
-            setAnalyzedFeeling(response.data.feeling);
+            setAnalyzedFeeling(response.data.data.feel_color);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
         }
     };
+
+    useEffect(() => {
+        if (analyzedFeeling) {
+            setAiModal(true);
+        }
+    }, [analyzedFeeling]);
+    
 
     const closeAIModal = () => {
         setAiModal(false);
@@ -62,6 +76,7 @@ const WriteForm = () => {
 
     const handleFeelingSelect = (selectedFeeling) => {
         setAnalyzedFeeling(selectedFeeling);
+        // console.log("전달된 감정", analyzedFeeling);
         closeAIModal();
     };
 
@@ -127,6 +142,7 @@ const WriteForm = () => {
             music: selectedMusic || null,
             content,
             feeling,
+            feel_color: String(analyzedFeeling),
             storage: 0,
         };
     
@@ -139,6 +155,8 @@ const WriteForm = () => {
                     "Content-Type": "application/json",
                 },
             });
+
+            // console.log("데이터 전송 완료", response);
     
             const postId = response.data.data.post_id;
     
@@ -149,16 +167,14 @@ const WriteForm = () => {
                     formData.append("images", image.file); 
                 });
     
-                console.log("업로드할 이미지 데이터:", formData);
-
-                await API.post(`/posts/${postId}/image`, formData, {
+                const response = await API.post(`/posts/${postId}/image`, formData, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         "Content-Type": "multipart/form-data",
                     },
                 });
     
-                console.log("이미지 업로드 완료");
+                // console.log("이미지 업로드 완료", response);
             }
     
             alert("일지가 저장되었습니다.");

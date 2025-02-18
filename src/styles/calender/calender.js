@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import colors from "../common/colors";
+import styled from 'styled-components';
+import colors from '../common/colors';
 
 // calender.jsx
 export const CalenderContainer = styled.div`
@@ -101,7 +101,7 @@ export const DateContainer = styled.div`
 
 export const DateCell = styled.div`
   width: 100%;
-  height: ${(props) => (props.lastrow === "true" ? "3.75vw" : "6.6vw")};
+  height: ${(props) => (props.lastrow === 'true' ? '3.75vw' : '6.6vw')};
   text-align: center;
   cursor: pointer;
   font-size: 1vw;
@@ -117,7 +117,7 @@ export const DateCell = styled.div`
 
 export const SelectedDateCell = styled.div`
   position: absolute;
-  top: ${(props) => (props.lastrow === "true" ? "15%" : "8%")};
+  top: ${(props) => (props.lastrow === 'true' ? '15%' : '8%')};
   left: 50%;
   transform: translate(-50%, -50%);
   width: 1.5vw;
@@ -131,7 +131,7 @@ export const ListP = styled.p`
   font-size: 0.55vw;
   font-weight: 300;
   color: ${colors.black};
-`
+`;
 
 // calenderRight.jsx
 export const CalenderRightContainer = styled.div`
@@ -180,120 +180,120 @@ export const ModalContainer = styled.div`
   bottom: 3.15vw;
 `;
 
-
 // list-calender.jsx
 export const ListContainer = styled.div`
-    width: 100%;
-    max-height: 27.85vw;
-    overflow-y: scroll;
-    border: 0.05vw solid ${colors.calenderGray};
+  width: 100%;
+  max-height: 27.85vw;
+  overflow-y: scroll;
+  border: 0.05vw solid ${colors.calenderGray};
 `;
 
 export const TitleContainer = styled.div`
-    width: 100%;
-    height: 2.15vw;
-    background: ${({ editvisible }) => (editvisible === "true" ? colors.subMain : colors.white)};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    margin-top: 1.2vw;
-    border: 0.05vw solid ${colors.calenderGray};
-    border-bottom: none;
+  width: 100%;
+  height: 2.15vw;
+  background: ${({ editvisible }) =>
+    editvisible === 'true' ? colors.subMain : colors.white};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 1.2vw;
+  border: 0.05vw solid ${colors.calenderGray};
+  border-bottom: none;
 `;
 
 export const TitleInnerContainer = styled.div`
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const LeftContainer = styled.div`
-    width: calc(100% - 3vw);
-    display: flex;
-    align-items: center;
+  width: calc(100% - 3vw);
+  display: flex;
+  align-items: center;
 `;
 
 export const TitleP = styled.p`
-    width: 25%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.9vw;
-    font-weight: 600;
-    color: ${colors.black};
+  width: 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9vw;
+  font-weight: 600;
+  color: ${colors.black};
 `;
 
 export const TitleP2 = styled(TitleP)`
-    font-size: 0.5vw;
-    width: 100%;
-    padding-right: 1vw;
+  font-size: 0.5vw;
+  width: 100%;
+  padding-right: 1vw;
 `;
 
 export const EditButton = styled.button`
-    width: 3vw;
-    height: 1.3vw;
-    background: ${colors.homeGray};
-    border: none;
-    border-radius: 0.25vw;
-    font-size: 0.8vw;
-    font-weight: 500;
-    color: ${colors.calenderGray4};
-    cursor: pointer;
-    display: ${({ visible }) => (visible === "true" ? "inline-block" : "none")};
+  width: 3vw;
+  height: 1.3vw;
+  background: ${colors.homeGray};
+  border: none;
+  border-radius: 0.25vw;
+  font-size: 0.8vw;
+  font-weight: 500;
+  color: ${colors.calenderGray4};
+  cursor: pointer;
+  display: ${({ visible }) => (visible === 'true' ? 'inline-block' : 'none')};
 `;
 
 // item-calender.jsx
 export const ItemContainer = styled.div`
-    width: 100%;
-    height: 3.5vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 0.05vw solid ${colors.calenderGray};
-    background: ${({ selected }) => (selected ? colors.subMain : "transparent")};
-    cursor: pointer;
-`
+  width: 100%;
+  height: 3.5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 0.05vw solid ${colors.calenderGray};
+  background: ${({ selected }) => (selected ? colors.subMain : 'transparent')};
+  cursor: pointer;
+`;
 
 export const ItemInnerContainer = styled.div`
-    width: 90%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-`
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 export const ItemP = styled.p`
-    font-size: 1.2vw;
-    font-weight: 500;
-    color: ${colors.black};
-    width: 25%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-`
+  font-size: 1.2vw;
+  font-weight: 500;
+  color: ${colors.black};
+  width: 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 export const ItemP2 = styled(ItemP)`
-    font-size: 0.8vw;
-    width: 100%;
-    padding-right: 1vw;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-`
+  font-size: 0.8vw;
+  width: 100%;
+  padding-right: 1vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 export const EditButton2 = styled.button`
-    width: 3vw;
-    height: 1.3vw;
-    background: ${colors.homeGray};
-    border: none;
-    border-radius: 0.25vw;
-    font-size: 0.8vw;
-    font-weight: 500;
-    color: ${colors.calenderGray4};
-    cursor: pointer;
-    display: ${({ selected }) => (selected ? "inline-block" : "none")};
-`
+  width: 3vw;
+  height: 1.3vw;
+  background: ${colors.homeGray};
+  border: none;
+  border-radius: 0.25vw;
+  font-size: 0.8vw;
+  font-weight: 500;
+  color: ${colors.calenderGray4};
+  cursor: pointer;
+  display: ${({ selected }) => (selected ? 'inline-block' : 'none')};
+`;
 
 // placeModal.jsx
 export const PlaceModalContainer = styled.div`
@@ -307,20 +307,20 @@ export const PlaceModalContainer = styled.div`
   justify-content: center;
   gap: 0.3vw;
   background: ${colors.calenderGray5};
-`
+`;
 
 export const PlaceTitleContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-`
+`;
 
 export const PlaceTitleP = styled.p`
   font-size: 0.9vw;
   font-weight: 700;
   color: ${colors.sideBarGray2};
-`
+`;
 
 export const TrashImg = styled.img`
   width: 0.85vw;
@@ -336,7 +336,7 @@ export const PlaceInput = styled.input`
   font-size: 0.8vw;
   font-weight: 500;
   color: ${colors.sideBarGray2};
-`
+`;
 
 export const PlaceButton = styled.button`
   width: 9.6vw;
@@ -347,58 +347,58 @@ export const PlaceButton = styled.button`
   font-size: 0.8vw;
   font-weight: 700;
   color: ${colors.white};
-`
+`;
 
 // modalTime.jsx
 export const SelectBox = styled.div`
-    position: relative;
-    width: 2.85vw;
-    height: 1.65vw;
-    background: ${colors.white};
-    border-radius: 0.25vw;
-    padding: 0 0.3vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-size: 0.8vw;
-    font-weight: 700;
-    color: ${colors.sideBarGray2};
+  position: relative;
+  width: 2.85vw;
+  height: 1.65vw;
+  background: ${colors.white};
+  border-radius: 0.25vw;
+  padding: 0 0.3vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 0.8vw;
+  font-weight: 700;
+  color: ${colors.sideBarGray2};
 `;
 
 export const SelectToggle = styled.img`
-    width: 0.35vw;
-    height: 0.35vw;
-`
+  width: 0.35vw;
+  height: 0.35vw;
+`;
 
 export const Dropdown = styled.div`
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    max-height: 6.35vw;
-    overflow-y: auto;
-    background: ${colors.calenderGray6};
-    border-radius: 0 0 0.25vw 0.25vw;
-    z-index: 100;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 6.35vw;
+  overflow-y: auto;
+  background: ${colors.calenderGray6};
+  border-radius: 0 0 0.25vw 0.25vw;
+  z-index: 100;
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 export const Option = styled.div`
-    width: 100%;
-    height: 1.75vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.8vw;
-    font-weight: 700;
-    color: ${colors.sideBarGray2};
+  width: 100%;
+  height: 1.75vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.8vw;
+  font-weight: 700;
+  color: ${colors.sideBarGray2};
 `;
 
 // addModal.jsx, editModal.jsx
@@ -472,4 +472,31 @@ export const AddButton = styled.button`
   &:hover {
     background: ${colors.mainDark};
   }
+`;
+
+export const DateText = styled.div`
+  font-size: 0.56vw;
+  font-weight: 500;
+  color: ${colors.black};
+  text-align: left;
+  max-width: 4.7vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export const LocationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1vw;
+  margin-top: 0.3vw;
+  margin-left: 3vw;
+  max-width: 4.7vw;
+`;
+
+export const MoreInfo = styled.div`
+  font-size: 0.8vw;
+  font-weight: 800;
+  color: #555555;
 `;
