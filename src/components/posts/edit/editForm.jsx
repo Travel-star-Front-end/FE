@@ -37,6 +37,7 @@ const EditForm = ({ postId, data }) => {
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
+    const [storage, setStorage] = useState(0);
     const navigate = useNavigate();
 
     // ai 모달
@@ -94,6 +95,8 @@ const EditForm = ({ postId, data }) => {
     
                 setSelectedImages(imagePreviews);
             }
+
+            console.log(storage);
         }
     }, [data]);
 
@@ -155,6 +158,10 @@ const EditForm = ({ postId, data }) => {
             alert("선택한 트랙에는 재생할 수 있는 URL이 없습니다.");
         }
     };
+
+    useEffect(() => {
+        console.log("스토리지 변경:", storage);
+    }, [storage]);
     
     const handleSubmit = async () => {
         const postData = {
@@ -164,6 +171,7 @@ const EditForm = ({ postId, data }) => {
             content,
             feeling,
             feel_color: String(analyzedFeeling),
+            storage,
         };
 
         try {
@@ -175,6 +183,8 @@ const EditForm = ({ postId, data }) => {
                     "Content-Type": "application/json",
                 },
             });
+
+            console.log("수정된 일지 전송 데이터", response);
     
             if (selectedImages.length > 0) {
                 const formData = new FormData();
@@ -183,18 +193,18 @@ const EditForm = ({ postId, data }) => {
                     formData.append("images", image.file); 
                 });
     
-                const response = await API.post(`/posts/${postId}/image`, formData, {
+                const response2 = await API.post(`/posts/${postId}/image`, formData, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                         "Content-Type": "multipart/form-data",
                     },
                 });
     
-                // console.log("이미지 업로드 완료", response);
+                // console.log("이미지 업로드 완료", response2);
             }
     
             alert("일지가 저장되었습니다.");
-            navigate("/posts");
+            // navigate("/posts");
         } catch (error) {
             console.error("게시글 작성 실패:", error);
             alert("게시글 작성에 실패했습니다.");
@@ -209,7 +219,7 @@ const EditForm = ({ postId, data }) => {
                 <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <s.MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
                 
-                {menu && <Toggle />}
+                {menu && <Toggle storage={storage} setStorage={setStorage} postId={postId} />}
             </s.TitleContainer>
 
             <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
