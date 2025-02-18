@@ -31,7 +31,7 @@ const Detail = () => {
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
-    const {postId, postUserId, nickname, date, location: region, profileImg, images } = location.state || {};
+    const {postId, postUserId, nickname } = location.state || {};
 
     //회원 일지 상세 조회 api 
     const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${postUserId}`);
@@ -61,8 +61,8 @@ const Detail = () => {
                     <S.InfoWrapper>
                         <S.Info>
                             <S.ProfileImg>
-                                {profileImg ? (
-                                    <img src={profileImg} alt="프로필" className="profile-img" />
+                                {postData.data.user.u_image ? (
+                                    <img src={postData.data.user.u_image} alt="프로필" className="profile-img" />
                                 ) : (
                                     <img src={default_profile_img} alt="프로필" className="profile-img" />
                                 )}
@@ -70,12 +70,12 @@ const Detail = () => {
                             <S.DetailInfo>
                                 <S.TitleDateWrapper>
                                     <div className='nickname'>{nickname}</div>
-                                    <div className='date'>{date}</div>
+                                    <div className='date'>{postData.data.created_at}</div>
                                 </S.TitleDateWrapper>
                                 <S.MetaWrapper>
                                     <S.LocationWrapper>
                                         <S.LocPin src={locationPin} alt="위치" />
-                                        <div>{region}</div>                                        
+                                        <div>{postData.data.star.region}</div>                                        
                                     </S.LocationWrapper>
                                     {postData.data.music && (
                                         <S.MusicWrapper>
@@ -94,12 +94,12 @@ const Detail = () => {
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                     </S.InfoWrapper>
 
-                    {images && images.length > 0 && (
+                    {postData.data.post_images && postData.data.post_images.length > 0 && (
                         <S.SliderWrapper>
                             <Slider {...settings}>
-                                {images.map((image, index) => (
+                                {postData.data.post_images.map((image, index) => (
                                     <S.TravelImg key={index}>
-                                        <img src={image} className='travel-img' />
+                                        <img src={image.imageUrl} className='travel-img' />
                                     </S.TravelImg>
                                 ))}
                             </Slider>
