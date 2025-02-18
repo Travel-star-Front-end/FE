@@ -1,8 +1,11 @@
-import React, { useState } from "react";
-import * as s from "../../../styles/calender/calender";
-import CalenderButton from "../../../assets/images/calender/button.png";
+import React, { useState } from 'react';
+import * as s from '../../../styles/calender/calender';
+import CalenderButton from '../../../assets/images/calender/button.png';
+import useFetch from '../../../hooks/useFetch';
+import { useSchedules } from '../../../hooks/useSchedules';
 
 const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
+  const { data, loading, error } = useFetch(`/schedule`);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth());
@@ -16,6 +19,15 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
     });
   };
 
+  const scheduleMap = data
+    ?.sort((a, b) => new Date(a.date_time) - new Date(b.date_time))
+    .reduce((acc, item) => {
+      const dateKey = item.date_time.split('T')[0];
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(item.location);
+      return acc;
+    }, {});
+
   const generateCalendar = () => {
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
@@ -28,7 +40,11 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
     const dates = [];
 
     // 이전 달
-    for (let i = prevMonthLastDay - prevMonthDays + 1; i <= prevMonthLastDay; i++) {
+    for (
+      let i = prevMonthLastDay - prevMonthDays + 1;
+      i <= prevMonthLastDay;
+      i++
+    ) {
       dates.push({
         day: i,
         currentMonth: false,
@@ -66,12 +82,16 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
   const calendarDates = generateCalendar();
 
   const handleDateClick = (day, month, year) => {
-    const formattedDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
+      day
+    ).padStart(2, '0')}`;
     setSelectedDay(formattedDate);
   };
 
   const isSelected = (day, month, year) => {
-    const formattedDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
+      day
+    ).padStart(2, '0')}`;
     return selectedDay === formattedDate;
   };
 
@@ -83,33 +103,64 @@ const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
             {year}년 {month + 1}월
           </s.CalenderP2>
           <s.ButtonContainer>
-            <s.ButtonImg src={CalenderButton} alt="button" onClick={() => changeMonth(-1)} />
-            <s.ButtonImg src={CalenderButton} alt="button" style={{ rotate: "180deg" }} onClick={() => changeMonth(1)} />
+            <s.ButtonImg
+              src={CalenderButton}
+              alt="button"
+              onClick={() => changeMonth(-1)}
+            />
+            <s.ButtonImg
+              src={CalenderButton}
+              alt="button"
+              style={{ rotate: '180deg' }}
+              onClick={() => changeMonth(1)}
+            />
           </s.ButtonContainer>
         </s.Header>
 
         <s.WeekContainer>
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <s.Day key={day}>{day}</s.Day>
           ))}
         </s.WeekContainer>
 
         <s.DateContainer>
           {calendarDates.map((date, index) => {
-            const { day, month: cellMonth, year: cellYear, currentMonth } = date;
+            const {
+              day,
+              month: cellMonth,
+              year: cellYear,
+              currentMonth,
+            } = date;
+            const formattedDate = `${cellYear}-${String(cellMonth).padStart(
+              2,
+              '0'
+            )}-${String(day).padStart(2, '0')}`;
+            const locationInfo = scheduleMap?.[formattedDate];
             const lastrow = index >= calendarDates.length - 7;
             const selected = isSelected(day, cellMonth, cellYear);
 
             return (
               <s.DateCell
                 key={index}
-                className={currentMonth ? "" : "inactive"}
-                onClick={() => currentMonth && handleDateClick(day, cellMonth, cellYear)}
+                className={currentMonth ? '' : 'inactive'}
+                onClick={() =>
+                  currentMonth && handleDateClick(day, cellMonth, cellYear)
+                }
                 lastrow={lastrow.toString()}
                 selected={selected}
               >
-                {selected && <s.SelectedDateCell lastrow={lastrow.toString()} />}
+                {selected && (
+                  <s.SelectedDateCell lastrow={lastrow.toString()} />
+                )}
                 {day}
+                {currentMonth && locationInfo && (
+                  <s.LocationList>
+                    {(locationInfo || []).slice(0, 3).map((location, idx) => (
+                      <s.DateText key={idx}>{location}</s.DateText>
+                    ))}
+                    {locationInfo.length > 3 && <s.MoreInfo>...</s.MoreInfo>}
+                  </s.LocationList>
+                )}
               </s.DateCell>
             );
           })}
