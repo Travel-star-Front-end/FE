@@ -31,6 +31,13 @@ const Posts = () => {
     const [activeTab, setActiveTab] = useState(null);
     const [banner, setBanner] = useState(null);
     const [comment, setComment] = useState(commentData?.data.comment || '');
+
+    useEffect(() => {
+        if(backgroundData?.data) {
+            setBanner(backgroundData?.data)
+        }
+    }, [backgroundData]);
+    
     useEffect(() => {
         if (commentData?.data.comment) {
             setComment(commentData.data.comment);
