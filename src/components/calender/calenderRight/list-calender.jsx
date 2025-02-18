@@ -37,6 +37,15 @@ const ListCalender = ({
     return `${hours}:${minutes}`;
   };
 
+  // 시간 기준 정렬 함수 추가함
+  const sortedData = safeData.sort((a, b) => {
+    const timeA = new Date(a.date_time);
+    const timeB = new Date(b.date_time);
+    return timeA - timeB;
+  });
+
+  // console.log('솔티드데이터터', sortedData);
+
   // const {
   //   data: titleData,
   //   loading,
@@ -72,7 +81,7 @@ const ListCalender = ({
 
       {/* time, location, selectedDay 추가함, ket 값 변경함*/}
       <s.ListContainer>
-        {safeData.map((item, index) => (
+        {sortedData.map((item) => (
           <ItemCalender
             key={item.schedule_id}
             id={item.schedule_id}
