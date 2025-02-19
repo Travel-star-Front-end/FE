@@ -15,10 +15,13 @@ import useFetch from '../../hooks/useFetch';
 import NotificationBadge from '../../components/posts/posts/notification-badge/notification-badge';
 
 const Posts = () => {
-    const userId = localStorage.getItem('userId'); 
     //전체 일지 조회(최신순 10개)
     const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
-    //닉네임 조회회
+    //유저 일지 조회
+    const { data: userPosts, loading: userPostsLoading } = useFetch('/posts');
+    //유저 프로필 사진 조회 
+    const { data: profile, loading: profileLoading } = useFetch('/profile-image');
+    //닉네임 조회
     const { data, loading, error } = useFetch("/mypage");
     //행성이름 조회
     const { data: planetData, loading: planetLoading } = useFetch('/planet');
@@ -26,6 +29,7 @@ const Posts = () => {
     const { data: commentData, loading: commentLoading } = useFetch('/comment');
     //배경화면 조회
     const { data: backgroundData, loading: backgroundLoading } = useFetch('/background');
+    const userId = localStorage.getItem('userId');
 
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(null);
@@ -65,7 +69,11 @@ const Posts = () => {
                     <S.BannerHeader>
                         <S.InfoContainer>
                             <S.ProfileImg>
+                            {profile?.data ? (
+                                <img src={profile?.data} alt='profile' className='profile-img'/>
+                            ) : (
                                 <img src={default_profile_img} alt='profile' className='profile-img'/>
+                            )}
                             </S.ProfileImg>
                             <div>
                                 <div className='nickname default'>
@@ -84,9 +92,9 @@ const Posts = () => {
                         <S.ToolbarContainer>
                             <S.Toolbar>
                                 <img src={setting} alt='setting' className='toolbar-icon' onClick={() => handleClick('setting')}/>
-                                <NotificationBadge icon={friends} count={5} onClick={() => handleClick('friends')}/>
+                                <NotificationBadge icon={friends} count={0} onClick={() => handleClick('friends')}/>
                                 <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
-                                <NotificationBadge icon={alert} count={10} />                 
+                                <NotificationBadge icon={alert} count={0} />                 
                             </S.Toolbar>
                             <S.AddToolbar>
                                 <img src={add} alt='add'className='toolbar-icon2' onClick={() => navigate('/posts/write')}/>
@@ -119,7 +127,20 @@ const Posts = () => {
                                 title={post.title}
                                 buttonType='edit'
                             />
-                        ))}                        
+                        ))}
+                        {userPosts?.data.map((post) => (
+                            <TravelPost 
+                                key={post.id}
+                                postId={post.id}
+                                postUserId={userId}
+                                profileImg={profile?.data}
+                                nickname={data?.data?.nickname}
+                                date={post.created_at}
+                                location={post.star.region}
+                                images={post.images}
+                                title={post.title}
+                                buttonType='edit'/>
+                        ))}                    
                         </>
                     ) : (
                         <S.NothingText>작성된 일지가 없습니다.</S.NothingText>
