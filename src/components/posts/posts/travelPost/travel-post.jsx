@@ -108,27 +108,30 @@ const TravelPost = ({
                     </S.DetailInfo>
                 </S.Info>
 
-                {buttonType === 'friend' && (
-                    <S.Button
-                        type="button"
-                        $isFriend={isFriend} 
-                        onClick={handleButtonClick}
-                    >
-                        {isFriend ? "친구" : "+ 친구 추가"}
-                  </S.Button>
-                )}
-                {buttonType === 'edit' && (
-                    <S.EditBtnContainer>
-                        {/* <img src={lock} alt='lock' className='lock-icon' /> */}
-                        <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
-                        <S.EditButton 
-                            type="button" 
-                            onClick={() => navigate(`/edit/${postId}`)}>
-                                수정하기
-                        </S.EditButton>
-                    </S.EditBtnContainer>
-                )}
+                {buttonType && (
+                    <>
+                        {buttonType === 'friend' && (
+                            <S.Button
+                                type="button"
+                                $isFriend={isFriend} 
+                                onClick={handleButtonClick}
+                            >
+                                {isFriend ? "친구" : "+ 친구 추가"}
+                            </S.Button>
+                        )}
 
+                        {buttonType === 'edit' && (
+                            <S.EditBtnContainer>
+                                <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                                <S.EditButton 
+                                    type="button" 
+                                    onClick={() => navigate(`/edit/${postId}`)}>
+                                    수정하기
+                                </S.EditButton>
+                            </S.EditBtnContainer>
+                        )}
+                    </>
+                )}
             </S.InfoWrapper>
 
             {images && images.length > 0 && (
