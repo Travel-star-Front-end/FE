@@ -20,12 +20,6 @@ const PlanetPage = () => {
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
 
-  const storedUserId = localStorage.getItem('userId');
-  const userId =
-    storedUserId && storedUserId.startsWith('{')
-      ? JSON.parse(storedUserId)
-      : storedUserId;
-
   // 사용자 전체 일지 조회
   const { data, loading, error } = useFetch('/posts');
   //사용자 행성 조회
@@ -44,18 +38,8 @@ const PlanetPage = () => {
   const [timeZoneId, setTimeZoneId] = useState(null);
   // 수정 모달 관련
   const [showModal, setShowModal] = useState(false);
-  //도시 / 연결선 데이터
-  // const [pointsData, setPointsData] = useState(() => {
-  //   const storedData = localStorage.getItem('pointsData');
-  //   return storedData ? JSON.parse(storedData) : [];
-  // });
-  // const [arcsData, setArcsData] = useState(() => {
-  //   const storedData = localStorage.getItem('arcsData');
-  //   return storedData ? JSON.parse(storedData) : [];
-  // });
-
   const [pointsData, setPointsData] = useState([]);
-  const [arcsData, setArcsData] = useState([]);
+
   //반응형 관련
   const [dimensions, setDimensions] = useState({
     width: 0,
@@ -79,7 +63,6 @@ const PlanetPage = () => {
       setIsProcessing(true);
 
       let updatedPoints = [];
-      let updatedArcs = [];
 
       if (Array.isArray(data.data)) {
         for (const item of data.data) {
@@ -99,17 +82,6 @@ const PlanetPage = () => {
                 size: getRandomStarSize(),
               };
               updatedPoints.push(newPoint);
-
-              if (updatedPoints.length > 1) {
-                const prevPoint = updatedPoints[updatedPoints.length - 2];
-                const newArc = {
-                  startLat: prevPoint.lat,
-                  startLng: prevPoint.lng,
-                  endLat: coordinates.lat,
-                  endLng: coordinates.lng,
-                };
-                updatedArcs.push(newArc);
-              }
             }
           } catch (error) {
             console.error(`Error processing region ${region}:`, error);
@@ -118,7 +90,7 @@ const PlanetPage = () => {
       }
 
       setPointsData(updatedPoints);
-      setArcsData(updatedArcs);
+      // setArcsData(updatedArcs);
 
       setIsProcessing(false);
     };
@@ -168,18 +140,6 @@ const PlanetPage = () => {
       globeRef.current.controls().autoRotateSpeed = 0.2;
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (!planetName) {
-  //     navigate('/setting');
-  //   }
-  // }, [planetName, navigate]);
-
-  // pointsData, arcsData가 변경될 때마다 로컬 스토리지에 저장
-  // useEffect(() => {
-  //   localStorage.setItem('pointsData', JSON.stringify(pointsData));
-  //   localStorage.setItem('arcsData', JSON.stringify(arcsData));
-  // }, [pointsData, arcsData]);
 
   // 현재 위치 기반 시간 업데이트 함수
   const updateTimeBasedOnLocation = async () => {
@@ -290,6 +250,7 @@ const PlanetPage = () => {
       setPlanetName(tempPlanetName);
       alert('행성 이름이 성공적으로 변경되었습니다.');
       setShowModal(false);
+      window.location.reload();
     } else {
       alert('행성 이름 수정에 실패했습니다.');
     }
@@ -376,7 +337,7 @@ const PlanetPage = () => {
 
               document.body.appendChild(tooltip);
 
-              el.onmouseover = (event) => {
+              el.onmouseover = () => {
                 tooltip.style.display = 'block';
               };
               el.onmousemove = (event) => {
@@ -424,6 +385,7 @@ const GlobeContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 `;
 
 const TopBar = styled.div`
