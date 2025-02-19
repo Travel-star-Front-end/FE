@@ -85,6 +85,7 @@ const PlanetPage = () => {
         for (const item of data.data) {
           const region = item.star.region;
           const feelNum = item.feel_color;
+          const stars_id = item.id;
 
           try {
             const coordinates = await fetchCoordinates(region);
@@ -93,6 +94,7 @@ const PlanetPage = () => {
                 lat: coordinates.lat,
                 lng: coordinates.lng,
                 name: region,
+                id: stars_id,
                 color: getFeelingColor(feelNum),
                 size: getRandomStarSize(),
               };
