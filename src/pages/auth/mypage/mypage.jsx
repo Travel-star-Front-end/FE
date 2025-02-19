@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Profile from '../../../assets/images/ProfileImage.png';
 import { useNavigate } from 'react-router-dom';
-import { API } from '../../../apis/axios'; // axios 인스턴스
+import { API } from '../../../apis/axios';
 import ConfirmModal from './confirmmodal';
+import useFetch from "../../../hooks/useFetch";
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -12,115 +13,24 @@ const formatDate = (dateString) => {
 
 const MyPage = () => {
   const navigate = useNavigate();
-
-  const [userData, setUserData] = useState({
-    user_id: '',      
-    nickname: '',
-    password: '',
-    name: '',
-    birth: '',
-    phonenum: '',
-    email: '',
-    planetName: '',  
-  });
-
+  const [planetName, setPlanetName] = useState("");
   const [profileImage, setProfileImage] = useState(Profile);
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [clickedButton, setClickedButton] = useState(null);
 
+  const { data: planetData } = useFetch("/planet");
+  const { data: userData } = useFetch("/mypage");
+  const { data: profileData } = useFetch("/profile-image");
+
   useEffect(() => {
-    fetchUserData();
-    fetchProfileImage();
-  }, []);
-
-  const fetchUserData = async () => {
-    try {
-      const token = localStorage.getItem('accessToken'); 
-      if (!token) {
-        console.error('No token found, redirecting to login...');
-        navigate('/login');
-        return;
-      }
-      const response = await API.get('/mypage', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      
-      const { data } = response.data; 
-      
-      setUserData((prev) => ({
-        ...prev,
-        user_id: data.user_id,
-        nickname: data.nickname,
-        password: data.password,
-        name: data.name,
-        birth: data.birth,
-        phonenum: data.phonenum,
-        email: data.email,
-      }));
-
-      if (data.user_id) {
-        fetchPlanetData(data.user_id);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error('401 Unauthorized - 토큰 만료 혹은 인증 실패');
-        navigate('/login');
-      } else {
-        console.error('Error fetching user data:', error);
-      }
+    if (planetData && planetData.planet_name) {
+      setPlanetName(planetData.planet_name);
     }
-  };
+  }, [planetData]);
 
-  const fetchPlanetData = async (user_id) => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await API.get(`/planet?user_id=${user_id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (response.status === 200) {
-        const { planets } = response.data;
-        if (planets && planets.length > 0) {
-          setUserData((prev) => ({
-            ...prev,
-            planetName: planets[0].name,
-          }));
-        } else {
-          setUserData((prev) => ({
-            ...prev,
-            planetName: '행성 이름 미지정',
-          }));
-        }
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setUserData((prev) => ({
-          ...prev,
-          planetName: '행성 이름 미지정',
-        }));
-      } else {
-        console.error('Error fetching planet data:', error);
-      }
-    }
-  };
-
-  const fetchProfileImage = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await API.get('/profile-image', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.status === 200 && response.data.data) {
-        setProfileImage(response.data.data);
-      }
-    } catch (error) {
-      setProfileImage(Profile);
-    }
-  };
+  useEffect(() => {
+    setProfileImage(profileData?.data);
+  }, [profileData]);
 
   const handleClick = (path) => {
     const absolutePath = `/mypage/${path}`;
@@ -133,29 +43,7 @@ const MyPage = () => {
     try {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userId');
-      navigate('/login');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
-
-  const onDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
- 
-  const handleDeleteAccount = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await API.delete('/user', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      console.log('회원탈퇴 요청 응답:', response.status);
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userId');
+      alert("로그아웃이 완료 되었습니다.");
       navigate('/login');
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -164,8 +52,32 @@ const MyPage = () => {
     }
   };
 
+  const onDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+ 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.delete('/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      // console.log('회원탈퇴 요청 응답:', response);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('isLoggedIn');
+      alert("회원탈퇴가 완료 되었습니다.");
+      navigate('/login');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    } finally {
+      setShowDeleteModal(false);
+    }
   };
 
   const maskPassword = (password) => {
@@ -185,9 +97,9 @@ const MyPage = () => {
         <ProfileSection>
           <ProfileImage src={profileImage} alt="Profile" />
           <ProfileInfo>
-            <UserNickname>{userData.nickname}</UserNickname>
+            <UserNickname>{userData?.data?.nickname}</UserNickname>
             <UserPlanet>
-              {userData.planetName || '행성 이름 미지정'}
+              {planetName || '행성 이름 미지정'} 행성
             </UserPlanet>
           </ProfileInfo>
           <ProfileEditButton
@@ -221,32 +133,31 @@ const MyPage = () => {
           <InfoDetails>
             <InfoRow>
               <InfoLabel>아이디</InfoLabel>
-              <InfoValue>{userData.user_id}</InfoValue>
+              <InfoValue>{userData?.data?.user_id}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>닉네임</InfoLabel>
-              <InfoValue>{userData.nickname}</InfoValue>
+              <InfoValue>{userData?.data?.nickname}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>비밀번호</InfoLabel>
-              <InfoValue>{maskPassword(userData.password)}</InfoValue>
+              <InfoValue>{maskPassword(userData?.data?.password)}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>이름</InfoLabel>
-              <InfoValue>{userData.name}</InfoValue>
+              <InfoValue>{userData?.data?.name}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>생년월일</InfoLabel>
-              {/* formatDate 함수를 사용하여 날짜만 표시 */}
-              <InfoValue>{formatDate(userData.birth)}</InfoValue>
+              <InfoValue>{formatDate(userData?.data?.birth)}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>전화번호</InfoLabel>
-              <InfoValue>{userData.phonenum}</InfoValue>
+              <InfoValue>{userData?.data?.phonenum}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>이메일</InfoLabel>
-              <InfoValue>{userData.email}</InfoValue>
+              <InfoValue>{userData?.data?.email}</InfoValue>
             </InfoRow>
           </InfoDetails>
         </InfoSection>
@@ -305,8 +216,9 @@ const ProfileSection = styled.div`
 const ProfileImage = styled.img`
   width: 16.25rem;
   height: 16.25rem;
-  object-fit: contain;
+  object-fit: cover;
   margin-right: 2.5rem;
+  border-radius: 50%;
   @media (max-width: 768px) {
     margin-right: 0;
     margin-bottom: 1.5rem;
