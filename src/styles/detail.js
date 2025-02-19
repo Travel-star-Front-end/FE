@@ -151,6 +151,7 @@ export const SliderWrapper = styled.div`
         width: 90%;
         display: flex !important;
         flex-wrap: nowrap;
+        margin: 0;
     }
 
      .slick-slide {
@@ -214,7 +215,8 @@ export const ContentWrapper = styled.div`
     flex-direction: column;
     gap: 0.75vw;
     width: 100%;
-    font-weight: 300px;
+    font-weight: 300;
+
     .title {
         font-size: 1vw;
         line-height: 1.21vw; 

@@ -132,7 +132,7 @@ export const EditButton = styled.button`
 
 export const SliderWrapper = styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 92%;
     margin: 0 auto;
@@ -149,9 +149,11 @@ export const SliderWrapper = styled.div`
     }
 
     .slick-track {
+        margin: 0;
         width: 90%;
         display: flex !important;
         flex-wrap: nowrap;
+        justify-content: flex-start;
     }
 
      .slick-slide {
@@ -201,7 +203,55 @@ export const TravelImg = styled.div`
 `;
 
 export const QuickReview = styled.div`
-    font-weight: 100;
+    font-weight: 300;
     font-size: 1vw;
     color: #000000;
+`;
+
+export const SliderWrapper2 = styled.div`
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 1vw;
+    position: relative;
+`;
+
+export const ImageContainer = styled.div`
+    display: flex;
+    gap: 0.4vw;
+    margin-left: 2.9vw;
+`;
+
+export const LeftImageArrow = styled.div`
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5vw;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    background-image: url(${LeftArrow});
+    background-size: 50% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1000;
+    cursor: pointer; 
+`;
+
+export const RightImageArrow = styled.div`
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5vw;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    background-image: url(${RightArrow});
+    background-size: 50% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1000;
+    cursor: pointer;
 `;
