@@ -1,14 +1,14 @@
-import React, { useState } from "react"; 
-import * as s from "../../styles/calender/calender";
-import CalenderLeft from "../../components/calender/calenderLeft/calenderLeft";
-import CalenderRight from "../../components/calender/calenderRight/calenderRight";
+import React, { useState } from 'react';
+import * as s from '../../styles/calender/calender';
+import CalenderLeft from '../../components/calender/calenderLeft/calenderLeft';
+import CalenderRight from '../../components/calender/calenderRight/calenderRight';
 
 const Calender = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
   const today = new Date();
-  const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}-${String(today.getDate()).padStart(2, "0")}`;
+  const formattedToday = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
   const [selectedDay, setSelectedDay] = useState(formattedToday);
 
@@ -18,9 +18,17 @@ const Calender = () => {
         <s.CalenderP>캘린더</s.CalenderP>
         <s.CalenderBar />
         <s.CalenderContentContainer>
-          <CalenderLeft selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+          <CalenderLeft
+            selectedDay={selectedDay}
+            setSelectedDay={setSelectedDay}
+            refreshKey={refreshKey}
+          />
 
-          <CalenderRight selectedDay={selectedDay} />
+          <CalenderRight
+            selectedDay={selectedDay}
+            refreshKey={refreshKey}
+            setRefreshKey={setRefreshKey}
+          />
         </s.CalenderContentContainer>
       </s.CalenderInnerContainer>
     </s.CalenderContainer>

@@ -5,7 +5,7 @@ import Trash from '../../../assets/images/calender/trash.png';
 import ModalTime from './modalTime';
 import { API } from '../../../apis/axios';
 
-const EditModal = ({ onClose, selectedDay, id }) => {
+const EditModal = ({ onClose, selectedDay, id, setRefreshKey }) => {
   const [period, setPeriod] = useState('오전');
   const [hour, setHour] = useState('00');
   const [minute, setMinute] = useState('00');
@@ -93,6 +93,8 @@ const EditModal = ({ onClose, selectedDay, id }) => {
           },
         }
       );
+
+      setRefreshKey((prev) => prev + 1);
 
       alert('일정이 수정되었습니다.');
       console.log(response.data);

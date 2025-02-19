@@ -6,7 +6,7 @@ import ModalTime from './modalTime';
 import { API } from '../../../apis/axios';
 import { useAddSchedule } from '../../../hooks/useSchedules';
 
-const AddModal = ({ onClose, selectedDay }) => {
+const AddModal = ({ onClose, selectedDay, setRefreshKey }) => {
   const [period, setPeriod] = useState('오전');
   const [hour, setHour] = useState('00');
   const [minute, setMinute] = useState('00');
@@ -65,6 +65,8 @@ const AddModal = ({ onClose, selectedDay }) => {
         },
       });
       console.log(response);
+
+      setRefreshKey((prev) => prev + 1);
 
       alert('일정이 추가되었습니다.');
       onClose();
