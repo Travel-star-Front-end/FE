@@ -30,7 +30,7 @@ const LoginForm = () => {
         resolver: zodResolver(schema),
     });
 
-    const { data: userData, loading, error } = useFetch(loginCompleted && userId ? `/planet/${userId}` : null);
+    const { data: userData, loading, error } = useFetch(loginCompleted ? "/planet" : null);
     useEffect(() => {
         if (error && error.status === 404) {
             navigate("/setting");

@@ -4,8 +4,7 @@ import useFetch from "../../hooks/useFetch";
 
 const Profile = () => {
     const { data, loading, error } = useFetch("/mypage");
-    const userId = localStorage.getItem("userId");
-    const { data: userData, loading: userLoading } = useFetch(userId ? `/planet/${userId}` : null);
+    const { data: userData, loading: userLoading } = useFetch("/planet");
 
     return (
         <s.ProfileContainer>
