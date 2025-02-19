@@ -15,10 +15,8 @@ import useFetch from '../../hooks/useFetch';
 import NotificationBadge from '../../components/posts/posts/notification-badge/notification-badge';
 
 const Posts = () => {
-    //전체 일지 조회(최신순 10개)
-    const { data: posts, loading: postsLoading, error: postsError } = useFetch(`/home`);
     //유저 일지 조회
-    const { data: userPosts, loading: userPostsLoading } = useFetch('/posts');
+    const { data: posts, loading: postsLoading } = useFetch('/posts');
     //유저 프로필 사진 조회 
     const { data: profile, loading: profileLoading } = useFetch('/profile-image');
     //닉네임 조회
@@ -112,23 +110,9 @@ const Posts = () => {
             <S.DiaryContainer>
                 <S.Text>전체 일지</S.Text>
                 <S.PostWrapper>
-                    {posts?.data.posts.length > 0 ? (
+                    {posts?.data.length > 0 ? (
                         <>
-                        {posts?.data.posts.map((post) => (
-                            <TravelPost 
-                                key={post.post_id}
-                                postId={post.post_id}
-                                postUserId={post.user_id}
-                                profileImg={post.user.profileImg}
-                                nickname={post.user.nickname}
-                                date={post.created_at}
-                                location={post.star.region}
-                                images={post.images}                                
-                                title={post.title}
-                                buttonType='edit'
-                            />
-                        ))}
-                        {userPosts?.data.map((post) => (
+                        {posts?.data.map((post) => (
                             <TravelPost 
                                 key={post.id}
                                 postId={post.id}
@@ -140,7 +124,7 @@ const Posts = () => {
                                 images={post.images}
                                 title={post.title}
                                 buttonType='edit'/>
-                        ))}                    
+                        ))}                           
                         </>
                     ) : (
                         <S.NothingText>작성된 일지가 없습니다.</S.NothingText>

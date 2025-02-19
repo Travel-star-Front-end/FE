@@ -67,7 +67,7 @@ const FriendsTab = ({ friends, requests }) => {
                             <FriendApplyCard
                                 key={item.requestId}
                                 id={item.requestId}
-                                profileImg={item.fromUserImage}
+                                profileImg={item.fromUserImage?.file_name}
                                 name={item.fromUserNickname}
                             />
                         ))}

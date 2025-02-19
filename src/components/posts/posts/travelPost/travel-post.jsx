@@ -12,25 +12,6 @@ import default_profile_img from '../../../../assets/images/ProfileImage.png';
 import useFetch from '../../../../hooks/useFetch';
 import usePost from '../../../../hooks/usePost';
 
-//예시 이미지
-import image1 from '../../../../assets/images/travel-post/image 1.png';
-import image2 from '../../../../assets/images/travel-post/image 2.png';
-import image3 from '../../../../assets/images/travel-post/image 3.png';
-
-//slick setting
-const settings = {
-    rows: 1,
-    slidesPerRow: 1,  
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    arrows: true,
-    draggable: false,
-}
-
-//추천 게시글 컴포넌트
 const TravelPost = ({
     postId,
     postUserId,
@@ -43,6 +24,19 @@ const TravelPost = ({
     isFriend : initialIsFriend,
     buttonType
 }) => {
+    //slick setting
+    const settings = {
+        rows: 1,
+        slidesPerRow: 1,  
+        dots: false,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: images.length > 3,
+        draggable: false,
+    }
+
     //친구 요청
     const { triggerPost } = usePost(`friends/request/${postUserId}`);
 
@@ -108,43 +102,62 @@ const TravelPost = ({
                     </S.DetailInfo>
                 </S.Info>
 
-                {buttonType === 'friend' && (
-                    <S.Button
-                        type="button"
-                        $isFriend={isFriend} 
-                        onClick={handleButtonClick}
-                    >
-                        {isFriend ? "친구" : "+ 친구 추가"}
-                  </S.Button>
-                )}
-                {buttonType === 'edit' && (
-                    <S.EditBtnContainer>
-                        {/* <img src={lock} alt='lock' className='lock-icon' /> */}
-                        <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
-                        <S.EditButton 
-                            type="button" 
-                            onClick={() => navigate(`/edit/${postId}`)}>
-                                수정하기
-                        </S.EditButton>
-                    </S.EditBtnContainer>
-                )}
+                {buttonType && (
+                    <>
+                        {buttonType === 'friend' && (
+                            <S.Button
+                                type="button"
+                                $isFriend={isFriend} 
+                                onClick={handleButtonClick}
+                            >
+                                {isFriend ? "친구" : "+ 친구 추가"}
+                            </S.Button>
+                        )}
 
+                        {buttonType === 'edit' && (
+                            <S.EditBtnContainer>
+                                <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                                <S.EditButton 
+                                    type="button" 
+                                    onClick={() => navigate(`/edit/${postId}`)}>
+                                    수정하기
+                                </S.EditButton>
+                            </S.EditBtnContainer>
+                        )}
+                    </>
+                )}
             </S.InfoWrapper>
 
             {images && images.length > 0 && (
-                <S.SliderWrapper>
-                    <Slider {...settings}>
-                        {images.map((image, index) => (
-                            <S.TravelImg key={index}>
-                                <img src={image} className='travel-img' />
-                            </S.TravelImg>
-                        ))}
-                    </Slider>
-                </S.SliderWrapper>
+                <>
+                    {images.length > 3 ? (
+                        <S.SliderWrapper>
+                            <Slider {...settings}>
+                                {images.map((image, index) => (
+                                    <S.TravelImg key={index}>
+                                        <img src={image} className="travel-img" />
+                                    </S.TravelImg>
+                                ))}
+                            </Slider>
+                        </S.SliderWrapper>
+                    ) : (
+                        <S.SliderWrapper2>
+                            <S.ImageContainer>
+                                <S.LeftImageArrow/>
+                                {images.map((image, index) => (
+                                    <S.TravelImg key={index}>
+                                        <img src={image} className="travel-img" />
+                                    </S.TravelImg>
+                                ))}
+                                <S.RightImageArrow/>
+                            </S.ImageContainer>                            
+                        </S.SliderWrapper2>
+
+                    )}
+                </>
             )}
-
+            
             <S.QuickReview>{title}</S.QuickReview>
-
         </S.Container>
     )
 }

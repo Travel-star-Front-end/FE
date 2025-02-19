@@ -1,6 +1,6 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import * as S from '../../styles/detail';
-import TravelPost from '../../components/posts/posts/travelPost/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -9,11 +9,8 @@ import share from '../../assets/images/posts/posts/share.png';
 import audio from '../../assets/images/posts/detail/audio.png';
 import default_profile_img from '../../assets/images/ProfileImage.png';
 import useFetch from '../../hooks/useFetch';
-
-//예시 이미지
-import image1 from '../../assets/images/travel-post/image 1.png';
-import image2 from '../../assets/images/travel-post/image 2.png';
-import image3 from '../../assets/images/travel-post/image 3.png';
+import { API2 } from '../../apis/posts/spotifyService';
+import IframePlayer from '../../components/posts/write/iframePlayer';
 
 const settings = {
     rows: 1,
@@ -28,6 +25,8 @@ const settings = {
 }
 
 const Detail = () => {
+    const [iframeUrl, setIframeUrl] = useState('');
+    const [trackInfo, setTrackInfo] = useState({duration: ''});
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
@@ -46,6 +45,39 @@ const Detail = () => {
             alert('주소 복사에 실패했습니다. 다시 시도해주세요.');
             console.error('주소 복사 실패:', err);
         });
+    };
+
+    useEffect(() => {
+        console.log("음악 검색 useEffect 실행", postData?.data?.music);
+        if (postData?.data?.music) {
+            fetchSpotifyTrack(postData.data.music);
+        }
+    },[postData])
+    
+
+    // 기존에 저장된 값으로 음악 검색
+    const fetchSpotifyTrack = async (musicTitle) => {
+        try {
+            const tracks = await API2(musicTitle);
+            console.log('검색결과', tracks);
+    
+            if (tracks.length > 0) {
+                const track = tracks[0];
+                setIframeUrl(`https://open.spotify.com/embed/track/${track.id}`);
+                setTrackInfo({duration: formatDuration(track.duration_ms),})
+            } else {
+                console.log("검색된 트랙 없음.");
+            }
+        } catch (error) {
+            console.error("Spotify 검색 실패:", error);
+        }
+    };
+
+    // 밀리초(ms) → mm:ss 변환 함수
+    const formatDuration = (milliseconds) => {
+        const minutes = Math.floor(milliseconds / 60000);
+        const seconds = Math.floor((milliseconds % 60000) / 1000);
+        return `${minutes}:${seconds.toString().padStart(2, "0")}`;
     };
 
     if (postLoading) {
@@ -77,7 +109,7 @@ const Detail = () => {
                                         <S.LocPin src={locationPin} alt="위치" />
                                         <div>{postData.data.star.region}</div>                                        
                                     </S.LocationWrapper>
-                                    {postData.data.music && (
+                                    {/* {postData?.data?.music && (
                                         <S.MusicWrapper>
                                             <S.MusicName>
                                                 <S.AudioImgWrapper>
@@ -85,14 +117,16 @@ const Detail = () => {
                                                 </S.AudioImgWrapper>
                                                 <div>{postData.data.music}</div>
                                             </S.MusicName>
-                                            <div>00:30</div>
+                                            <div>{trackInfo.duration}</div>
                                         </S.MusicWrapper>
-                                    )}
+                                    )} */}
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
                         <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
                     </S.InfoWrapper>
+
+                    {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
 
                     {postData.data.post_images && postData.data.post_images.length > 0 && (
                         <S.SliderWrapper>
