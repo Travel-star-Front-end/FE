@@ -95,7 +95,7 @@ const MyPage = () => {
       <MainContent>
         <Header>마이페이지</Header>
         <ProfileSection>
-          <ProfileImage src={profileImage} alt="Profile" />
+          <ProfileImage src={profileData?.data || Profile} alt="Profile" />
           <ProfileInfo>
             <UserNickname>{userData?.data?.nickname}</UserNickname>
             <UserPlanet>

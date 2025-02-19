@@ -37,7 +37,7 @@ export const ProfileContainer = styled.div`
     gap: 0.8vw;
 `
 
-export const ProfileImgContainer = styled.div`
+export const ProfileImgContainer = styled.img`
     width: 5.05vw;
     height: 5.05vw;
     background: ${colors.white};
@@ -46,11 +46,6 @@ export const ProfileImgContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-`
-
-export const ProfileImg = styled.img`
-    width: 2.4vw;
-    height: 2.95vw;
 `
 
 export const PContainer = styled.div`
