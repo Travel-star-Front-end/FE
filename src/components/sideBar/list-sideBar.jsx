@@ -18,6 +18,8 @@ const ListSideBar = () => {
                     id={item.id}
                     name={item.name} 
                     link={item.link} 
+                    link2={item.link2}
+                    link3={item.link3}
                     logo={item.logo} 
                     logoClick={item.logoClick}
                 />

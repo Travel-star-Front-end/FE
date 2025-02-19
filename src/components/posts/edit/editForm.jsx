@@ -20,7 +20,7 @@ import Modal from "../write/modal/modal";
 import IframePlayer from "../write/iframePlayer";
 import AIModal from "../write/modal/aiModal";
 
-const EditForm = ({ data }) => {
+const EditForm = ({ postId, data }) => {
     const [menu, setMenu] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
     const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
@@ -37,7 +37,14 @@ const EditForm = ({ data }) => {
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
+    const [storage, setStorage] = useState("");
+    const [isFeelingAnalyzed, setIsFeelingAnalyzed] = useState(false);
     const navigate = useNavigate();
+
+    const handleFeelingChange = (e) => {
+        setFeeling(e.target.value);
+        setIsFeelingAnalyzed(false);
+    };
 
     // ai 모달
     const openAIModal = async () => {
@@ -49,10 +56,18 @@ const EditForm = ({ data }) => {
         setAiModal(true);
     
         try {
-            const response = await API.post("/analyze", { text: feeling });
-            console.log("분석 결과:", response.data);
-    
-            setAnalyzedFeeling(response.data.feeling);
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.post("/posts/feeling", { review: feeling },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            // console.log("분석 결과:", response.data);
+
+            setAnalyzedFeeling(response.data.data.feel_color);
+            setIsFeelingAnalyzed(true);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
@@ -70,11 +85,31 @@ const EditForm = ({ data }) => {
 
     useEffect(() => {
         if (data) {
-            setTitle(data.title);
-            setContent(data.body);
-            setFeeling(data.body);
+            setTitle(data.post.title);
+            setContent(data.post.content);
+            setFeeling(data.post.feeling);
+            setAnalyzedFeeling(data.post.feel_color);
+            setSelectedLocation(data.post.region);
+            setSelectedMusic(data.post.music);
+            setStorage(data.post.storage);
+    
+            if (Array.isArray(data.post.images) && data.post.images.length > 0) {
+                const imagePreviews = data.post.images.map((image) => ({
+                    id: image.id,
+                    name: image.url.split("/").pop(),
+                    preview: image.url,
+                    file: null,
+                }));
+    
+                setSelectedImages(imagePreviews);
+            } else {
+                setSelectedImages([]);
+            }
+    
+            // console.log("스토리지 값:", storage);
         }
     }, [data]);
+    
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
@@ -86,7 +121,7 @@ const EditForm = ({ data }) => {
         reader.onloadend = () => {
             setSelectedImages(prevImages => [
                 ...prevImages,
-                { name: file.name, preview: reader.result }
+                { name: file.name, preview: reader.result, file }
             ]);
         };
         reader.readAsDataURL(file); 
@@ -134,31 +169,72 @@ const EditForm = ({ data }) => {
             alert("선택한 트랙에는 재생할 수 있는 URL이 없습니다.");
         }
     };
+
+    useEffect(() => {
+       //  console.log("스토리지 변경:", storage);
+    }, [storage]);
     
     const handleSubmit = async () => {
+    const updatedStorage = storage;
+    // console.log("전송될 storage 값:", updatedStorage);
+    if (!String(analyzedFeeling).trim()) {
+        alert("감정 분석을 완료해주세요.");
+        return;
+    }
+
+    if (!isFeelingAnalyzed) {
+        alert("감정을 분석한 후 저장해주세요.");
+        return;
+    }
+
         const postData = {
             title,
-            photos: selectedImages.map(img => img.name), 
-            location: {
-                latitude,
-                longitude,
-                address: selectedLocation || "" 
-            },
+            region: selectedLocation || "",
             music: selectedMusic || null,
             content,
-            feeling
+            feeling,
+            feel_color: String(analyzedFeeling),
+            storage: updatedStorage,
         };
 
         try {
-            const response = await API.post("/users", postData);
-            console.log("Response:", response);
+            const accessToken = localStorage.getItem("accessToken");
+    
+            const response = await API.patch(`/posts/${postId}`, postData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            // console.log("서버 응답:", response.data);
+
+            const newImages = selectedImages.filter(image => image.file);
+    
+            if (newImages.length > 0) {
+                const formData = new FormData();
+                
+                newImages.forEach((image) => {
+                    formData.append("images", image.file); 
+                });
+    
+                const response2 = await API.post(`/posts/${postId}/image`, formData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+    
+                console.log("이미지 업로드 완료", response2);
+            }
+    
             alert("일지가 저장되었습니다.");
             navigate("/posts");
         } catch (error) {
             console.error("게시글 작성 실패:", error);
+            alert("게시글 작성에 실패했습니다.");
         }
     };
-
     const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
@@ -167,17 +243,17 @@ const EditForm = ({ data }) => {
                 <WriteInput width="95%" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <s.MenuImg src={Menu} alt="menu" onClick={handleMenuClick} />
                 
-                {menu && <Toggle />}
+                {menu && <Toggle storage={storage} setStorage={setStorage} postId={postId} />}
             </s.TitleContainer>
 
             <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
 
             <s.ImageContainer>
-                <ListImage images={selectedImages} onDelete={handleDeleteImage} />
+                <ListImage images={selectedImages} onDelete={handleDeleteImage} postId={postId} />
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
             
-            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={handleFeelingChange} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
             
             {aiModal && (
                 <AIModal onClose={closeAIModal} analyzedFeeling={analyzedFeeling} onFeelingSelect={handleFeelingSelect} />

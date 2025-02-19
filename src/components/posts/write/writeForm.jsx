@@ -34,7 +34,13 @@ const WriteForm = () => {
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
+    const [isFeelingAnalyzed, setIsFeelingAnalyzed] = useState(false);
     const navigate = useNavigate();
+
+    const handleFeelingChange = (e) => {
+        setFeeling(e.target.value);
+        setIsFeelingAnalyzed(false);
+    };
 
     // ai 모달
     const openAIModal = async () => {
@@ -57,17 +63,12 @@ const WriteForm = () => {
             // console.log("분석 결과:", response.data);
 
             setAnalyzedFeeling(response.data.data.feel_color);
+            setIsFeelingAnalyzed(true);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
         }
     };
-
-    useEffect(() => {
-        if (analyzedFeeling) {
-            setAiModal(true);
-        }
-    }, [analyzedFeeling]);
     
 
     const closeAIModal = () => {
@@ -136,6 +137,16 @@ const WriteForm = () => {
     };
     
     const handleSubmit = async () => {
+        if (!String(analyzedFeeling).trim()) {
+            alert("감정 분석을 완료해주세요.");
+            return;
+        }
+    
+        if (!isFeelingAnalyzed) {
+            alert("감정을 분석한 후 저장해주세요.");
+            return;
+        }
+
         const postData = {
             title,
             region: selectedLocation || "",
@@ -199,7 +210,7 @@ const WriteForm = () => {
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
 
-            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={handleFeelingChange} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
             
             {aiModal && (
                 <AIModal onClose={closeAIModal} analyzedFeeling={analyzedFeeling} onFeelingSelect={handleFeelingSelect} />
