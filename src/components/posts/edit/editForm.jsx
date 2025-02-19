@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../../apis/axios";
+import { API2 } from "../../../apis/posts/spotifyService";
 import * as s from "../../../styles/posts/write/write";
 import colors from "../../../styles/common/colors";
 import WriteInput from "../write/input/writeInput";
@@ -105,10 +106,27 @@ const EditForm = ({ postId, data }) => {
             } else {
                 setSelectedImages([]);
             }
-    
-            // console.log("스토리지 값:", storage);
+
+            if (data.post.music) {
+                fetchSpotifyTrack(data.post.music);
+            }
         }
     }, [data]);
+
+    // 기존에 저장된 값으로 음악 검색
+    const fetchSpotifyTrack = async (musicTitle) => {
+        try {
+            const tracks = await API2(musicTitle);
+    
+            if (tracks.length > 0) {
+                setIframeUrl(`https://open.spotify.com/embed/track/${tracks[0].id}`);
+            } else {
+                console.log("검색된 트랙 없음.");
+            }
+        } catch (error) {
+            console.error("Spotify 검색 실패:", error);
+        }
+    };    
     
 
     const handleMenuClick = () => {
@@ -272,7 +290,7 @@ const EditForm = ({ postId, data }) => {
 
             {subscribeModal && <Modal onClose={() => setSubscribeModal(false)} />}
 
-            <IframePlayer iframeUrl={iframeUrl} />
+            {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
 
             <s.ButtonContainer>
                 <WriteButton btncolor={colors.main} onClick={handleSubmit} disabled={!isFormValid}>일지 저장</WriteButton>

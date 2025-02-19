@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAccessToken } from "./auth";
 
-export const API = async (query) => {
+export const API2 = async (query) => {
   try {
     const accessToken = await getAccessToken();
 
