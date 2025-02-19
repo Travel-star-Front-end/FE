@@ -1,16 +1,21 @@
 import axios from 'axios';
 
 // 랜덤 색상 근데 이제 백으로부터 감정 받아야함함
-export const getRandomColor = () => {
+export const getFeelingColor = (feelNum) => {
   const colors = [
-    '#ff6600',
-    '#ff9900',
-    '#ffcc00',
-    '#66ff33',
-    '#33ccff',
-    '#cc66ff',
+    '#FF576B', // 1. 분노
+    '#FFA357', // 2. 슬픔, 우울
+    '#FFDD00', // 3. 기쁨
+    '#B2E762', // 4. 성장, 도전
+    '#57AEFF', // 5. 평온, 힐링
+    '#01BCD4', // null
   ];
-  return colors[Math.floor(Math.random() * colors.length)];
+
+  if (feelNum === null || feelNum < 1 || feelNum > 5) {
+    return colors[5];
+  } else {
+    return colors[feelNum - 1];
+  }
 };
 
 // 랜덤 사이즈즈

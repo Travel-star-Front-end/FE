@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import useFetch from '../../hooks/useFetch';
 import {
-  getRandomColor,
+  getFeelingColor,
   getRandomStarSize,
   fetchCoordinates,
 } from '../../utils/planet/getRandom';
@@ -23,6 +23,7 @@ const ConstellationViewer = () => {
         if (Array.isArray(data.data)) {
           for (const item of data.data) {
             const region = item.star.region;
+            const feelNum = item.feel_color;
             try {
               const coordinates = await fetchCoordinates(region);
               if (coordinates) {
@@ -30,7 +31,7 @@ const ConstellationViewer = () => {
                   lat: coordinates.lat,
                   lng: coordinates.lng,
                   name: region,
-                  color: getRandomColor(),
+                  color: getFeelingColor(feelNum),
                   size: getRandomStarSize(),
                 });
               }
