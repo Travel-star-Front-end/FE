@@ -7,35 +7,72 @@ function FriendManagement() {
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    fetchFriends();
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("토큰이 없습니다.");
+      return;
+    }
+    fetchFriends(token);
   }, []);
 
-  const fetchFriends = async () => {
+  const fetchFriends = async (accessToken) => {
     try {
-      const response = await API.get('https://jsonplaceholder.typicode.com/users?_limit=7'); 
+      console.log("Fetching friends with token:", accessToken);
       
-      const data = response.data;
-      const mappedFriends = data.map((user) => ({
-        id: user.id,
-        name: user.name,
-        avatar: ProfileImage, 
-      }));
+      const response = await API.get('/friends/list', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      setFriends(mappedFriends);
+      const { resultType, data } = response.data;
+
+      if (resultType === 'success') {
+        setFriends(
+          data.map((friend) => ({
+            id: friend.requestId,
+            name: friend.friendNickname,
+            avatar: friend.friendImage || ProfileImage,
+            requestedAt: friend.requestedAt,
+          }))
+        );
+      } else {
+        setFriends([]);
+      }
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
   };
 
-  const handleRemoveFriend = async (id) => {
-    try {
-      //  DELETE 요청. 실제로는 반영되지 않는 Mock API입니다.
-      await API.delete(`https://jsonplaceholder.typicode.com/users/1/`);
+  const handleRemoveFriend = async (requestId) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("토큰이 없습니다.");
+      return;
+    }
 
-      // 삭제 요청 성공 시, 로컬 state에서도 제거합니다.
-      setFriends((prevFriends) => prevFriends.filter((friend) => friend.id !== id));
+    try {
+      console.log("Removing friend with requestId:", requestId, "token:", token);
+      
+      const response = await API.delete(`/friends/request/${requestId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.resultType === 'success') {
+        setFriends((prevFriends) => prevFriends.filter((friend) => friend.id !== requestId));
+      }
     } catch (error) {
-      console.error('Error removing friend:', error);
+      if (error.response) {
+        if (error.response.status === 404) {
+          console.warn('존재하지 않는 친구 관계입니다.', error.response.data);
+        } else if (error.response.status === 500) {
+          console.error('서버 에러가 발생하였습니다.', error.response.data);
+        }
+      } else {
+        console.error('Error removing friend:', error);
+      }
     }
   };
 
@@ -43,15 +80,19 @@ function FriendManagement() {
     <Container>
       <MainTitle>친구 관리 {friends.length}</MainTitle>
       <ListTitle>목록</ListTitle>
-      {friends.map((friend) => (
-        <FriendRow key={friend.id}>
-          <Avatar src={friend.avatar} alt={`${friend.name} avatar`} />
-          <FriendName>{friend.name}</FriendName>
-          <RemoveButton onClick={() => handleRemoveFriend(friend.id)}>
-            친구 삭제
-          </RemoveButton>
-        </FriendRow>
-      ))}
+      {friends.length === 0 ? (
+        <NoFriendsMsg>친구 목록이 없습니다.</NoFriendsMsg>
+      ) : (
+        friends.map((friend) => (
+          <FriendRow key={friend.id}>
+            <Avatar src={friend.avatar} alt={`${friend.name} avatar`} />
+            <FriendName>{friend.name}</FriendName>
+            <RemoveButton onClick={() => handleRemoveFriend(friend.id)}>
+              친구 삭제
+            </RemoveButton>
+          </FriendRow>
+        ))
+      )}
     </Container>
   );
 }
@@ -98,6 +139,9 @@ const FriendName = styled.div`
   flex: 1;
   font-size: 2rem;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const RemoveButton = styled.button`
@@ -111,4 +155,10 @@ const RemoveButton = styled.button`
   &:hover {
     background-color: #ddd;
   }
+`;
+
+const NoFriendsMsg = styled.div`
+  font-size: 1.8rem;
+  color: #888;
+  margin-left: 2.125rem;
 `;

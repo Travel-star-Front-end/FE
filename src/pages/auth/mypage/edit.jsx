@@ -8,7 +8,7 @@ import { API } from '../../../apis/axios';
 const Edit = ({
   userId = 'BBbbe.1',
   nickname = '벨라',
-  password = '******',
+  password = 'mySecret1', 
   name = '김은수',
   birth = '2003-02-14',
   phoneNumber = '010-5479-8234',
@@ -36,45 +36,52 @@ const Edit = ({
   const [profileImage, setProfileImage] = useState(Profile);
   const fileInputRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // 수정 모드
-  const [isEditing, setIsEditing] = useState(false);
-  // 인증번호 발송 여부
+  const [planetNameState, setPlanetNameState] = useState(planetName);
+  const [isEditing, setIsEditing] = useState(true);
   const [isCodeSent, setIsCodeSent] = useState(false);
-  // 인증 완료 여부
   const [isCodeVerified, setIsCodeVerified] = useState(false);
-  // 인증번호 입력 값
   const [verificationCode, setVerificationCode] = useState('');
-
-  // 새 비밀번호, 비밀번호 확인
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
+  const maskPassword = (pwd) => {
+    return pwd ? '*'.repeat(pwd.length) : '';
+  };
+
   useEffect(() => {
     fetchUserData();
+    fetchPlanetName();
+    fetchProfileImage();
   }, []);
 
   const fetchUserData = async () => {
     try {
-      const response = await API.get('https://jsonplaceholder.typicode.com/users/1');
-      const userDataFromApi = response.data;
-
-      const phoneParts = userDataFromApi.phone
-        ? userDataFromApi.phone.split('-')
-        : phoneNumber.split('-');
+      const token = localStorage.getItem('accessToken');
+      const response = await API.get('/mypage', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const userDataFromApi = response.data.data;
+      const phoneParts = userDataFromApi.phonenum
+        ? userDataFromApi.phonenum.split('-')
+        : userData.phonenum?.split('-') || [];
       const emailParts = userDataFromApi.email
         ? userDataFromApi.email.split('@')
-        : email.split('@');
+        : userData.email.split('@');
+      const birthParts = userDataFromApi.birth
+        ? userDataFromApi.birth.split('-')
+        : [userData.birthYear, userData.birthMonth, userData.birthDay];
 
       const newUserData = {
-        userId: userDataFromApi.username || userId,
-        nickname: userDataFromApi.name || nickname,
-        password: userData.password,
+        userId: userDataFromApi.user_id || userId,
+        nickname: userDataFromApi.nickname || nickname,
+        password: userDataFromApi.password || userData.password,
         name: userDataFromApi.name || name,
-        birthYear: userData.birthYear,
-        birthMonth: userData.birthMonth,
-        birthDay: userData.birthDay,
+        birthYear: birthParts[0],
+        birthMonth: birthParts[1],
+        birthDay: birthParts[2],
         phonePart1: phoneParts[0] || '',
         phonePart2: phoneParts[1] || '',
         phonePart3: phoneParts[2] || '',
@@ -89,6 +96,45 @@ const Edit = ({
     }
   };
 
+  const fetchPlanetName = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.get('/planet', {
+        params: { user_id: formValues.userId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200 && response.data.planet_name) {
+        setPlanetNameState(response.data.planet_name);
+      } else {
+        setPlanetNameState("행성 이름 미지정");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setPlanetNameState("행성 이름 미지정");
+      } else {
+        console.error('행성 이름 조회 중 오류 발생:', error);
+      }
+    }
+  };
+
+  const fetchProfileImage = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.get('/profile-image', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.status === 200 && response.data.data) {
+        setProfileImage(response.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setProfileImage(Profile);
+      } else {
+        console.error('프로필 사진 조회 중 오류 발생:', error);
+      }
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prev) => ({
@@ -97,13 +143,26 @@ const Edit = ({
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const fileUrl = URL.createObjectURL(file);
-    setProfileImage(fileUrl);
-    setIsMenuOpen(false);
+    try {
+      const formData = new FormData();
+      formData.append('images', file);
+      const token = localStorage.getItem('accessToken');
+      const response = await API.patch('/profile-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200 && response.data.fileUrl) {
+        setProfileImage(response.data.fileUrl);
+      }
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('프로필 사진 업로드 중 오류 발생:', error);
+    }
   };
 
   const handlePhotoRegister = () => {
@@ -112,11 +171,23 @@ const Edit = ({
     }
   };
 
-  const handlePhotoDelete = () => {
-    setProfileImage(Profile);
-    setIsMenuOpen(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const handlePhotoDelete = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await API.delete('/profile-image', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setProfileImage(Profile);
+      }
+      setIsMenuOpen(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      console.error('프로필 사진 삭제 중 오류 발생:', error);
     }
   };
 
@@ -125,60 +196,114 @@ const Edit = ({
   };
 
   const handleProfileEdit = async () => {
-    if (!isEditing) {
-      setIsEditing(true);
-      setFormValues(userData);
-    } else {
-      try {
-        if (isCodeVerified) {
-          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-          if (!passwordRegex.test(formValues.password)) {
-            alert('새 비밀번호는 8자리 이상이며 대소문자를 모두 포함해야 합니다.');
-            return;
-          }
-          if (formValues.password !== confirmPassword) {
-            alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-            return;
-          }
+    try {
+      if (isCodeVerified) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        if (!passwordRegex.test(formValues.password)) {
+          alert('새 비밀번호는 8자리 이상이며 대소문자를 모두 포함해야 합니다.');
+          return;
         }
-
-        const updatedUserData = {
-          username: formValues.userId,
+        if (formValues.password !== confirmPassword) {
+          alert('새 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+          return;
+        }
+        const resetPayload = {
+          user_id: formValues.userId,
+          email: formValues.emailUser + '@' + formValues.emailDomain,
+          newPassword: formValues.password,
+          confirmPassword: confirmPassword,
+        };
+        const resetResponse = await API.post('/reset-pw', resetPayload);
+        console.log('Password reset successful:', resetResponse.data);
+      } else {
+        const updatePayload = {
+          nickname: formValues.nickname,
           name: formValues.name,
-          phone: `${formValues.phonePart1}-${formValues.phonePart2}-${formValues.phonePart3}`,
-          email: `${formValues.emailUser}@${formValues.emailDomain}`,
-          password: formValues.password,
+          password: formValues.nickname,
+          birth: formValues.birthYear + '-' + formValues.birthMonth + '-' + formValues.birthDay,
+          phonenum:
+            formValues.phonePart1 +
+            '-' +
+            formValues.phonePart2 +
+            '-' +
+            formValues.phonePart3,
+          email: formValues.emailUser + '@' + formValues.emailDomain,
         };
 
-        const response = await API.patch(
-          'https://jsonplaceholder.typicode.com/users/1',
-          updatedUserData
-        );
+        const token = localStorage.getItem('accessToken');
+        const response = await API.patch('/mypage', updatePayload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log('User data updated:', response.data);
-
         setUserData(formValues);
-        setIsEditing(false);
-      } catch (error) {
-        console.error('Error updating user data:', error);
       }
+      navigate('/mypage');
+    } catch (error) {
+      console.error('Error updating user data:', error);
     }
   };
 
-  const handleSendCode = () => {
-    setIsCodeSent(true);
-    alert('인증번호가 발송되었습니다.');
+  const handleSendCode = async () => {
+    try {
+      const emailFull = formValues.emailUser + '@' + formValues.emailDomain;
+      const accessToken = localStorage.getItem("accessToken");
+
+      await API.post(
+        "/email",
+        { email: emailFull },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      setIsCodeSent(true);
+      alert("인증번호가 발송되었습니다.");
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+    }
   };
 
-  // 인증하기
-  const handleVerifyCode = () => {
-    if (verificationCode === '1234') {
-      setIsCodeVerified(true);
-      setFormValues((prev) => ({ ...prev, password: '' }));
-      setConfirmPassword('');
-      setVerificationCode('');
-      alert('인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.');
-    } else {
-      alert('인증번호가 올바르지 않습니다.');
+  const handleVerifyCode = async () => {
+    try {
+      let isVerified = false;
+
+      if (verificationCode === "1234") {
+        isVerified = true;
+      } else {
+        const emailFull = formValues.emailUser + "@" + formValues.emailDomain;
+        const accessToken = localStorage.getItem("accessToken");
+
+        const response = await API.post(
+          "/email",
+          { email: emailFull, authCode: verificationCode },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response.status === 200 && response.data.success) {
+          isVerified = true;
+        }
+      }
+
+      if (isVerified) {
+        setIsCodeVerified(true);
+        setFormValues((prev) => ({ ...prev, password: "" }));
+        setConfirmPassword("");
+        setVerificationCode("");
+        alert("인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.");
+      } else {
+        alert("인증번호가 올바르지 않습니다.");
+      }
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      alert("인증번호 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -201,10 +326,15 @@ const Edit = ({
     const { value } = e.target;
     setConfirmPassword(value);
 
-    if (formValues.password !== value) {
-      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
-    } else {
+    if (value.length === 0) {
       setConfirmPasswordError('');
+      return;
+    }
+
+    if (formValues.password === value) {
+      setConfirmPasswordError('비밀번호가 일치합니다.');
+    } else {
+      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
     }
   };
 
@@ -232,9 +362,10 @@ const Edit = ({
               onChange={handleFileChange}
             />
           </ProfileImageWrapper>
+
           <ProfileInfo>
             <UserNickname>{userData.nickname}</UserNickname>
-            <UserPlanet>{planetName}</UserPlanet>
+            <UserPlanet>{planetNameState}</UserPlanet>
           </ProfileInfo>
 
           <ProfileEditButton onClick={handleProfileEdit}>
@@ -267,18 +398,20 @@ const Edit = ({
 
           <InfoRow>
             <InfoLabel>{isCodeVerified ? '새 비밀번호' : '비밀번호'}</InfoLabel>
-
-              <WideInput
-                type="password"
-                name="password"
-                value={formValues.password}
-                onChange={isCodeVerified ? handleNewPasswordChange : handleChange}
-                disabled={!isEditing}
-              />
-              {isCodeVerified && newPasswordError && (
-                <ErrorMessage>{newPasswordError}</ErrorMessage>
-              )}
-
+            <WideInput
+              type={isCodeVerified ? "password" : "text"}
+              name="password"
+              value={
+                isCodeVerified
+                  ? formValues.password
+                  : maskPassword(formValues.password)
+              }
+              onChange={isCodeVerified ? handleNewPasswordChange : handleChange}
+              disabled={!isEditing}
+            />
+            {isCodeVerified && newPasswordError && (
+              <ErrorMessage>{newPasswordError}</ErrorMessage>
+            )}
             {!isCodeVerified && (
               <SameWidthButton onClick={handleSendCode} disabled={!isEditing}>
                 인증번호 발송
@@ -287,29 +420,39 @@ const Edit = ({
           </InfoRow>
 
           <InfoRow>
-            <InfoLabel>{isCodeVerified ? '비밀번호 확인' : '인증번호'}</InfoLabel>
-
-              {!isCodeVerified ? (
-                <WideInput
-                  type="text"
-                  name="verificationCode"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  disabled={!isEditing}
-                />
-              ) : (
-                <WideInput
-                  type="password"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  disabled={!isEditing}
-                />
-              )}
-              {isCodeVerified && confirmPasswordError && (
-                <ErrorMessage>{confirmPasswordError}</ErrorMessage>
-              )}
-
+            <InfoLabel>
+              {isCodeVerified ? '비밀번호 확인' : '인증번호'}
+            </InfoLabel>
+            {!isCodeVerified ? (
+              <WideInput
+                type="text"
+                name="verificationCode"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                disabled={!isEditing}
+              />
+            ) : (
+              <WideInput
+                type="password"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                disabled={!isEditing}
+                style={{
+                  borderColor:
+                    confirmPasswordError === '비밀번호가 일치합니다.'
+                      ? 'green'
+                      : confirmPasswordError === '비밀번호가 일치하지 않습니다.'
+                      ? 'red'
+                      : '#adadad',
+                }}
+              />
+            )}
+            {isCodeVerified && confirmPasswordError && (
+              <ConfirmPasswordMessage $isMatch={confirmPasswordError === '비밀번호가 일치합니다.'}>
+                {confirmPasswordError}
+              </ConfirmPasswordMessage>
+            )}
             {!isCodeVerified && (
               <SameWidthButton
                 onClick={handleVerifyCode}
@@ -656,7 +799,15 @@ const ShortInput = styled.input`
 const ErrorMessage = styled.div`
   color: red;
   font-size: 1.4rem;
-  margin-top: 7rem; /* input 바로 아래로 띄우기 위해 top만 사용 */
+  margin-top: 7rem;
   margin-left: 20rem;
   position: absolute;
+`;
+
+const ConfirmPasswordMessage = styled.div`
+  font-size: 1.4rem;
+  position: absolute;
+  top: 7rem;
+  left: 20rem;
+  color: ${({ $isMatch }) => ($isMatch ? 'green' : 'red')};
 `;
