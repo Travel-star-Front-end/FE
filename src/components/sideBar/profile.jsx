@@ -5,12 +5,11 @@ import useFetch from "../../hooks/useFetch";
 const Profile = () => {
     const { data, loading, error } = useFetch("/mypage");
     const { data: userData, loading: userLoading } = useFetch("/planet");
+    const { data: profileData } = useFetch("/profile-image");
 
     return (
         <s.ProfileContainer>
-            <s.ProfileImgContainer>
-                <s.ProfileImg src={ProfilePng} alt="profile" />
-            </s.ProfileImgContainer>
+            <s.ProfileImgContainer src={profileData?.data || ProfilePng} alt="profile" />
 
             <s.PContainer>
                 <s.ProfileP size="1vw" weight="400">
