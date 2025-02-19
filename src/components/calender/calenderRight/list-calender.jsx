@@ -31,12 +31,14 @@ const ListCalender = ({
 
   // 시/분 추출하는 함수 추가함
   const extractTime = (dateTime) => {
-    const date = new Date(dateTime);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const utcDate = new Date(dateTime);
+    const kstDate = new Date(utcDate.getTime() - 9 * 60 * 60 * 1000); // ✅ 9시간 더하기 (UTC → KST 변환)
+  
+    const hours = kstDate.getHours().toString().padStart(2, '0');
+    const minutes = kstDate.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   };
-
+  
   // 시간 기준 정렬 함수 추가함
   const sortedData = safeData.sort((a, b) => {
     const timeA = new Date(a.date_time);
@@ -61,13 +63,14 @@ const ListCalender = ({
 
   return (
     <>
+    {/*
       <s.TitleContainer
         editvisible={editVisible.toString()}
         onClick={handleTitleClick}
       >
         <s.TitleInnerContainer>
-          {/* <s.LeftContainer> */}
-          {/* <s.TitleP>{title}</s.TitleP>
+          <s.LeftContainer>
+          <s.TitleP>{title}</s.TitleP>
             <s.TitleP2>{subTitle}</s.TitleP2>
           </s.LeftContainer>
           <s.EditButton
@@ -75,9 +78,10 @@ const ListCalender = ({
             onClick={handlePlaceModalOpen}
           >
             수정
-          </s.EditButton> */}
+          </s.EditButton>
         </s.TitleInnerContainer>
       </s.TitleContainer>
+      */}
 
       {/* time, location, selectedDay 추가함, ket 값 변경함*/}
       <s.ListContainer>
