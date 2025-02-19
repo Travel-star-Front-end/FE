@@ -4,6 +4,7 @@ import * as S from '../../../../styles/posts/posts/Tabs/friend-card';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
 import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 import {SharedTab} from './share-tab';
+import { API } from '../../../../apis/axios';
 
 //친구 목록 리스트 컴포넌트
 export const FriendCard = ({id, profileImg, name}) => {
@@ -28,7 +29,12 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
 
     const handleAcceptRequest = async() => {
         try {
-            const response = await axios.patch(`friends/request/${id}`, { requestId: id });
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.patch(`friends/request/${id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             if (response.data.resultType === "success") {
                 alert("친구 요청이 수락되었습니다!");

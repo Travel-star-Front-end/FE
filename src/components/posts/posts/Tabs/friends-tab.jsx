@@ -18,7 +18,6 @@ const exampleData = [
 ];
 
 const FriendsTab = ({ friends, requests }) => {
-    //친구 목록
     const{data: friendsData, loading, error} = useFetch(`/friends/list`);
     const{data: applyFriendData, loading: applyFriendLoading, error:applyFriendError } = useFetch(`/friends/list/received`);
 
@@ -64,7 +63,7 @@ const FriendsTab = ({ friends, requests }) => {
                 <S.CardListContainer>
                     {applyFriendData?.data?.length > 0 ? (
                         <>
-                        {friendsData?.data.map((item) => (
+                        {applyFriendData?.data.map((item) => (
                             <FriendApplyCard
                                 key={item.requestId}
                                 id={item.requestId}
@@ -76,13 +75,6 @@ const FriendsTab = ({ friends, requests }) => {
                     ) : (
                         <S.NoFreinds>친구 신청 목록이 없습니다.</S.NoFreinds>
                     )}
-                    {/* {exampleData.map((item) => (
-                            <FriendApplyCard
-                                key={item.id}
-                                id={item.id}
-                                name={item.name}
-                            />
-                        ))} */}
                 </S.CardListContainer>
                 )}
             </S.TabContent>

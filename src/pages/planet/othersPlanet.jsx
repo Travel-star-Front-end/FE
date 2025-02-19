@@ -6,6 +6,7 @@ import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVe
 import useFetch from '../../hooks/useFetch';
 import { fetchCoordinates } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
+import { getFeelingColor } from '../../utils/planet/getRandom';
 
 const OthersPlanet = () => {
   const { id } = useParams();
@@ -25,37 +26,62 @@ const OthersPlanet = () => {
 
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
 
+  // useEffect(() => {
+  //   if (!data || loading || error) return;
+
+  //   const loadPointsData = async () => {
+  //     const pointsDataPromises = data.regions.map(async (regionName) => {
+  //       const coordinates = await fetchCoordinates(regionName);
+  //       if (coordinates) {
+  //         return {
+  //           lat: coordinates.lat,
+  //           lng: coordinates.lng,
+  //           name: regionName,
+  //           color: '#ff6600',
+  //           size: '9rem',
+  //         };
+  //       }
+  //       return null;
+  //     });
+
+  //     const resolvedPointsData = (await Promise.all(pointsDataPromises)).filter(
+  //       (point) => point !== null
+  //     );
+  //     setPlanetData({ planetName: id, pointsData: resolvedPointsData });
+  //   };
+
+  //   loadPointsData();
+  // }, [data, loading, error, id]);
+
   useEffect(() => {
     if (!data || loading || error) return;
 
     const loadPointsData = async () => {
-      const pointsDataPromises = data.regions.map(async (regionName) => {
-        const coordinates = await fetchCoordinates(regionName);
+      const pointsDataPromises = data.regions.map(async (region) => {
+        const coordinates = await fetchCoordinates(region.region); // 'region' 필드 사용
+
         if (coordinates) {
           return {
             lat: coordinates.lat,
             lng: coordinates.lng,
-            name: regionName,
-            color: '#ff6600',
+            name: region.region,
+            color: getFeelingColor(region.feel_color),
             size: '9rem',
           };
         }
+
         return null;
       });
 
       const resolvedPointsData = (await Promise.all(pointsDataPromises)).filter(
         (point) => point !== null
       );
+
       setPlanetData({ planetName: id, pointsData: resolvedPointsData });
     };
 
     loadPointsData();
   }, [data, loading, error, id]);
-
-  // useEffect(() => {
-  //   const { innerWidth, innerHeight } = window;
-  //   setDimensions({ width: innerWidth, height: innerHeight });
-  // }, []);
 
   //반응형 관련 altitude 동적으로 조절
   useEffect(() => {

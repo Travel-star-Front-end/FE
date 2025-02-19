@@ -8,7 +8,7 @@ import updateButton from '../../assets/images/planet/switchButton/updateButton.p
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import {
   fetchCoordinates,
-  getRandomColor,
+  getFeelingColor,
   getRandomStarSize,
 } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
@@ -33,7 +33,7 @@ const PlanetPage = () => {
     data: planetData,
     loading: planetLoading,
     error: planetError,
-  } = useFetch(`/planet/${userId}`);
+  } = useFetch(`/planet`);
 
   // 상태관리------------------------------------------------------------------------
   const [planetName, setPlanetName] = useState('');
@@ -84,6 +84,8 @@ const PlanetPage = () => {
       if (Array.isArray(data.data)) {
         for (const item of data.data) {
           const region = item.star.region;
+          const feelNum = item.feel_color;
+          const stars_id = item.id;
 
           try {
             const coordinates = await fetchCoordinates(region);
@@ -92,7 +94,8 @@ const PlanetPage = () => {
                 lat: coordinates.lat,
                 lng: coordinates.lng,
                 name: region,
-                color: getRandomColor(),
+                id: stars_id,
+                color: getFeelingColor(feelNum),
                 size: getRandomStarSize(),
               };
               updatedPoints.push(newPoint);
