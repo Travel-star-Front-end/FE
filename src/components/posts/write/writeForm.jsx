@@ -222,7 +222,8 @@ const WriteForm = () => {
             </s.SearchContainer>
 
             <s.SearchContainer>
-                <WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} onClick={() => setSubscribeModal(true)}/>
+                {/*<WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange} onClick={() => setSubscribeModal(true)}/>*/}
+                <WriteInput width="100%" placeholder="음악 설정 - 부가 서비스" padding="0 0.8vw 0 4.1vw" icon={Music} value={selectedMusic || musicQuery} onChange={handleMusicChange}/>
                 <ListMusic musicResults={musicResults} musicQuery={musicQuery} handleMusicSelect={handleMusicSelect} />
             </s.SearchContainer>
 
