@@ -13,7 +13,7 @@ import {
 } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
 import useFetch from '../../hooks/useFetch';
-import spinner from '../../components/Spinner/Spinner';
+import Spinner from '../../components/Spinner/Spinner';
 
 const PlanetPage = () => {
   const globeRef = useRef();
@@ -76,7 +76,7 @@ const PlanetPage = () => {
     const processRegionData = async () => {
       if (!data || loading || error) return;
 
-      setIsProcessing(true); // 로딩 시작
+      setIsProcessing(true);
 
       let updatedPoints = [];
       let updatedArcs = [];
@@ -120,7 +120,7 @@ const PlanetPage = () => {
       setPointsData(updatedPoints);
       setArcsData(updatedArcs);
 
-      setIsProcessing(false); // 로딩 종료
+      setIsProcessing(false);
     };
 
     processRegionData();
@@ -308,16 +308,7 @@ const PlanetPage = () => {
   return (
     <>
       <GlobeWrapper>
-        {/* 도시 입력 폼 */}
-        {/* <div>
-          <input
-            type="text"
-            placeholder="도시 이름 입력"
-            value={cityName}
-            onChange={(e) => setCityName(e.target.value)}
-          />
-          <button onClick={addCity}>추가</button>
-        </div> */}
+        {isProcessing && <Spinner />}
 
         <TopBar>
           <RefreshButton>
@@ -363,22 +354,6 @@ const PlanetPage = () => {
             // globeImageUrl={planetCutyVer}
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
-            pointsData={pointsData}
-            pointLat="lat"
-            pointLng="lng"
-            pointAltitude={0.02}
-            pointLabel={({ name }) => `<b>${name}</b>`}
-            // arcsData={arcsData}
-            // arcStartLat="startLat"
-            // arcStartLng="startLng"
-            // arcEndLat="endLat"
-            // arcEndLng="endLng"
-            // arcColor={() => ['#ff9900', '#ff6600']}
-            // arcDashLength={1}
-            // arcDashGap={0}
-            // arcDashAnimateTime={0}
-            // arcAltitude={0}
-            // arcStroke={1}
             htmlElementsData={pointsData}
             htmlLat={(d) => d.lat}
             htmlLng={(d) => d.lng}
@@ -386,6 +361,35 @@ const PlanetPage = () => {
             htmlElement={(d) => {
               const el = document.createElement('div');
               el.innerHTML = markerSvg;
+              el.style.cursor = 'pointer';
+              el.style.pointerEvents = 'auto';
+
+              const tooltip = document.createElement('div');
+              tooltip.className = 'tooltip';
+              tooltip.innerText = d.name;
+              tooltip.style.position = 'absolute';
+              tooltip.style.backgroundColor = 'rgb(100, 116, 110)';
+              tooltip.style.color = '#fff';
+              tooltip.style.padding = '5px';
+              tooltip.style.borderRadius = '5px';
+              tooltip.style.display = 'none';
+
+              document.body.appendChild(tooltip);
+
+              el.onmouseover = (event) => {
+                tooltip.style.display = 'block';
+              };
+              el.onmousemove = (event) => {
+                tooltip.style.left = `${event.pageX + 10}px`;
+                tooltip.style.top = `${event.pageY + 10}px`;
+              };
+              el.onmouseleave = () => {
+                tooltip.style.display = 'none';
+              };
+              el.onclick = () => {
+                tooltip.style.display = 'none';
+                navigate(`/posts/${d.id}`);
+              };
               el.innerHTML = `
                 <div style="
                   transform: translate(0%, 0%) scale(0.5);
