@@ -16,7 +16,6 @@ const OthersPlanet = () => {
   const [planetData, setPlanetData] = useState({
     planetName: '', //이거 사실 필요한지 모르겠음.. 차피 id 값이 행성 이름으로 나올거라
     pointsData: [],
-    arcsData: [],
   });
 
   //반응형 관련
@@ -27,6 +26,8 @@ const OthersPlanet = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
+  const { data: planetName, isloading, iserror } = useFetch(`/planets/${id}`);
+  console.log(planetName);
 
   useEffect(() => {
     if (!data || loading || error) return;
