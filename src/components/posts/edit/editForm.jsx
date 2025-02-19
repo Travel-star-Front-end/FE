@@ -38,7 +38,13 @@ const EditForm = ({ postId, data }) => {
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
     const [storage, setStorage] = useState("");
+    const [isFeelingAnalyzed, setIsFeelingAnalyzed] = useState(false);
     const navigate = useNavigate();
+
+    const handleFeelingChange = (e) => {
+        setFeeling(e.target.value);
+        setIsFeelingAnalyzed(false);
+    };
 
     // ai 모달
     const openAIModal = async () => {
@@ -61,6 +67,7 @@ const EditForm = ({ postId, data }) => {
             // console.log("분석 결과:", response.data);
 
             setAnalyzedFeeling(response.data.data.feel_color);
+            setIsFeelingAnalyzed(true);
         } catch (error) {
             console.error("감정 분석 실패:", error);
             alert("감정 분석에 실패했습니다.");
@@ -170,6 +177,15 @@ const EditForm = ({ postId, data }) => {
     const handleSubmit = async () => {
     const updatedStorage = storage;
     // console.log("전송될 storage 값:", updatedStorage);
+    if (!String(analyzedFeeling).trim()) {
+        alert("감정 분석을 완료해주세요.");
+        return;
+    }
+
+    if (!isFeelingAnalyzed) {
+        alert("감정을 분석한 후 저장해주세요.");
+        return;
+    }
 
         const postData = {
             title,
@@ -219,7 +235,7 @@ const EditForm = ({ postId, data }) => {
             alert("게시글 작성에 실패했습니다.");
         }
     };
-    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim() && analyzedFeeling.trim();;
+    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
         <s.FormContainer>
@@ -237,7 +253,7 @@ const EditForm = ({ postId, data }) => {
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
             
-            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={(e) => setFeeling(e.target.value)} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
+            <WriteTextarea width="100%" height="4.8vw" padding="0.95vw 20vw 0.95vw 0.85vw" placeholder="이번 여행을 통해 느낀 감정" value={feeling} onChange={handleFeelingChange} onAIClick={openAIModal} analyzedFeeling={analyzedFeeling}/>
             
             {aiModal && (
                 <AIModal onClose={closeAIModal} analyzedFeeling={analyzedFeeling} onFeelingSelect={handleFeelingSelect} />
