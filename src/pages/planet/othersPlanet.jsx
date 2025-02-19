@@ -7,6 +7,7 @@ import useFetch from '../../hooks/useFetch';
 import { fetchCoordinates } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
 import { getFeelingColor } from '../../utils/planet/getRandom';
+import Spinner from '../../components/Spinner/Spinner';
 
 const OthersPlanet = () => {
   const { id } = useParams();
@@ -23,38 +24,14 @@ const OthersPlanet = () => {
     width: 0,
     height: 0,
   });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
 
-  // useEffect(() => {
-  //   if (!data || loading || error) return;
-
-  //   const loadPointsData = async () => {
-  //     const pointsDataPromises = data.regions.map(async (regionName) => {
-  //       const coordinates = await fetchCoordinates(regionName);
-  //       if (coordinates) {
-  //         return {
-  //           lat: coordinates.lat,
-  //           lng: coordinates.lng,
-  //           name: regionName,
-  //           color: '#ff6600',
-  //           size: '9rem',
-  //         };
-  //       }
-  //       return null;
-  //     });
-
-  //     const resolvedPointsData = (await Promise.all(pointsDataPromises)).filter(
-  //       (point) => point !== null
-  //     );
-  //     setPlanetData({ planetName: id, pointsData: resolvedPointsData });
-  //   };
-
-  //   loadPointsData();
-  // }, [data, loading, error, id]);
-
   useEffect(() => {
     if (!data || loading || error) return;
+
+    setIsProcessing(true);
 
     const loadPointsData = async () => {
       const pointsDataPromises = data.regions.map(async (region) => {
@@ -78,6 +55,8 @@ const OthersPlanet = () => {
       );
 
       setPlanetData({ planetName: id, pointsData: resolvedPointsData });
+
+      setIsProcessing(false);
     };
 
     loadPointsData();
@@ -127,31 +106,6 @@ const OthersPlanet = () => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // 백엔드 연동 전이라서 임시 데이터 만듬
-  // useEffect(() => {
-  //   // 일단 임시 데이터
-  //   const mockData = {
-  //     planetName: '테스트 행성',
-  //     pointsData: [
-  //       {
-  //         lat: 37.5665,
-  //         lng: 126.978,
-  //         name: '서울',
-  //         color: '#ff6600',
-  //         size: '9rem',
-  //       },
-  //       {
-  //         lat: 35.6762,
-  //         lng: 139.6503,
-  //         name: '도쿄',
-  //         color: '#33ccff',
-  //         size: '7rem',
-  //       },
-  //     ],
-  //   };
-  //   setPlanetData(mockData);
-  // }, [id]);
-
   useEffect(() => {
     if (globeRef.current) {
       globeRef.current.controls().autoRotate = true;
@@ -168,6 +122,8 @@ const OthersPlanet = () => {
 
   return (
     <>
+      {isProcessing && <Spinner />}
+
       <GlobeWrapper>
         <TopBar>
           <RefreshButton>{id} 행성</RefreshButton>
@@ -181,11 +137,6 @@ const OthersPlanet = () => {
             // globeImageUrl={planetCutyVer}
             backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
             backgroundColor="rgba(0,0,0,0)"
-            pointsData={planetData.pointsData}
-            pointLat="lat"
-            pointLng="lng"
-            pointAltitude={0.02}
-            pointLabel={({ name }) => `<b>${name}</b>`}
             htmlElementsData={planetData.pointsData}
             htmlLat={(d) => d.lat}
             htmlLng={(d) => d.lng}
@@ -193,6 +144,35 @@ const OthersPlanet = () => {
             htmlElement={(d) => {
               const el = document.createElement('div');
               el.innerHTML = markerSvg;
+              el.style.cursor = 'pointer';
+              el.style.pointerEvents = 'auto';
+
+              const tooltip = document.createElement('div');
+              tooltip.className = 'tooltip';
+              tooltip.innerText = d.name;
+              tooltip.style.position = 'absolute';
+              tooltip.style.backgroundColor = 'rgb(100, 116, 110)';
+              tooltip.style.color = '#fff';
+              tooltip.style.padding = '5px';
+              tooltip.style.borderRadius = '5px';
+              tooltip.style.display = 'none';
+
+              document.body.appendChild(tooltip);
+
+              el.onmouseover = (event) => {
+                tooltip.style.display = 'block';
+              };
+              el.onmousemove = (event) => {
+                tooltip.style.left = `${event.pageX + 10}px`;
+                tooltip.style.top = `${event.pageY + 10}px`;
+              };
+              el.onmouseleave = () => {
+                tooltip.style.display = 'none';
+              };
+              el.onclick = () => {
+                tooltip.style.display = 'none';
+                navigate(`/posts/${d.id}`);
+              };
               el.innerHTML = `
                 <div style="
                   transform: translate(0%, 0%) scale(0.5);
