@@ -5,12 +5,11 @@ import InputRankingRight from './input/inputRankingRight';
 import ButtonRankingRight from './button/buttonRankingRight';
 import ConstellationViewer from '../../planet/ConstellationViewer';
 import html2canvas from 'html2canvas';
+import useFetch from '../../../hooks/useFetch';
 
 const RankingRight = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-
   const [pointsData, setPointsData] = useState([]);
   const [arcsData, setArcsData] = useState([]);
   const imgContainerRef = useRef(null);
@@ -18,12 +17,13 @@ const RankingRight = () => {
   useEffect(() => {
     const storedPointsData = localStorage.getItem('pointsData');
     const storedArcsData = localStorage.getItem('arcsData');
-    const completedStatus = localStorage.getItem('isCompleted');
 
     if (storedPointsData) setPointsData(JSON.parse(storedPointsData));
     if (storedArcsData) setArcsData(JSON.parse(storedArcsData));
-    if (completedStatus === 'true') setIsCompleted(true); 
   }, []);
+
+  const { data } = useFetch("/stars/ranking/check");
+  const isCompleted = data?.applied === 1;
 
   const handleChange = (e) => {
     setName(e.target.value);
@@ -63,11 +63,9 @@ const RankingRight = () => {
         });
   
         alert('별자리 신청이 완료되었습니다.');
-        console.log(response.data);
-  
-        setIsCompleted(true);
-        localStorage.setItem('isCompleted', 'true');
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload(); 
+        }, 100);
       });
     } catch (err) {
       alert('이미지 업로드 중 오류 발생');
