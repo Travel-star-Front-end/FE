@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import * as s from '../../../styles/calender/calender';
 import CalenderButton from '../../../assets/images/calender/button.png';
 import useFetch from '../../../hooks/useFetch';
-import { useSchedules } from '../../../hooks/useSchedules';
 
 const CalenderLeft = ({ selectedDay, setSelectedDay, refreshKey }) => {
   const { data, loading, error } = useFetch(`/schedule`, [refreshKey]);

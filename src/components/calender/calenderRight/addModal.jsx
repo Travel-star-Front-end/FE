@@ -4,7 +4,6 @@ import colors from '../../../styles/common/colors';
 import Trash from '../../../assets/images/calender/trash.png';
 import ModalTime from './modalTime';
 import { API } from '../../../apis/axios';
-import { useAddSchedule } from '../../../hooks/useSchedules';
 
 const AddModal = ({ onClose, selectedDay, setRefreshKey }) => {
   const [period, setPeriod] = useState('오전');
