@@ -114,20 +114,6 @@ const Posts = () => {
                 <S.PostWrapper>
                     {posts?.data.posts.length > 0 ? (
                         <>
-                        {posts?.data.posts.map((post) => (
-                            <TravelPost 
-                                key={post.post_id}
-                                postId={post.post_id}
-                                postUserId={post.user_id}
-                                profileImg={post.user.profileImg}
-                                nickname={post.user.nickname}
-                                date={post.created_at}
-                                location={post.star.region}
-                                images={post.images}                                
-                                title={post.title}
-                                buttonType='edit'
-                            />
-                        ))}
                         {userPosts?.data.map((post) => (
                             <TravelPost 
                                 key={post.id}
@@ -140,7 +126,20 @@ const Posts = () => {
                                 images={post.images}
                                 title={post.title}
                                 buttonType='edit'/>
-                        ))}                    
+                        ))}                           
+                        {posts?.data.posts.map((post) => (
+                            <TravelPost 
+                                key={post.post_id}
+                                postId={post.post_id}
+                                postUserId={post.user_id}
+                                profileImg={post.user.profileImg}
+                                nickname={post.user.nickname}
+                                date={post.created_at}
+                                location={post.star.region}
+                                images={post.images}                                
+                                title={post.title}
+                            />
+                        ))}
                         </>
                     ) : (
                         <S.NothingText>작성된 일지가 없습니다.</S.NothingText>
