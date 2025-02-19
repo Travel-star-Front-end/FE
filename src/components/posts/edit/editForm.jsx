@@ -84,21 +84,24 @@ const EditForm = ({ postId, data }) => {
             setAnalyzedFeeling(data.post.feel_color);
             setSelectedLocation(data.post.region);
             setSelectedMusic(data.post.music);
-            setSelectedImages(data.post.images);
-
-            if (data.post.images?.length > 0) {
-                const imagePreviews = data.post.images.map((url) => ({
-                    name: url.split("/").pop(),
-                    preview: url,
+    
+            if (Array.isArray(data.post.images) && data.post.images.length > 0) {
+                const imagePreviews = data.post.images.map((image) => ({
+                    id: image.id,
+                    name: image.url.split("/").pop(),
+                    preview: image.url,
                     file: null,
                 }));
     
                 setSelectedImages(imagePreviews);
+            } else {
+                setSelectedImages([]);
             }
-
-            console.log(storage);
+    
+            console.log("스토리지 값:", storage);
         }
     }, [data]);
+    
 
     const handleMenuClick = () => {
         setMenu(prevState => !prevState); 
@@ -184,12 +187,12 @@ const EditForm = ({ postId, data }) => {
                 },
             });
 
-            console.log("수정된 일지 전송 데이터", response);
+            const newImages = selectedImages.filter(image => image.file);
     
-            if (selectedImages.length > 0) {
+            if (newImages.length > 0) {
                 const formData = new FormData();
                 
-                selectedImages.forEach((image, index) => {
+                newImages.forEach((image) => {
                     formData.append("images", image.file); 
                 });
     
@@ -200,17 +203,16 @@ const EditForm = ({ postId, data }) => {
                     },
                 });
     
-                // console.log("이미지 업로드 완료", response2);
+                console.log("이미지 업로드 완료", response2);
             }
     
             alert("일지가 저장되었습니다.");
-            // navigate("/posts");
+            navigate("/posts");
         } catch (error) {
             console.error("게시글 작성 실패:", error);
             alert("게시글 작성에 실패했습니다.");
         }
     };
-
     const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
 
     return (
@@ -225,7 +227,7 @@ const EditForm = ({ postId, data }) => {
             <WriteTextarea placeholder="글 작성" value={content} onChange={(e) => setContent(e.target.value)} />
 
             <s.ImageContainer>
-                <ListImage images={selectedImages} onDelete={handleDeleteImage} />
+                <ListImage images={selectedImages} onDelete={handleDeleteImage} postId={postId} />
                 <ImageButton onImageSelect={addImage} />
             </s.ImageContainer>
             

@@ -1,7 +1,7 @@
 import ItemImage from "./item-image";
 import * as s from "../../../styles/posts/write/write";
 
-const ListImage = ({ images, onDelete }) => {
+const ListImage = ({ postId, images, onDelete }) => {
     return (
         <s.ListItemContainer>
             {images.map((image, index) => (
@@ -10,6 +10,7 @@ const ListImage = ({ images, onDelete }) => {
                     image={image} 
                     index={index} 
                     onDelete={onDelete}
+                    postId={postId}
                 />
             ))}
         </s.ListItemContainer>
