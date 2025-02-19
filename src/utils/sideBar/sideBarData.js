@@ -5,6 +5,8 @@ const SideBarData = [
         "id": 1, 
         "name": "일지 작성", 
         "link": "/posts",
+        "link2": "/edit",
+        "link3": "/subscribe",
         "logo": images["posts"],
         "logoClick": images["postsClick"],
     },

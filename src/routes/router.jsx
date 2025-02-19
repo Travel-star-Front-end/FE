@@ -49,11 +49,18 @@ const router = createBrowserRouter([
             path: 'write',
             element: <PostsWritePage />,
           },
+        ],
+      },
+
+      {
+        path: 'edit',
+        errorElement: <NotFoundPage />,
+        children: [
           {
-            path: 'edit',
+            path: ':id',
             element: <PostsEditPage />,
           },
-        ],
+        ]
       },
 
       {
