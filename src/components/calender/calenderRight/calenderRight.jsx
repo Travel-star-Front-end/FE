@@ -8,8 +8,10 @@ import PlaceModal from './placeModal';
 import EditModal from './editModal';
 import { getCalenderData } from '../../../apis/planet/planetService';
 
-const CalenderRight = ({ selectedDay }) => {
-  const { data, loading, error } = useFetch(`/schedule/${selectedDay}`);
+const CalenderRight = ({ selectedDay, refreshKey, setRefreshKey }) => {
+  const { data, loading, error } = useFetch(`/schedule/${selectedDay}`, [
+    refreshKey,
+  ]);
   const [modalType, setModalType] = useState(null);
   const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
@@ -73,6 +75,8 @@ const CalenderRight = ({ selectedDay }) => {
               <AddModal
                 onClose={() => setModalType(null)}
                 selectedDay={selectedDay}
+                refreshKey={refreshKey}
+                setRefreshKey={setRefreshKey}
               />
             )}
             {modalType === 'place' && (
@@ -81,6 +85,7 @@ const CalenderRight = ({ selectedDay }) => {
                 selectedDay={selectedDay}
                 title={title}
                 subTitle={subTitle}
+                refreshKey={refreshKey}
               />
             )}
             {modalType === 'edit' && (

@@ -4,8 +4,8 @@ import CalenderButton from '../../../assets/images/calender/button.png';
 import useFetch from '../../../hooks/useFetch';
 import { useSchedules } from '../../../hooks/useSchedules';
 
-const CalenderLeft = ({ selectedDay, setSelectedDay }) => {
-  const { data, loading, error } = useFetch(`/schedule`);
+const CalenderLeft = ({ selectedDay, setSelectedDay, refreshKey }) => {
+  const { data, loading, error } = useFetch(`/schedule`, [refreshKey]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth());
