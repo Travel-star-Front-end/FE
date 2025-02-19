@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as s from "../../../../styles/posts/edit/edit";
 import colors from "../../../../styles/common/colors";
 import { API } from "../../../../apis/axios";
 
 const ItemToggle = ({ data, index, storage, setStorage, postId }) => {
     const [currentIndex, setCurrentIndex] = useState(storage);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setCurrentIndex(storage);
@@ -25,6 +27,7 @@ const ItemToggle = ({ data, index, storage, setStorage, postId }) => {
                 });
 
                 alert("삭제되었습니다.");
+                navigate("/posts");
             } catch (error) {
                 console.error("게시글 삭제 실패:", error);
                 alert("게시글 삭제에 실패했습니다.");

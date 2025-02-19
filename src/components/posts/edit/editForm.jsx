@@ -37,7 +37,7 @@ const EditForm = ({ postId, data }) => {
     const [iframeUrl, setIframeUrl] = useState("");
     const [subscribeModal, setSubscribeModal] = useState(false);
     const [aiModal, setAiModal] = useState(false);
-    const [storage, setStorage] = useState(0);
+    const [storage, setStorage] = useState("");
     const navigate = useNavigate();
 
     // ai 모달
@@ -84,6 +84,7 @@ const EditForm = ({ postId, data }) => {
             setAnalyzedFeeling(data.post.feel_color);
             setSelectedLocation(data.post.region);
             setSelectedMusic(data.post.music);
+            setStorage(data.post.storage);
     
             if (Array.isArray(data.post.images) && data.post.images.length > 0) {
                 const imagePreviews = data.post.images.map((image) => ({
@@ -98,7 +99,7 @@ const EditForm = ({ postId, data }) => {
                 setSelectedImages([]);
             }
     
-            console.log("스토리지 값:", storage);
+            // console.log("스토리지 값:", storage);
         }
     }, [data]);
     
@@ -163,10 +164,13 @@ const EditForm = ({ postId, data }) => {
     };
 
     useEffect(() => {
-        console.log("스토리지 변경:", storage);
+       //  console.log("스토리지 변경:", storage);
     }, [storage]);
     
     const handleSubmit = async () => {
+    const updatedStorage = storage;
+    // console.log("전송될 storage 값:", updatedStorage);
+
         const postData = {
             title,
             region: selectedLocation || "",
@@ -174,7 +178,7 @@ const EditForm = ({ postId, data }) => {
             content,
             feeling,
             feel_color: String(analyzedFeeling),
-            storage,
+            storage: updatedStorage,
         };
 
         try {
@@ -186,6 +190,8 @@ const EditForm = ({ postId, data }) => {
                     "Content-Type": "application/json",
                 },
             });
+
+            // console.log("서버 응답:", response.data);
 
             const newImages = selectedImages.filter(image => image.file);
     
@@ -213,7 +219,7 @@ const EditForm = ({ postId, data }) => {
             alert("게시글 작성에 실패했습니다.");
         }
     };
-    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
+    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim() && analyzedFeeling.trim();;
 
     return (
         <s.FormContainer>

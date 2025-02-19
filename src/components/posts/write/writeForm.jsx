@@ -184,7 +184,7 @@ const WriteForm = () => {
             alert("게시글 작성에 실패했습니다.");
         }
     };
-    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim();
+    const isFormValid = title.trim() && selectedLocation.trim() && content.trim() && feeling.trim() && analyzedFeeling.trim();;
 
     return (
         <s.FormContainer>
