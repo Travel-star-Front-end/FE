@@ -25,7 +25,6 @@ const SearchTravelPost = ({ searchValue }) => {
     return (
         <Container>
             <Text>검색 결과</Text>
-            <Hr/>
             <PostWrapper>
                 {posts?.data.map((post) => (
                     <TravelPost 
@@ -35,9 +34,10 @@ const SearchTravelPost = ({ searchValue }) => {
                         profileImg={post.user.profileImg}
                         nickname={post.user.nickname}
                         date={post.updated_at}
-                        location={post.region}
-                        travelImages={post.images}                                
+                        location={post.star.region}
+                        images={post.images}                                
                         title={post.title}
+                        isFriend={post.isFriend}
                         buttonType='friend'
                     />
                 ))}
@@ -58,19 +58,16 @@ const Container = styled.div`
     box-sizing: border-box;
 `;
 
-const Hr = styled.hr`
-    width: 100%;
-    border: 0;
-    height: 0.05vw;
-    background-color: #D9D9D9;
-`;
-
 const Text = styled.div`
+    margin-top: 8vw;
     font-weight: 600;
     font-size: 1.2vw;
     color: #555555;
 `;
 
 const PostWrapper = styled.div`
-    padding: 1.5vw 0;
+    widht: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;

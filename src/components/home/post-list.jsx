@@ -45,7 +45,7 @@ const Text = styled.div`
 `;
 
 const PostWrapper = styled.div`
-   widht: 100%;
+    widht: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
