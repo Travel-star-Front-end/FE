@@ -17,28 +17,43 @@ const EditModal = ({ onClose, selectedDay, id, setRefreshKey }) => {
     if (id) {
       const fetchData = async () => {
         try {
-          //귀찮아서 걍 똑같은 코드 씀. 나중에 리팩토링 ㄱㄱ
-          const accssToken = localStorage.getItem('accessToken');
+          const accessToken = localStorage.getItem('accessToken');
           const response = await API.get(`/schedule/${selectedDay}/${id}`, {
             headers: {
-              Authorization: `Bearer ${accssToken}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           });
           const data = response.data;
-          console.log('실리카겔', data);
-
-          setPeriod(data.period || '오전');
-          setHour(data.hour || '00');
-          setMinute(data.minute || '00');
-          setLocation(data.location || ''); //이 부분만 일단 수정함
+          console.log('받아온 일정 데이터:', data);
+  
+          if (data.date_time) {
+            const utcDate = new Date(data.date_time);
+            const kstDate = new Date(utcDate.getTime() - 9 * 60 * 60 * 1000); 
+  
+            let kstHour = kstDate.getHours();
+            const kstMinute = kstDate.getMinutes();
+  
+            const period = kstHour < 12 ? '오전' : '오후';
+  
+            const hour12 = kstHour.toString().padStart(2, '0');
+  
+            setPeriod(period);
+            setHour(hour12); 
+            setMinute(kstMinute.toString().padStart(2, '0'));
+          }
+  
+          setLocation(data.location || '');
         } catch (error) {
           console.error('Error:', error);
         }
       };
-
+  
       fetchData();
     }
   }, [id]);
+  
+  
+  
 
   const getHourOptions = (period) => {
     if (period === '오전') {
@@ -119,7 +134,8 @@ const EditModal = ({ onClose, selectedDay, id, setRefreshKey }) => {
         },
       });
       if (response) {
-        alert('일지 삭제 완료');
+        alert('일정이 삭제되었습니다.');
+        setRefreshKey((prev) => prev + 1);
         onClose();
       }
     } catch (err) {

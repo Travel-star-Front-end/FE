@@ -183,6 +183,7 @@ export const ModalContainer = styled.div`
 
 // list-calender.jsx
 export const ListContainer = styled.div`
+  margin-top: 1.2vw;
   width: 100%;
   max-height: 27.85vw;
   overflow-y: scroll;
