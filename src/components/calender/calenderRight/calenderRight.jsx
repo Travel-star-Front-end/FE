@@ -85,7 +85,6 @@ const CalenderRight = ({ selectedDay, refreshKey, setRefreshKey }) => {
                 selectedDay={selectedDay}
                 title={title}
                 subTitle={subTitle}
-                refreshKey={refreshKey}
               />
             )}
             {modalType === 'edit' && (
@@ -93,6 +92,8 @@ const CalenderRight = ({ selectedDay, refreshKey, setRefreshKey }) => {
                 onClose={() => setModalType(null)}
                 selectedDay={selectedDay}
                 id={editItemId}
+                refreshKey={refreshKey}
+                setRefreshKey={setRefreshKey}
               />
             )}
           </s.ModalContainer>
