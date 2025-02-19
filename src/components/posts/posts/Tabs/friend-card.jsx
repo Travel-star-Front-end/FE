@@ -27,6 +27,20 @@ export const FriendCard = ({id, profileImg, name}) => {
 export const FriendApplyCard = ({id, profileImg, name}) => {
     const [accepted, setAccepted] = useState(false);
 
+    const handleDeleteFriend = async () => {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.delete(`friends/request/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+        } catch (error) {
+            console.error("친구 요청 삭제 오류:", error);
+            alert("오류가 발생했습니다.");
+        }
+    };
+
     const handleAcceptRequest = async() => {
         try {
             const accessToken = localStorage.getItem("accessToken");
@@ -52,7 +66,7 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
         <S.Container2>
             <S.FriendContnet>
                 <S.CloseBtnWrapper>
-                    <img src={closeX} alt='x' className='close-btn'/>
+                    <img src={closeX} alt='x' className='close-btn' onClick={handleDeleteFriend}/>
                 </S.CloseBtnWrapper>
                 <S.ProfileWrapper>
                     {profileImg ? (
