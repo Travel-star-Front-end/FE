@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Globe from 'react-globe.gl';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import useFetch from '../../hooks/useFetch';
@@ -17,15 +17,17 @@ const OthersPlanet = () => {
     planetName: '', //이거 사실 필요한지 모르겠음.. 차피 id 값이 행성 이름으로 나올거라
     pointsData: [],
   });
+
+  const location = useLocation();
+  const user_id = location.state?.user_id; // 조회하고 싶은 사람 user_id
+  console.log('user_id', user_id);
+
   //반응형 관련
   const [dimensions, setDimensions] = useState({
     width: 0,
     height: 0,
   });
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // 로그인된 사용자 행성 조회
-  const userId = localStorage.getItem('userId');
 
   // 별자리 지역 조회
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
@@ -35,7 +37,7 @@ const OthersPlanet = () => {
     data: planetNameData,
     isloading,
     iserror,
-  } = useFetch(`/planets/${userId}`);
+  } = useFetch(`/planets/${user_id}`);
   const planetName = planetNameData?.data?.planet_name || '행성 조회 실패';
 
   useEffect(() => {
