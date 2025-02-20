@@ -67,6 +67,7 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     
             console.log("업로드 성공:", response.data);
             setBanner(null);
+
         } catch (error) {
             console.error("이미지 업로드 오류:", error);
             alert("오류가 발생했습니다. 다시 시도해주세요.");
