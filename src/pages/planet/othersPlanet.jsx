@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Globe from 'react-globe.gl';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import useFetch from '../../hooks/useFetch';
@@ -18,6 +18,10 @@ const OthersPlanet = () => {
     pointsData: [],
   });
 
+  const location = useLocation();
+  const user_id = location.state?.user_id; // 조회하고 싶은 사람 user_id
+  console.log('user_id', user_id);
+
   //반응형 관련
   const [dimensions, setDimensions] = useState({
     width: 0,
@@ -25,9 +29,16 @@ const OthersPlanet = () => {
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // 별자리 지역 조회
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
-  const { data: planetName, isloading, iserror } = useFetch(`/planets/${id}`);
-  console.log(planetName);
+
+  // 다른 사용자 행성 조회
+  const {
+    data: planetNameData,
+    isloading,
+    iserror,
+  } = useFetch(`/planets/${user_id}`);
+  const planetName = planetNameData?.data?.planet_name || '행성 조회 실패';
 
   useEffect(() => {
     if (!data || loading || error) return;
@@ -55,7 +66,7 @@ const OthersPlanet = () => {
         (point) => point !== null
       );
 
-      setPlanetData({ planetName: id, pointsData: resolvedPointsData });
+      setPlanetData({ planetName, pointsData: resolvedPointsData });
 
       setIsProcessing(false);
     };
@@ -127,7 +138,7 @@ const OthersPlanet = () => {
 
       <GlobeWrapper>
         <TopBar>
-          <RefreshButton>{id} 행성</RefreshButton>
+          <RefreshButton>{planetName} 행성</RefreshButton>
         </TopBar>
         <GlobeContainer ref={globeContainerRef}>
           <Globe
@@ -240,8 +251,8 @@ const RefreshButton = styled.div`
   }
 
   @media (max-width: 480px) {
-    font-size: 4rem;
-    padding: 1.7rem 2.04rem;
+    font-size: 3vw;
+    padding: 1.2vw 1.67vw;
   }
 `;
 

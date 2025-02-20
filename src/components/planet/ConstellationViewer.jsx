@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import useFetch from '../../hooks/useFetch';
 import {
   getFeelingColor,
-  getRandomStarSize,
+  getStarSize,
   fetchCoordinates,
 } from '../../utils/planet/getRandom';
 import { drawStar } from '../../utils/constellationviwer/canvasRenderer';
@@ -24,6 +24,8 @@ const ConstellationViewer = () => {
           for (const item of data.data) {
             const region = item.star.region;
             const feelNum = item.feel_color;
+            const sizeNum = item.size;
+
             try {
               const coordinates = await fetchCoordinates(region);
               if (coordinates) {
@@ -32,7 +34,7 @@ const ConstellationViewer = () => {
                   lng: coordinates.lng,
                   name: region,
                   color: getFeelingColor(feelNum),
-                  size: getRandomStarSize(),
+                  size: getStarSize(sizeNum),
                 });
               }
             } catch (error) {
@@ -86,9 +88,9 @@ const ConstellationViewer = () => {
 
     // Calculate MST edges
     const edges = calculateEdges(adjustedPointsData);
-    console.log('Edges:', edges);
+    // console.log('Edges:', edges);
     const mstEdges = kruskalMST(edges, adjustedPointsData.length);
-    console.log('MST Edges:', mstEdges);
+    // console.log('MST Edges:', mstEdges);
 
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
@@ -103,9 +105,9 @@ const ConstellationViewer = () => {
         return;
       }
 
-      console.log(
-        `Drawing line from (${startPoint.x}, ${startPoint.y}) to (${endPoint.x}, ${endPoint.y})`
-      );
+      // console.log(
+      //   `Drawing line from (${startPoint.x}, ${startPoint.y}) to (${endPoint.x}, ${endPoint.y})`
+      // );
       ctx.beginPath();
       ctx.moveTo(startPoint.x, startPoint.y);
       ctx.lineTo(endPoint.x, endPoint.y);
