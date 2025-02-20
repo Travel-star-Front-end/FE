@@ -62,10 +62,8 @@ const RankingRight = () => {
           },
         });
   
-        alert('별자리 신청이 완료되었습니다.');
-        setTimeout(() => {
-          window.location.reload(); 
-        }, 100);
+        // console.log(response);
+        alert('별자리 신청이 완료되었습니다. 반영까지 5분이 소요됩니다.');
       });
     } catch (err) {
       alert('이미지 업로드 중 오류 발생');

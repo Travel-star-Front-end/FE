@@ -39,7 +39,12 @@ const ItemTopRanking = ({ id, name, rank, user_id, imageUrl }) => {
                 window.location.reload(); 
             }, 100);
         } catch (error) {
-            console.error("Error", error);
+            if (error.response && error.response.status === 403) {
+                alert("본인의 별자리에는 투표할 수 없습니다.");
+            } else {
+                console.error("Error", error);
+                alert("투표 중 오류가 발생했습니다.");
+            }
         }
     };
     
