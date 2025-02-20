@@ -23,14 +23,7 @@ export const InfoWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
     margin-bottom: 1vw;
-
-    .share-icon {
-        width: 1.55vw;//31px
-        height: 1.55vw;
-        cursor: pointer;
-    }
 `;
 
 export const Info = styled.div`
@@ -76,42 +69,6 @@ export const LocationWrapper = styled.div`
     font-size: 0.55vw;
 `;
 
-
-export const MusicWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 9.35vw;
-    height: 1vw;
-    border-radius: 0.25vw;
-    padding: 0 0.2vw;
-    background-color: #ECECEC;
-    color: rgba(0, 0, 0, 0.49);
-    font-weight: 400;
-    font-size: 0.5vw;
-    line-height: 0.6vw;
-`;
-
-export const MusicName = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.4vw;
-`;
-
-export const AudioImgWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    width: 0.8vw;
-    height: 0.9vw;
-    overflow: hidden;
-
-    .audio_png {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }    
-`;
-
 export const ProfileImg = styled.div`
     width: 2.5vw;
     height: 2.5vw;
@@ -127,6 +84,39 @@ export const ProfileImg = styled.div`
 
 export const LocPin = styled.img`
     height: 0.65vw;
+`;
+
+export const EditBtnContainer= styled.div`
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    .lock-icon {
+        width: 1.15vw;
+        height: 1.15vw;
+    }
+
+    .share-icon {
+        width: 1.55vw;
+        height: 1.55vw;
+        cursor: pointer;
+    }
+`;
+
+export const EditButton = styled.button`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6.1vw;
+    height: 1.65vw;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    background-color: white;
+
+    font-weight: 400;
+    font-size: 0.7vw;
+    line-height: 0.85vw;
+    color: rgba(0, 0, 0, 0.49);
 `;
 
 export const SliderWrapper = styled.div`
@@ -274,5 +264,8 @@ export const ContentWrapper = styled.div`
         font-size: 0.8vw;
         line-height: 1.15vw; 
         margin: 0;  
+        width: 100%;
+        white-space: pre-wrap; /*넘치면 자동 개행 */
+        word-break: break-word;
     }
 `; 

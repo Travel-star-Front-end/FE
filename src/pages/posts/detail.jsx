@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import * as S from '../../styles/detail';
 import Slider from 'react-slick';
@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import locationPin from '../../assets/images/travel-post/locationPin.png';
 import share from '../../assets/images/posts/posts/share.png';
 import audio from '../../assets/images/posts/detail/audio.png';
+import lock from '../../assets/images/travel-post/lock-person.png'
 import default_profile_img from '../../assets/images/ProfileImage.png';
 import useFetch from '../../hooks/useFetch';
 import { API2 } from '../../apis/posts/spotifyService';
@@ -25,6 +26,7 @@ const settings = {
 }
 
 const Detail = () => {
+    const navigate = useNavigate();
     const [iframeUrl, setIframeUrl] = useState('');
     const location = useLocation();
     const { pathname } = useLocation();
@@ -101,21 +103,20 @@ const Detail = () => {
                                         <S.LocPin src={locationPin} alt="위치" />
                                         <div>{postData.data.star.region}</div>                                        
                                     </S.LocationWrapper>
-                                    {/* {postData?.data?.music && (
-                                        <S.MusicWrapper>
-                                            <S.MusicName>
-                                                <S.AudioImgWrapper>
-                                                    <img src={audio} alt="audio" className="audio_png" />
-                                                </S.AudioImgWrapper>
-                                                <div>{postData.data.music}</div>
-                                            </S.MusicName>
-                                            <div>{trackInfo.duration}</div>
-                                        </S.MusicWrapper>
-                                    )} */}
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
-                        <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                        <S.EditBtnContainer>
+                            {postData?.data?.storage === 1 && (
+                                <img src={lock} alt="only-friend" className="lock-icon" />
+                            )}
+                            <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                            <S.EditButton 
+                                type="button" 
+                                onClick={() => navigate(`/edit/${postId}`)}>
+                                수정하기
+                             </S.EditButton>
+                        </S.EditBtnContainer>
                     </S.InfoWrapper>
 
                     {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
