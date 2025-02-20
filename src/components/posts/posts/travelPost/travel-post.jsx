@@ -152,7 +152,6 @@ const TravelPost = ({
                                 <S.RightImageArrow/>
                             </S.ImageContainer>                            
                         </S.SliderWrapper2>
-
                     )}
                 </>
             )}

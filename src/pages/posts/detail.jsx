@@ -121,15 +121,31 @@ const Detail = () => {
                     {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
 
                     {postData.data.post_images && postData.data.post_images.length > 0 && (
-                        <S.SliderWrapper>
-                            <Slider {...settings}>
-                                {postData.data.post_images.map((image, index) => (
-                                    <S.TravelImg key={index}>
-                                        <img src={image.imageUrl} className='travel-img' />
-                                    </S.TravelImg>
-                                ))}
-                            </Slider>
-                        </S.SliderWrapper>
+                        <>
+                        {postData.data.post_images.length > 3 ? (
+                            <S.SliderWrapper>
+                                <Slider {...settings}>
+                                    {postData.data.post_images.map((image, index) => (
+                                        <S.TravelImg key={index}>
+                                            <img src={image.imageUrl} className='travel-img' />
+                                        </S.TravelImg>
+                                    ))}
+                                </Slider>
+                            </S.SliderWrapper>
+                        ) : (
+                            <S.SliderWrapper2>
+                                <S.ImageContainer>
+                                    <S.LeftImageArrow/>
+                                        {postData.data.post_images.map((image, index) => (
+                                            <S.TravelImg key={index}>
+                                                <img src={image.imageUrl} className='travel-img' />
+                                            </S.TravelImg>
+                                        ))}
+                                    <S.RightImageArrow/>
+                                </S.ImageContainer>                            
+                            </S.SliderWrapper2>
+                        )}
+                        </>
                     )}
                     </div>
 
