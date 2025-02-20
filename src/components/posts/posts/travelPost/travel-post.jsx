@@ -29,7 +29,7 @@ const TravelPost = ({
         dots: false,
         infinite: false,
         speed: 500,
-        slidesToShow: 1,
+        slidesToShow: 3,
         slidesToScroll: 1,
         arrows: true,
         draggable: false,
@@ -79,6 +79,7 @@ const TravelPost = ({
                         postId: postId,
                         postUserId: postUserId,
                         nickname: nickname,
+                        buttonType: buttonType,
                     }
                 })}>
                     <S.ProfileImg>

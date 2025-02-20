@@ -119,7 +119,7 @@ export const ToolbarContainer = styled.div`
 export const Toolbar = styled.div`
     display: flex;
     justify-content: space-between;
-    width: 13.8vw;
+    width: 6vw;
     height: 2.5vw;
     border-radius: 36px;
     line-height: 50px;

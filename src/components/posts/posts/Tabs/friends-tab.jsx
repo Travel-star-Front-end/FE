@@ -3,9 +3,9 @@ import * as S from '../../../../styles/posts/posts/Tabs/friends-tab';
 import { FriendCard, FriendApplyCard } from "./friend-card";
 import useFetch from "../../../../hooks/useFetch";
 
-const FriendsTab = ({ friends, requests }) => {
+const FriendsTab = () => {
     const{ data: friendsData, loading, error } = useFetch(`/friends/list`);
-    const{ data: applyFriendData, loading: applyFriendLoading, error:applyFriendError } = useFetch(`/friends/list/received`);
+    const{ data: applyFriendData, loading: applyFriendLoading } = useFetch(`/friends/list/received`);
 
     const [activeTab, setActiveTab] = useState("friends");
 
