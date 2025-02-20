@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
     z-index: 100;
     position: absolute;
+    right: 0;
     bottom: 3.1585vw;
     width: 16.6vw;
     height: 12vw;
