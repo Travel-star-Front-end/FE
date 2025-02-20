@@ -106,19 +106,25 @@ const Detail = () => {
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
+                        <S.EditBtnContainer>
                         {buttonType === 'edit' && (
-                            <S.EditBtnContainer>
+                            <>
                                 {postData?.data?.storage === 1 && (
                                     <img src={lock} alt="only-friend" className="lock-icon" />
-                                )}
-                                <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                                )}                              
+                            </>
+                        )}
+                        <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl} />
+                        {buttonType === 'edit' && (
+                            <>
                                 <S.EditButton 
                                     type="button" 
                                     onClick={() => navigate(`/edit/${postId}`)}>
                                     수정하기
                                 </S.EditButton>
-                            </S.EditBtnContainer>                            
+                            </>
                         )}
+                    </S.EditBtnContainer>
                     </S.InfoWrapper>
 
                     {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
