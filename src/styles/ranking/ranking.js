@@ -180,6 +180,8 @@ export const ItemTopVoteButton = styled.button`
 // list-bottomRanking.jsx
 export const ListBottomContainer = styled.div`
     width: 100%;
+    height: 30vw;
+    overflow-y: scroll;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     margin-top: 1vw;
