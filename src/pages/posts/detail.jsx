@@ -26,14 +26,15 @@ const settings = {
 
 const Detail = () => {
     const [iframeUrl, setIframeUrl] = useState('');
-    const [trackInfo, setTrackInfo] = useState({duration: ''});
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
     const {postId, postUserId, nickname } = location.state || {};
 
-    //회원 일지 상세 조회 api 
+    //다른 유저 일지 상세 조회 api 
     const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${postUserId}`);
+    //유저 일지 상세 조회 api
+    // const { data: userData, loading: userLoading } = useFetch(`posts/${postId}`)
 
     //현재 url복사
     const handleCopyUrl = () => {
@@ -54,7 +55,6 @@ const Detail = () => {
         }
     },[postData])
     
-
     // 기존에 저장된 값으로 음악 검색
     const fetchSpotifyTrack = async (musicTitle) => {
         try {
@@ -64,20 +64,12 @@ const Detail = () => {
             if (tracks.length > 0) {
                 const track = tracks[0];
                 setIframeUrl(`https://open.spotify.com/embed/track/${track.id}`);
-                setTrackInfo({duration: formatDuration(track.duration_ms),})
             } else {
                 console.log("검색된 트랙 없음.");
             }
         } catch (error) {
             console.error("Spotify 검색 실패:", error);
         }
-    };
-
-    // 밀리초(ms) → mm:ss 변환 함수
-    const formatDuration = (milliseconds) => {
-        const minutes = Math.floor(milliseconds / 60000);
-        const seconds = Math.floor((milliseconds % 60000) / 1000);
-        return `${minutes}:${seconds.toString().padStart(2, "0")}`;
     };
 
     if (postLoading) {
@@ -94,7 +86,7 @@ const Detail = () => {
                         <S.Info>
                             <S.ProfileImg>
                                 {postData.data.user.u_image ? (
-                                    <img src={postData.data.user.u_image} alt="프로필" className="profile-img" />
+                                    <img src={postData.data.user.u_image.file_name} alt="프로필" className="profile-img" />
                                 ) : (
                                     <img src={default_profile_img} alt="프로필" className="profile-img" />
                                 )}
@@ -129,23 +121,39 @@ const Detail = () => {
                     {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
 
                     {postData.data.post_images && postData.data.post_images.length > 0 && (
-                        <S.SliderWrapper>
-                            <Slider {...settings}>
-                                {postData.data.post_images.map((image, index) => (
-                                    <S.TravelImg key={index}>
-                                        <img src={image.imageUrl} className='travel-img' />
-                                    </S.TravelImg>
-                                ))}
-                            </Slider>
-                        </S.SliderWrapper>
+                        <>
+                        {postData.data.post_images.length > 3 ? (
+                            <S.SliderWrapper>
+                                <Slider {...settings}>
+                                    {postData.data.post_images.map((image, index) => (
+                                        <S.TravelImg key={index}>
+                                            <img src={image.imageUrl} className='travel-img' />
+                                        </S.TravelImg>
+                                    ))}
+                                </Slider>
+                            </S.SliderWrapper>
+                        ) : (
+                            <S.SliderWrapper2>
+                                <S.ImageContainer>
+                                    <S.LeftImageArrow/>
+                                        {postData.data.post_images.map((image, index) => (
+                                            <S.TravelImg key={index}>
+                                                <img src={image.imageUrl} className='travel-img' />
+                                            </S.TravelImg>
+                                        ))}
+                                    <S.RightImageArrow/>
+                                </S.ImageContainer>                            
+                            </S.SliderWrapper2>
+                        )}
+                        </>
                     )}
                     </div>
 
                     <S.ContentWrapper>
                         <div className='title'>{postData.data.title}</div>
-                        <div className='content'>
+                        <pre className='content'>
                             {postData.data.content}
-                        </div>
+                        </pre>
                     </S.ContentWrapper>
                 </S.PostWrapper>
         </S.Container>

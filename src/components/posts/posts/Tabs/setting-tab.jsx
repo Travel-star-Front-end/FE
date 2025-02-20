@@ -7,7 +7,6 @@ import { API } from '../../../../apis/axios';
 const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     const [activeTab, setActiveTabState] = useState(null);
     const [editComment, setEditComment] = useState('');
-    const [backgroundImage, setBackgroundImage] = useState('');
 
     //코멘트 수정
     const { triggerPost } = usePost('/comment');
@@ -50,7 +49,6 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     
             console.log("업로드 성공:", response.data);
             setBanner(response.data.fileUrl);
-            setBackgroundImage(response.data.fileUrl);
         } catch (error) {
             console.error("이미지 업로드 오류:", error);
             alert("오류가 발생했습니다. 다시 시도해주세요.");
@@ -58,8 +56,22 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     };
 
     //기본 배경화면 설정
-    const handleDefaultBanner = () => {
-        setBanner(null);
+    const handleDefaultBanner = async() => {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            const response = await API.delete("/background", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+    
+            console.log("업로드 성공:", response.data);
+            setBanner(null);
+
+        } catch (error) {
+            console.error("이미지 업로드 오류:", error);
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
+        }
     }
 
     //댓글 등록

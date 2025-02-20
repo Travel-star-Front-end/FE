@@ -16,7 +16,7 @@ const PostList = ({text}) => {
                         key={post.post_id}
                         postId={post.post_id}
                         postUserId={post.user_id}
-                        profileImg={post.user.profileImg}
+                        profileImg={post.user.profileImage}
                         nickname={post.user.nickname}
                         date={post.created_at}
                         location={post.star.region}
