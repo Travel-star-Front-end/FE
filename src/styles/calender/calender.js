@@ -43,7 +43,6 @@ export const CalenderLeftContainer = styled.div`
 
 export const CalendarLeftInnerContainer = styled.div`
   width: 98%;
-  height: 93%;
   display: flex;
   flex-direction: column;
   background: ${colors.white};
