@@ -19,6 +19,7 @@ const PlanetPage = () => {
   const globeRef = useRef();
   const navigate = useNavigate();
   const globeContainerRef = useRef(null);
+  const userId = localStorage.getItem('userId');
 
   // 사용자 전체 일지 조회
   const { data, loading, error } = useFetch('/posts');
@@ -349,8 +350,11 @@ const PlanetPage = () => {
               };
               el.onclick = () => {
                 tooltip.style.display = 'none';
-                navigate(`/posts/${d.id}`);
+                navigate(`/posts/${d.id}`, {
+                  state: { postId: d.id, postUserId: userId },
+                });
               };
+
               el.innerHTML = `
                 <div style="
                   transform: translate(0%, 0%) scale(0.5);
@@ -422,9 +426,12 @@ const RefreshButton = styled.div`
     padding: 1.7rem 2.04rem;
   }
 
-  @media (max-width: 445px) {
-    font-size: 2rem;
-    padding: 1.2rem 1.7rem;
+  @media (max-width: 290px) {
+    font-size: 2vw;
+    padding: 1.2vw 1.7vw;
+    margin-left: 8vw;
+    font-size: 1.6vw;
+    gap: 0.45vw;
   }
 `;
 
@@ -450,6 +457,9 @@ const TimeDisplay = styled.div`
   @media (max-width: 480px) {
     font-size: 2.5rem;
   }
+  @media (max-width: 300px) {
+    font-size: 1.8vw;
+  }
 `;
 
 const EditButton = styled.button`
@@ -469,6 +479,9 @@ const EditButton = styled.button`
 
   @media (max-width: 450px) {
     font-size: 2rem;
+  }
+  @media (max-width: 300px) {
+    font-size: 1.67vw;
   }
 `;
 
@@ -554,6 +567,10 @@ const SmallText = styled.span`
   @media (max-width: 480px) {
     font-size: 1rem;
     margin-left: 0.2rem;
+  }
+  @media (max-width: 300px) {
+    font-size: 1.67vw;
+    margin-left: 0.22vw;
   }
 `;
 

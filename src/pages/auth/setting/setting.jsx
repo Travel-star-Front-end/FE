@@ -20,11 +20,11 @@ function SettingPage() {
     try {
       setIsLoading(true);
       // 행성 이름 로컬 스토리지 저장
-      localStorage.setItem('planetName', planetName);
+      // localStorage.setItem('planetName', planetName);
 
       // 로컬 스토리지에서 userId 가져오기
-      const userId = localStorage.getItem('userId');
-      if (!userId) throw new Error('사용자 ID를 찾을 수 없습니다.');
+      // const userId = localStorage.getItem('userId');
+      // if (!userId) throw new Error('사용자 ID를 찾을 수 없습니다.');
 
       // 행성 생성 API 호출
       const response = await postPlanetName(planetName);
@@ -36,8 +36,8 @@ function SettingPage() {
 
       // 응답으로 받은 행성 ID 저장
       if (response && typeof response === 'string') {
-        console.log('응답 데이터:', response); // 디버깅용 로그
-        localStorage.setItem('planetId', response);
+        // console.log('응답 데이터:', response);
+        // localStorage.setItem('planetId', response);
         navigate('/planet');
       } else {
         throw new Error('API 응답이 null 또는 잘못된 형식입니다.');
@@ -132,8 +132,8 @@ const SettingContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.83vw;
+  padding: 0.83vw;
   text-align: center;
   // min-height: 20vh;
   width: 100vw;
@@ -141,61 +141,62 @@ const SettingContainer = styled.div`
 `;
 
 const SettingName = styled.div`
-  font-size: 20px;
+  font-size: 1.2vw;
   color: white;
 `;
 
 const Settinginput = styled.input`
   width: 100%;
   max-width: 400px;
-  padding: 1rem;
-  border: 0.1rem solid #ccc;
+  padding: 0.83vw;
+  border: 0.08vw solid #ccc;
   border-radius: 0.5rem;
   background: white;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5vw;
 
-  @media (max-width: 1800px) {
-    padding: 2rem;
-    font-size: 2rem;
-  }
+  // @media (max-width: 1800px) {
+  //   padding: 2rem;
+  //   font-size: 2rem;
+  // }
 
-  @media (max-width: 1200px) {
-    padding: 2.2rem;
-    font-size: 3.5rem;
-  }
+  // @media (max-width: 1200px) {
+  //   padding: 2.2rem;
+  //   font-size: 3.5rem;
+  // }
 
   @media (max-width: 768px) {
-    padding: 2.6rem;
-    font-size: 5rem;
+    padding: 1.8vw;
+    font-size: 3.2vw;
+    height: 2vh;
   }
 `;
 
 const Settingbutton = styled.button`
   width: 100%;
   max-width: 500px;
-  padding: 1.5rem;
+  padding: 1vw;
   border: none;
   border-radius: 1rem;
   background-color: #00bcd4;
   color: white;
-  font-size: 2rem;
+  font-size: 1.1vw;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   @media (max-width: 1800px) {
-    padding: 2.2rem;
-    font-size: 3rem;
+    padding: 1.7vw;
+    font-size: 1.8vw;
   }
 
   @media (max-width: 1200px) {
-    padding: 2.4rem;
-    font-size: 4rem;
+    padding: 1.8vw;
+    font-size: 1.9vw;
   }
 
   @media (max-width: 768px) {
-    padding: 2.8rem;
-    font-size: 6rem;
+    padding: 1.9vw;
+    font-size: 2vw;
   }
 `;
 
@@ -223,7 +224,7 @@ const BottomBar = styled.div`
 `;
 
 const PlanetName = styled.div`
-  font-size: 40px;
+  font-size: 2vw;
   font-weight: bold;
   color: white;
 `;
@@ -234,7 +235,7 @@ const TopBar = styled.div`
   right: 0;
   top: 0;
   z-index: 10;
-  margin-top: 15rem;
+  margin-top: 9vh;
 `;
 
 export default SettingPage;

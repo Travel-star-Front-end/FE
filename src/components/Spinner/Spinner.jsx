@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const SpinnerContainer = styled.div`
   position: fixed;
   top: 0;
-  left: 0;
+  left: 15vw;
   right: 0;
   bottom: 0;
   display: flex;
