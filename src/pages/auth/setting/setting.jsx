@@ -37,7 +37,6 @@ function SettingPage() {
       // 응답으로 받은 행성 ID 저장
       if (response && typeof response === 'string') {
         // console.log('응답 데이터:', response);
-        // localStorage.setItem('planetId', response);
         navigate('/planet');
       } else {
         throw new Error('API 응답이 null 또는 잘못된 형식입니다.');

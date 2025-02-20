@@ -17,7 +17,6 @@ const OthersPlanet = () => {
     planetName: '', //이거 사실 필요한지 모르겠음.. 차피 id 값이 행성 이름으로 나올거라
     pointsData: [],
   });
-
   //반응형 관련
   const [dimensions, setDimensions] = useState({
     width: 0,
@@ -25,9 +24,19 @@ const OthersPlanet = () => {
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // 로그인된 사용자 행성 조회
+  const userId = localStorage.getItem('userId');
+
+  // 별자리 지역 조회
   const { data, loading, error } = useFetch(`/stars/${id}/regions`);
-  const { data: planetName, isloading, iserror } = useFetch(`/planets/${id}`);
-  console.log(planetName);
+
+  // 다른 사용자 행성 조회
+  const {
+    data: planetNameData,
+    isloading,
+    iserror,
+  } = useFetch(`/planets/${userId}`);
+  const planetName = planetNameData?.data?.planet_name || '행성 조회 실패';
 
   useEffect(() => {
     if (!data || loading || error) return;
@@ -55,7 +64,7 @@ const OthersPlanet = () => {
         (point) => point !== null
       );
 
-      setPlanetData({ planetName: id, pointsData: resolvedPointsData });
+      setPlanetData({ planetName, pointsData: resolvedPointsData });
 
       setIsProcessing(false);
     };
@@ -127,7 +136,7 @@ const OthersPlanet = () => {
 
       <GlobeWrapper>
         <TopBar>
-          <RefreshButton>{id} 행성</RefreshButton>
+          <RefreshButton>{planetName} 행성</RefreshButton>
         </TopBar>
         <GlobeContainer ref={globeContainerRef}>
           <Globe
