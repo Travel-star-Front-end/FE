@@ -49,16 +49,21 @@ export const ProfileImgContainer = styled.img`
 `
 
 export const PContainer = styled.div`
+    width: 90%;
     display: flex;
     flex-direction: column;
     text-align: center;
 `
 
 export const ProfileP = styled.p`
+    width: 100%;
     text-align: center;
     font-size: ${(props) => props.size || '0.7vw'};
     font-weight: ${(props) => props.weight || '300'};
     color: ${colors.black};
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `
 
 export const ListContainer = styled.div`
