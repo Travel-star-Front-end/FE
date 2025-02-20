@@ -41,9 +41,11 @@ const Edit = ({
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
+  const [serverCode, setServerCode] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const maskPassword = (pwd) => {
     return pwd ? '*'.repeat(pwd.length) : '';
@@ -144,8 +146,13 @@ const Edit = ({
   };
 
   const handleFileChange = async (e) => {
+    if (isUploading) return; 
+    setIsUploading(true);
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      setIsUploading(false);
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append('images', file);
@@ -162,6 +169,8 @@ const Edit = ({
       setIsMenuOpen(false);
     } catch (error) {
       console.error('프로필 사진 업로드 중 오류 발생:', error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -245,12 +254,13 @@ const Edit = ({
     }
   };
 
+  // 인증번호 발송 함수
   const handleSendCode = async () => {
     try {
-      const emailFull = formValues.emailUser + '@' + formValues.emailDomain;
+      const emailFull = formValues.emailUser + "@" + formValues.emailDomain;
       const accessToken = localStorage.getItem("accessToken");
 
-      await API.post(
+      const response = await API.post(
         "/email",
         { email: emailFull },
         {
@@ -259,51 +269,25 @@ const Edit = ({
           },
         }
       );
-
+      setServerCode(response.data.authCode);
       setIsCodeSent(true);
       alert("인증번호가 발송되었습니다.");
     } catch (error) {
       console.error("Error sending verification code:", error);
+      alert("인증번호 발송에 실패했습니다.");
     }
   };
 
-  const handleVerifyCode = async () => {
-    try {
-      let isVerified = false;
-
-      if (verificationCode === "1234") {
-        isVerified = true;
-      } else {
-        const emailFull = formValues.emailUser + "@" + formValues.emailDomain;
-        const accessToken = localStorage.getItem("accessToken");
-
-        const response = await API.post(
-          "/email",
-          { email: emailFull, authCode: verificationCode },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response.status === 200 && response.data.success) {
-          isVerified = true;
-        }
-      }
-
-      if (isVerified) {
-        setIsCodeVerified(true);
-        setFormValues((prev) => ({ ...prev, password: "" }));
-        setConfirmPassword("");
-        setVerificationCode("");
-        alert("인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.");
-      } else {
-        alert("인증번호가 올바르지 않습니다.");
-      }
-    } catch (error) {
-      console.error("Error verifying code:", error);
-      alert("인증번호 확인 중 오류가 발생했습니다.");
+  // 인증번호 확인 함수
+  const handleVerifyCode = () => {
+    if (verificationCode === serverCode) {
+      setIsCodeVerified(true);
+      setFormValues((prev) => ({ ...prev, password: "" }));
+      setConfirmPassword("");
+      setVerificationCode("");
+      alert("인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.");
+    } else {
+      alert("인증번호가 올바르지 않습니다.");
     }
   };
 
@@ -635,7 +619,7 @@ const CameraMenuItem = styled.div`
 
 const CameraMenuItemDelete = styled(CameraMenuItem)`
   color: #ff4444;
-  border-top: 1px solid #d9d9d9;
+  border-top: 0.125rem solid #d9d9d9;
 `;
 
 const HiddenFileInput = styled.input`
