@@ -101,7 +101,11 @@ const Posts = () => {
                             {activeTab === 'friends' && <FriendsTab/>}
                             {activeTab === 'share' && <ShareTab/>}
                             {activeTab === 'setting' && 
-                            <SettingTab setActiveTab={setActiveTab} setBanner={setBanner} setComment={setComment} />}
+                            <SettingTab 
+                                setActiveTab={setActiveTab} 
+                                banner={banner} 
+                                setBanner={setBanner} 
+                                setComment={setComment} />}
                         </S.ToolbarContainer>
                     </S.BannerHeader>
                 </S.BannerInfo>
