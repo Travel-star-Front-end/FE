@@ -26,7 +26,7 @@ export const FriendContnet = styled.div`
 
 export const ProfileWrapper = styled.div`
     display: flex;
-    align-items: cener;
+    align-items: center;
     justify-content: center;
     width: 1.092vw;
     height: 1.092vw;
@@ -75,6 +75,9 @@ export const AccpetBtn = styled.button`
 `;
 
 export const AcceptedText = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 2.95vw;
     height: 0.75vw;
     background-color: #FFFFFF;
