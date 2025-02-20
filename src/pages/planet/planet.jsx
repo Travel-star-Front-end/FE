@@ -29,6 +29,12 @@ const PlanetPage = () => {
     loading: planetLoading,
     error: planetError,
   } = useFetch(`/planet`);
+  const {
+    data: nameData,
+    loading: nameLoading,
+    error: nameError,
+  } = useFetch('mypage');
+  const nickname = nameData?.data?.nickname || '알 수 없는 사용자';
 
   // 상태관리------------------------------------------------------------------------
   const [planetName, setPlanetName] = useState('');
@@ -351,7 +357,11 @@ const PlanetPage = () => {
               el.onclick = () => {
                 tooltip.style.display = 'none';
                 navigate(`/posts/${d.id}`, {
-                  state: { postId: d.id, postUserId: userId },
+                  state: {
+                    postId: d.id,
+                    postUserId: userId,
+                    nickname: nickname,
+                  },
                 });
               };
 
