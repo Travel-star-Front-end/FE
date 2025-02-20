@@ -4,23 +4,23 @@ import closeX from '../../../../assets/images/travel-post/friend-card/x.png';
 import usePost from '../../../../hooks/usePost';
 import { API } from '../../../../apis/axios';
 
-const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
+const SettingTab = ({ setActiveTab, banner, setBanner, setComment }) => {
     const [activeTab, setActiveTabState] = useState(null);
     const [editComment, setEditComment] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedDefaultBanner, setSelectedDefaultBanner] = useState(false); 
+    const [prevBanner, setPrevBanner] = useState(banner); 
 
     //코멘트 수정
     const { triggerPost } = usePost('/comment');
 
     const handleClick = (tab) => {
-        if (activeTab === tab) {
-            setActiveTabState(null);  // 같은 버튼을 다시 클릭하면 초기화
-        } else {
-            setActiveTabState(tab);  // 다른 버튼 클릭 시 해당 버튼으로 활성화
-        }
+        setActiveTabState(activeTab === tab ? null : tab);
+        setPrevBanner(banner);
     };
 
     //모든 설정 창 닫기
-    const handleButtonClick = () => {
+    const handleClose = () => {
         setActiveTabState(null);
         setActiveTab(null);  // 상위 컴포넌트로도 상태를 리셋
     };
@@ -32,47 +32,69 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     // 앨범에서 이미지 선택
     const handleImageSelect = async(event) => {
         const file = event.target.files[0];
-        console.log(file)
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append("images", file);
-
-        try {
-            const accessToken = localStorage.getItem("accessToken");
-            const response = await API.patch("/background", formData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-    
-            console.log("업로드 성공:", response.data);
-            setBanner(response.data.fileUrl);
-        } catch (error) {
-            console.error("이미지 업로드 오류:", error);
-            alert("오류가 발생했습니다. 다시 시도해주세요.");
-        }
+        const imageUrl = URL.createObjectURL(file); 
+        setBanner(imageUrl);
+        setSelectedImage(file); // 선택된 이미지 상태로 저장
     };
 
     //기본 배경화면 설정
     const handleDefaultBanner = async() => {
-        try {
-            const accessToken = localStorage.getItem("accessToken");
-            const response = await API.delete("/background", {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
-    
-            console.log("업로드 성공:", response.data);
-            setBanner(null);
-
-        } catch (error) {
-            console.error("이미지 업로드 오류:", error);
-            alert("오류가 발생했습니다. 다시 시도해주세요.");
-        }
+        setBanner(null);
+        setSelectedDefaultBanner(true);
     }
+
+    // 배경화면 적용하기
+    const handleApplyBanner = async () => {
+        if (selectedImage) {
+            // 앨범 이미지가 선택된 경우
+            const formData = new FormData();
+            formData.append("images", selectedImage);
+
+            try {
+                const accessToken = localStorage.getItem("accessToken");
+                const response = await API.patch("/background", formData, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+
+                console.log("업로드 성공:", response.data);
+                setBanner(response.data.fileUrl);
+                setPrevBanner(response.data.fileUrl);
+            } catch (error) {
+                console.error("이미지 업로드 오류:", error);
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        } else if (selectedDefaultBanner) {
+            // 기본 배경화면을 선택한 경우
+            try {
+                const accessToken = localStorage.getItem("accessToken");
+                const response = await API.delete("/background", {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                console.log("기본 배경화면 설정 성공:", response.data);
+                setBanner(null); // 기본 배경화면으로 설정
+                setPrevBanner(null);
+            } catch (error) {
+                console.error("기본 배경화면 설정 오류:", error);
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        }
+        handleClose();
+    };
+
+    // 배경화면 취소하기
+    const handleCancelBanner = () => {
+        setBanner(prevBanner);
+        setSelectedImage(null);
+        setSelectedDefaultBanner(false);
+        handleClose();
+    };
 
     //댓글 등록
     const handleCommentSubmit = async() => {
@@ -94,13 +116,13 @@ const SettingTab = ({ setActiveTab, setBanner, setComment }) => {
     return(
         <>
             <S.Container>
-                <div className="close" onClick={handleButtonClick}>
+                <div className="close" onClick={handleClose}>
                     닫기
                 </div>
                 {activeTab === 'background-image-edit' || activeTab === 'comment-edit' ? (
                     <>
-                        <S.Button type="button">적용하기</S.Button>
-                        <S.Button type="button" onClick={handleButtonClick}>취소</S.Button>
+                        <S.Button type="button" onClick={handleApplyBanner}>적용하기</S.Button>
+                        <S.Button type="button" onClick={handleCancelBanner}>취소</S.Button>
                     </>
                 ) : (
                     <>
