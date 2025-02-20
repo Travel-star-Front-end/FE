@@ -94,7 +94,7 @@ const Detail = () => {
                         <S.Info>
                             <S.ProfileImg>
                                 {postData.data.user.u_image ? (
-                                    <img src={postData.data.user.u_image} alt="프로필" className="profile-img" />
+                                    <img src={postData.data.user.u_image.file_name} alt="프로필" className="profile-img" />
                                 ) : (
                                     <img src={default_profile_img} alt="프로필" className="profile-img" />
                                 )}
@@ -143,9 +143,9 @@ const Detail = () => {
 
                     <S.ContentWrapper>
                         <div className='title'>{postData.data.title}</div>
-                        <div className='content'>
+                        <pre className='content'>
                             {postData.data.content}
-                        </div>
+                        </pre>
                     </S.ContentWrapper>
                 </S.PostWrapper>
         </S.Container>
