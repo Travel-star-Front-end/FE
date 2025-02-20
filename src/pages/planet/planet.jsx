@@ -408,9 +408,9 @@ const TopBar = styled.div`
   top: 0;
   left: 0;
   display: flex;
-  padding: 0 1vw;
+  padding: 0 1.3vw;
   z-index: 10;
-  margin-top: 5vw;
+  margin-top: 7vw;
   gap: 1.5vw;
 `;
 
@@ -418,11 +418,11 @@ const RefreshButton = styled.div`
   display: flex;
   align-items: center;
   gap: 0.3vw;
-  padding: 0.5vw 0.6vw;
+  padding: 0.6vw 0.7vw;
   background: rgb(100, 116, 110);
   border-radius: 0.4vw;
   color: white;
-  font-size: 1vw;
+  font-size: 1.3vw;
   font-weight: bold;
   cursor: pointer;
   margin-left: 5vw;
@@ -440,7 +440,7 @@ const TimeDisplay = styled.div`
   align-items: center;
   margin-left: auto;
   color: white;
-  font-size: 1vw;
+  font-size: 1.3vw;
   font-weight: bold;
 `;
 
@@ -448,7 +448,7 @@ const EditButton = styled.button`
   background: #01bcd4;
   padding: 0.05vw 0.2vw;
   border-radius: 0.3vw;
-  font-size: 0.85vw;
+  font-size: 1vw;
   color: white;
 `;
 
@@ -529,7 +529,7 @@ const UpdateButton = styled.img`
 `;
 
 const SmallText = styled.span`
-  font-size: 0.6vw; /* 원하는 크기로 설정 */
+  font-size: 0.8vw; /* 원하는 크기로 설정 */
   margin-left: 0.5vw;
 `;
 
