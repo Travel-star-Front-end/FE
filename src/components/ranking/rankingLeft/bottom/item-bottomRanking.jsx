@@ -11,8 +11,8 @@ const ItemBottomRanking = ({ id, name, user_id, imageUrl }) => {
     const isVoted = data?.voted === 1;
 
     const handleViewClick = () => {
-        navigate(`/planet/${id}`);
-    }
+        navigate(`/planet/${id}`, { state: { user_id: user_id } });
+    };    
 
     const handleVoteClick = async () => {
         try {
