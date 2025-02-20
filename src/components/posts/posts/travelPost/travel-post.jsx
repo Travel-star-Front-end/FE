@@ -33,7 +33,7 @@ const TravelPost = ({
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        arrows: images.length > 3,
+        arrows: true,
         draggable: false,
     }
 
