@@ -135,7 +135,6 @@ const CalenderLeft = ({ selectedDay, setSelectedDay, refreshKey }) => {
               '0'
             )}-${String(day).padStart(2, '0')}`;
             const locationInfo = scheduleMap?.[formattedDate];
-            const lastrow = index >= calendarDates.length - 7;
             const selected = isSelected(day, cellMonth, cellYear);
 
             return (
@@ -145,11 +144,10 @@ const CalenderLeft = ({ selectedDay, setSelectedDay, refreshKey }) => {
                 onClick={() =>
                   currentMonth && handleDateClick(day, cellMonth, cellYear)
                 }
-                lastrow={lastrow.toString()}
                 selected={selected}
               >
                 {selected && (
-                  <s.SelectedDateCell lastrow={lastrow.toString()} />
+                  <s.SelectedDateCell />
                 )}
                 {day}
                 {currentMonth && locationInfo && (
