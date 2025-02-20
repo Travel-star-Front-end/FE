@@ -365,7 +365,8 @@ const Edit = ({
               name="userId"
               value={formValues.userId}
               onChange={handleChange}
-              disabled={!isEditing}
+              // 아이디는 항상 수정 불가능하도록
+              disabled={true}
             />
           </InfoRow>
 
@@ -390,8 +391,9 @@ const Edit = ({
                   ? formValues.password
                   : maskPassword(formValues.password)
               }
-              onChange={isCodeVerified ? handleNewPasswordChange : handleChange}
-              disabled={!isEditing}
+              // 인증이 완료되어 새 비밀번호 입력 상태가 되기 전에는 수정 불가능하게
+              onChange={isCodeVerified ? handleNewPasswordChange : undefined}
+              disabled={!isEditing || !isCodeVerified}
             />
             {isCodeVerified && newPasswordError && (
               <ErrorMessage>{newPasswordError}</ErrorMessage>
