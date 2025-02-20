@@ -31,7 +31,7 @@ const Detail = () => {
     const location = useLocation();
     const { pathname } = useLocation();
     const currentUrl = window.location.origin + pathname;
-    const {postId, postUserId, nickname } = location.state || {};
+    const {postId, postUserId, nickname, buttonType } = location.state || {};
 
     //다른 유저 일지 상세 조회 api 
     const { data: postData, loading: postLoading } = useFetch(`posts/${postId}/user/${postUserId}`);
@@ -106,17 +106,19 @@ const Detail = () => {
                                 </S.MetaWrapper>
                             </S.DetailInfo>
                         </S.Info>
-                        <S.EditBtnContainer>
-                            {postData?.data?.storage === 1 && (
-                                <img src={lock} alt="only-friend" className="lock-icon" />
-                            )}
-                            <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
-                            <S.EditButton 
-                                type="button" 
-                                onClick={() => navigate(`/edit/${postId}`)}>
-                                수정하기
-                             </S.EditButton>
-                        </S.EditBtnContainer>
+                        {buttonType === 'edit' && (
+                            <S.EditBtnContainer>
+                                {postData?.data?.storage === 1 && (
+                                    <img src={lock} alt="only-friend" className="lock-icon" />
+                                )}
+                                <img src={share} alt="share" className="share-icon" onClick={handleCopyUrl}/>
+                                <S.EditButton 
+                                    type="button" 
+                                    onClick={() => navigate(`/edit/${postId}`)}>
+                                    수정하기
+                                </S.EditButton>
+                            </S.EditBtnContainer>                            
+                        )}
                     </S.InfoWrapper>
 
                     {iframeUrl && <IframePlayer iframeUrl={iframeUrl} />}
