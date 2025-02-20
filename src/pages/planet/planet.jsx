@@ -9,7 +9,7 @@ import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVe
 import {
   fetchCoordinates,
   getFeelingColor,
-  getRandomStarSize,
+  getStarSize,
 } from '../../utils/planet/getRandom';
 import { markerSvg } from '../../components/planet/MarkerSVG';
 import useFetch from '../../hooks/useFetch';
@@ -75,6 +75,7 @@ const PlanetPage = () => {
         for (const item of data.data) {
           const region = item.star.region;
           const feelNum = item.feel_color;
+          const sizeNum = item.size;
           const stars_id = item.id;
 
           try {
@@ -86,7 +87,7 @@ const PlanetPage = () => {
                 name: region,
                 id: stars_id,
                 color: getFeelingColor(feelNum),
-                size: getRandomStarSize(),
+                size: getStarSize(sizeNum),
               };
               updatedPoints.push(newPoint);
             }

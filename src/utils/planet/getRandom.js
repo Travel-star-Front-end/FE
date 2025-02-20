@@ -19,9 +19,9 @@ export const getFeelingColor = (feelNum) => {
 };
 
 // 랜덤 사이즈즈
-export const getRandomStarSize = () => {
+export const getStarSize = (sizeNum) => {
   const sizes = ['7rem', '9rem', '11rem'];
-  return sizes[Math.floor(Math.random() * sizes.length)];
+  return sizes[sizeNum - 1] || '7rem';
 };
 
 // Google Geocoding API로 위도와 경도 가져오기

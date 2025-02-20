@@ -240,8 +240,8 @@ const RefreshButton = styled.div`
   }
 
   @media (max-width: 480px) {
-    font-size: 4rem;
-    padding: 1.7rem 2.04rem;
+    font-size: 3vw;
+    padding: 1.2vw 1.67vw;
   }
 `;
 
