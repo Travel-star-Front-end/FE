@@ -224,6 +224,7 @@ export const ContentWrapper = styled.div`
 
     .content {
         font-size: 0.8vw;
-        line-height: 0.968vw;        
+        line-height: 1.15vw; 
+        margin: 0;  
     }
 `; 
