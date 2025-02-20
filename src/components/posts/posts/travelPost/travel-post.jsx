@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import * as S from '../../../../styles/travel-post';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -9,7 +8,6 @@ import locationPin from '../../../../assets/images/travel-post/locationPin.png';
 import lock from '../../../../assets/images/travel-post/lock-person.png';
 import share from '../../../../assets/images/posts/posts/share.png';
 import default_profile_img from '../../../../assets/images/ProfileImage.png';
-import useFetch from '../../../../hooks/useFetch';
 import usePost from '../../../../hooks/usePost';
 
 const TravelPost = ({

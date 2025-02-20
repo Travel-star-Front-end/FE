@@ -30,7 +30,7 @@ export const ShareTab = () => {
                         <ShareCard
                             key={item.requestId}
                             id={item.requestId}
-                            profileImg={item.friendImage}
+                            profileImg={item.friendImage?.file_name}
                             name={item.friendNickname}
                         />
                     ))}                    
