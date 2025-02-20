@@ -408,46 +408,28 @@ const TopBar = styled.div`
   top: 0;
   left: 0;
   display: flex;
-  padding: 0 2rem;
+  padding: 0 1vw;
   z-index: 10;
-  margin-top: 10rem;
-  gap: 3rem;
+  margin-top: 5vw;
+  gap: 1.5vw;
 `;
 
 const RefreshButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 1rem 1.2rem;
+  gap: 0.3vw;
+  padding: 0.5vw 0.6vw;
   background: rgb(100, 116, 110);
-  border-radius: 0.8rem;
+  border-radius: 0.4vw;
   color: white;
-  font-size: 2rem;
+  font-size: 1vw;
   font-weight: bold;
   cursor: pointer;
-  margin-left: 10rem;
-
-  @media (max-width: 768px) {
-    font-size: 2.8rem;
-    padding: 1.2rem 1.44rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 3rem;
-    padding: 1.7rem 2.04rem;
-  }
-
-  @media (max-width: 290px) {
-    font-size: 2vw;
-    padding: 1.2vw 1.7vw;
-    margin-left: 8vw;
-    font-size: 1.6vw;
-    gap: 0.45vw;
-  }
+  margin-left: 5vw;
 `;
 
 const PlanetName = styled.div`
-  max-width: 15rem;
+  max-width: 7.5vw;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -458,42 +440,16 @@ const TimeDisplay = styled.div`
   align-items: center;
   margin-left: auto;
   color: white;
-  font-size: 2rem;
+  font-size: 1vw;
   font-weight: bold;
-
-  @media (max-width: 768px) {
-    font-size: 3rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.5rem;
-  }
-  @media (max-width: 300px) {
-    font-size: 1.8vw;
-  }
 `;
 
 const EditButton = styled.button`
   background: #01bcd4;
-  padding: 0.1rem 0.4rem;
-  border-radius: 0.6rem;
-  font-size: 1.7rem;
+  padding: 0.05vw 0.2vw;
+  border-radius: 0.3vw;
+  font-size: 0.85vw;
   color: white;
-
-  @media (max-width: 768px) {
-    font-size: 2.55rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 3rem;
-  }
-
-  @media (max-width: 450px) {
-    font-size: 2rem;
-  }
-  @media (max-width: 300px) {
-    font-size: 1.67vw;
-  }
 `;
 
 const ModalBackdrop = styled.div`
@@ -511,16 +467,16 @@ const ModalBackdrop = styled.div`
 
 const ModalContent = styled.div`
   background: rgba(249, 249, 249, 0.8);
-  width: 44rem;
-  padding: 2rem 3rem;
-  border-radius: 1.2rem;
+  width: 22vw;
+  padding: 1vw 1.5vw;
+  border-radius: 0.6vw;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75vw;
 `;
 
 const RenamePlanet = styled.div`
-  font-size: 1.8rem;
+  font-size: 0.9vw;
   font-weight: 500;
   color: #333;
   text-align: center;
@@ -529,10 +485,10 @@ const RenamePlanet = styled.div`
 const ModalInput = styled.input`
   width: 100%;
   background: white;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
+  padding: 0.5vw;
+  border: 0.05vw solid #e0e0e0;
+  border-radius: 0.4vw;
+  font-size: 0.8vw;
   outline: none;
 `;
 
@@ -540,15 +496,15 @@ const ModalButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.5vw;
+  margin-top: 0.5vw;
 `;
 
 const ModalButton = styled.button`
-  padding: 1rem 2rem;
+  padding: 0.5vw 1vw;
   width: 100%;
-  border-radius: 0.8rem;
-  font-size: 1.6rem;
+  border-radius: 0.4vw;
+  font-size: 0.8vw;
   cursor: pointer;
   border: none;
 
@@ -566,23 +522,15 @@ const ModalButton = styled.button`
 const UpdateButton = styled.img`
   width: auto;
   height: 100%;
-  margin-right: 3rem;
-  max-height: 4rem;
+  margin-right: 1.5vw;
+  max-height: 2vw;
   cursor: pointer;
   // object-fit: contain;
 `;
 
 const SmallText = styled.span`
-  font-size: 1.2rem; /* 원하는 크기로 설정 */
-  margin-left: 1rem;
-  @media (max-width: 480px) {
-    font-size: 1rem;
-    margin-left: 0.2rem;
-  }
-  @media (max-width: 300px) {
-    font-size: 1.67vw;
-    margin-left: 0.22vw;
-  }
+  font-size: 0.6vw; /* 원하는 크기로 설정 */
+  margin-left: 0.5vw;
 `;
 
 export default PlanetPage;
