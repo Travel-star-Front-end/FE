@@ -91,8 +91,8 @@ const Posts = () => {
                             <S.Toolbar>
                                 <img src={setting} alt='setting' className='toolbar-icon' onClick={() => handleClick('setting')}/>
                                 <NotificationBadge icon={friends} count={0} onClick={() => handleClick('friends')}/>
-                                <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
-                                <NotificationBadge icon={alert} count={0} />                 
+                                {/* <img src={share} alt='share' className='toolbar-icon' onClick={() => handleClick('share')}/>
+                                <NotificationBadge icon={alert} count={0} />                  */}
                             </S.Toolbar>
                             <S.AddToolbar>
                                 <img src={add} alt='add'className='toolbar-icon2' onClick={() => navigate('/posts/write')}/>
