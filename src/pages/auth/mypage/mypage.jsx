@@ -298,8 +298,7 @@ const InfoSection = styled.div`
   border-top: 0.125rem solid #ddd;
   padding-top: 2.5rem;
   @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 2rem;
+    gap: 8rem;
     padding-top: 2rem;
   }
   @media (max-width: 480px) {
