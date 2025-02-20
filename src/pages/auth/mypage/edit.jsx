@@ -34,6 +34,8 @@ const Edit = ({
 
   const [formValues, setFormValues] = useState({ ...userData });
   const [profileImage, setProfileImage] = useState(Profile);
+  const [pendingProfileImageFile, setPendingProfileImageFile] = useState(null);
+  const [pendingProfileImageDelete, setPendingProfileImageDelete] = useState(false);
   const fileInputRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [planetNameState, setPlanetNameState] = useState(planetName);
@@ -47,9 +49,7 @@ const Edit = ({
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
-  const maskPassword = (pwd) => {
-    return pwd ? '*'.repeat(pwd.length) : '';
-  };
+  const maskPassword = (pwd) => (pwd ? '*'.repeat(pwd.length) : '');
 
   useEffect(() => {
     fetchUserData();
@@ -61,9 +61,7 @@ const Edit = ({
     try {
       const token = localStorage.getItem('accessToken');
       const response = await API.get('/mypage', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const userDataFromApi = response.data.data;
       const phoneParts = userDataFromApi.phonenum
@@ -139,39 +137,16 @@ const Edit = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = async (e) => {
-    if (isUploading) return; 
-    setIsUploading(true);
+  const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) {
-      setIsUploading(false);
-      return;
-    }
-    try {
-      const formData = new FormData();
-      formData.append('images', file);
-      const token = localStorage.getItem('accessToken');
-      const response = await API.patch('/profile-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200 && response.data.fileUrl) {
-        setProfileImage(response.data.fileUrl);
-      }
-      setIsMenuOpen(false);
-    } catch (error) {
-      console.error('프로필 사진 업로드 중 오류 발생:', error);
-    } finally {
-      setIsUploading(false);
-    }
+    if (!file) return;
+    setPendingProfileImageFile(file);
+    setProfileImage(URL.createObjectURL(file));
+    setPendingProfileImageDelete(false);
+    setIsMenuOpen(false);
   };
 
   const handlePhotoRegister = () => {
@@ -180,23 +155,13 @@ const Edit = ({
     }
   };
 
-  const handlePhotoDelete = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const response = await API.delete('/profile-image', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        setProfileImage(Profile);
-      }
-      setIsMenuOpen(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    } catch (error) {
-      console.error('프로필 사진 삭제 중 오류 발생:', error);
+  const handlePhotoDelete = () => {
+    setPendingProfileImageDelete(true);
+    setPendingProfileImageFile(null);
+    setProfileImage(Profile);
+    setIsMenuOpen(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -206,6 +171,22 @@ const Edit = ({
 
   const handleProfileEdit = async () => {
     try {
+      const token = localStorage.getItem('accessToken');
+      const passwordToSend = isCodeVerified ? formValues.password : userData.password;
+      const updatePayload = {
+        nickname: formValues.nickname,
+        name: formValues.name,
+        password: passwordToSend,
+        birth: `${formValues.birthYear}-${formValues.birthMonth}-${formValues.birthDay}`,
+        phonenum: `${formValues.phonePart1}-${formValues.phonePart2}-${formValues.phonePart3}`,
+        email: `${formValues.emailUser}@${formValues.emailDomain}`,
+      };
+
+      await API.patch('/mypage', updatePayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('User data updated.');
+
       if (isCodeVerified) {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         if (!passwordRegex.test(formValues.password)) {
@@ -218,36 +199,36 @@ const Edit = ({
         }
         const resetPayload = {
           user_id: formValues.userId,
-          email: formValues.emailUser + '@' + formValues.emailDomain,
+          email: `${formValues.emailUser}@${formValues.emailDomain}`,
           newPassword: formValues.password,
           confirmPassword: confirmPassword,
         };
-        const resetResponse = await API.post('/reset-pw', resetPayload);
-        console.log('Password reset successful:', resetResponse.data);
-      } else {
-        const updatePayload = {
-          nickname: formValues.nickname,
-          name: formValues.name,
-          password: formValues.nickname,
-          birth: formValues.birthYear + '-' + formValues.birthMonth + '-' + formValues.birthDay,
-          phonenum:
-            formValues.phonePart1 +
-            '-' +
-            formValues.phonePart2 +
-            '-' +
-            formValues.phonePart3,
-          email: formValues.emailUser + '@' + formValues.emailDomain,
-        };
+        await API.post('/reset-pw', resetPayload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('Password reset successful.');
+      }
 
-        const token = localStorage.getItem('accessToken');
-        const response = await API.patch('/mypage', updatePayload, {
+      if (pendingProfileImageDelete) {
+        await API.delete('/profile-image', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProfileImage(Profile);
+      } else if (pendingProfileImageFile) {
+        const formData = new FormData();
+        formData.append('images', pendingProfileImageFile);
+        const response = await API.patch('/profile-image', formData, {
           headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('User data updated:', response.data);
-        setUserData(formValues);
+        if (response.status === 200 && response.data.fileUrl) {
+          setProfileImage(response.data.fileUrl);
+        }
       }
+
+      setUserData(formValues);
       navigate('/mypage');
     } catch (error) {
       console.error('Error updating user data:', error);
@@ -257,17 +238,12 @@ const Edit = ({
   // 인증번호 발송 함수
   const handleSendCode = async () => {
     try {
-      const emailFull = formValues.emailUser + "@" + formValues.emailDomain;
-      const accessToken = localStorage.getItem("accessToken");
-
+      const emailFull = `${formValues.emailUser}@${formValues.emailDomain}`;
+      const token = localStorage.getItem("accessToken");
       const response = await API.post(
         "/email",
         { email: emailFull },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setServerCode(response.data.authCode);
       setIsCodeSent(true);
@@ -293,11 +269,7 @@ const Edit = ({
 
   const handleNewPasswordChange = (e) => {
     const { value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      password: value,
-    }));
-
+    setFormValues((prev) => ({ ...prev, password: value }));
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if (!passwordRegex.test(value)) {
       setNewPasswordError('8자리 이상이며, 대소문자를 모두 포함해야 합니다.');
@@ -309,12 +281,10 @@ const Edit = ({
   const handleConfirmPasswordChange = (e) => {
     const { value } = e.target;
     setConfirmPassword(value);
-
     if (value.length === 0) {
       setConfirmPasswordError('');
       return;
     }
-
     if (formValues.password === value) {
       setConfirmPasswordError('비밀번호가 일치합니다.');
     } else {
@@ -365,8 +335,7 @@ const Edit = ({
               name="userId"
               value={formValues.userId}
               onChange={handleChange}
-              // 아이디는 항상 수정 불가능하도록
-              disabled={true}
+              disabled={true} // 아이디는 수정 불가
             />
           </InfoRow>
 
@@ -387,13 +356,10 @@ const Edit = ({
               type={isCodeVerified ? "password" : "text"}
               name="password"
               value={
-                isCodeVerified
-                  ? formValues.password
-                  : maskPassword(formValues.password)
+                isCodeVerified ? formValues.password : maskPassword(formValues.password)
               }
-              // 인증이 완료되어 새 비밀번호 입력 상태가 되기 전에는 수정 불가능하게
               onChange={isCodeVerified ? handleNewPasswordChange : undefined}
-              disabled={!isEditing || !isCodeVerified}
+              disabled={!isEditing || !isCodeVerified} 
             />
             {isCodeVerified && newPasswordError && (
               <ErrorMessage>{newPasswordError}</ErrorMessage>
