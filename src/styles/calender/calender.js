@@ -101,7 +101,7 @@ export const DateContainer = styled.div`
 
 export const DateCell = styled.div`
   width: 100%;
-  height: ${(props) => (props.lastrow === 'true' ? '3.75vw' : '6.6vw')};
+  height: 6.6vw;
   text-align: center;
   cursor: pointer;
   font-size: 1vw;
@@ -117,7 +117,7 @@ export const DateCell = styled.div`
 
 export const SelectedDateCell = styled.div`
   position: absolute;
-  top: ${(props) => (props.lastrow === 'true' ? '15%' : '8%')};
+  top: 8%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 1.5vw;
