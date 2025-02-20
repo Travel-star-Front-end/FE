@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { API } from '../../../apis/axios';
-import * as s from "../../../styles/ranking/ranking";
+import * as s from '../../../styles/ranking/ranking';
 import InputRankingRight from './input/inputRankingRight';
 import ButtonRankingRight from './button/buttonRankingRight';
 import ConstellationViewer from '../../planet/ConstellationViewer';
@@ -22,7 +22,7 @@ const RankingRight = () => {
     if (storedArcsData) setArcsData(JSON.parse(storedArcsData));
   }, []);
 
-  const { data } = useFetch("/stars/ranking/check");
+  const { data } = useFetch('/stars/ranking/check');
   const isCompleted = data?.applied === 1;
 
   const handleChange = (e) => {
@@ -31,9 +31,9 @@ const RankingRight = () => {
 
   const handleSubmit = async () => {
     if (!name) return alert('이름을 입력해주세요.');
-  
+
     setLoading(true);
-  
+
     try {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
@@ -41,7 +41,7 @@ const RankingRight = () => {
         setLoading(false);
         return;
       }
-  
+
       const canvas = await html2canvas(imgContainerRef.current);
       canvas.toBlob(async (blob) => {
         if (!blob) {
@@ -53,17 +53,19 @@ const RankingRight = () => {
         const formData = new FormData();
         formData.append('name', name);
         formData.append('image', blob, `${Date.now()}_constellation.png`);
-  
-        
+
         const response = await API.patch('/stars/name', formData, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'multipart/form-data',
           },
         });
-  
+
         // console.log(response);
         alert('별자리 신청이 완료되었습니다. 반영까지 5분이 소요됩니다.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       });
     } catch (err) {
       alert('이미지 업로드 중 오류 발생');
@@ -72,7 +74,6 @@ const RankingRight = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <s.RightContainer>
@@ -87,11 +88,19 @@ const RankingRight = () => {
         <s.CompletedP>신청완료</s.CompletedP>
       ) : (
         <s.InputContainer>
-          <s.RightP style={{ fontWeight: '600', fontSize: '0.9vw', marginTop: '1.3vw' }}>
+          <s.RightP
+            style={{ fontWeight: '600', fontSize: '0.9vw', marginTop: '1.3vw' }}
+          >
             이름
           </s.RightP>
-          <InputRankingRight placeholder="작성해주세요." value={name} onChange={handleChange} />
-          <ButtonRankingRight onClick={handleSubmit}>신청하기</ButtonRankingRight>
+          <InputRankingRight
+            placeholder="작성해주세요."
+            value={name}
+            onChange={handleChange}
+          />
+          <ButtonRankingRight onClick={handleSubmit}>
+            신청하기
+          </ButtonRankingRight>
         </s.InputContainer>
       )}
     </s.RightContainer>
