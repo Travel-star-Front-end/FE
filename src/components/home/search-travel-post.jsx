@@ -31,7 +31,7 @@ const SearchTravelPost = ({ searchValue }) => {
                         key={post.post_id}
                         postId={post.post_id}
                         postUserId={post.user_id}
-                        profileImg={post.user.profileImg}
+                        profileImg={post.user.profileImage}
                         nickname={post.user.nickname}
                         date={post.updated_at}
                         location={post.star.region}
@@ -59,7 +59,7 @@ const Container = styled.div`
 `;
 
 const Text = styled.div`
-    margin-top: 8vw;
+    margin-top: 6vw;
     font-weight: 600;
     font-size: 1.2vw;
     color: #555555;
