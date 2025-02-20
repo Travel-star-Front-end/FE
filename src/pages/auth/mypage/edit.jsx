@@ -8,7 +8,7 @@ import { API } from '../../../apis/axios';
 const Edit = ({
   userId = 'BBbbe.1',
   nickname = '벨라',
-  password = 'mySecret1', 
+  password = 'mySecret1',
   name = '김은수',
   birth = '2003-02-14',
   phoneNumber = '010-5479-8234',
@@ -71,7 +71,7 @@ const Edit = ({
         ? userDataFromApi.email.split('@')
         : userData.email.split('@');
       const birthParts = userDataFromApi.birth
-        ? userDataFromApi.birth.split('-')
+        ? userDataFromApi.birth.split('T')[0].split('-')
         : [userData.birthYear, userData.birthMonth, userData.birthDay];
 
       const newUserData = {
