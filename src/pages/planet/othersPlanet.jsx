@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Globe from 'react-globe.gl';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import planetCutyVer from '../../assets/images/planet/planetTexture/planetCutyVer.jpg';
 import useFetch from '../../hooks/useFetch';
@@ -12,6 +12,7 @@ import Spinner from '../../components/Spinner/Spinner';
 const OthersPlanet = () => {
   const { id } = useParams();
   const globeRef = useRef();
+  const navigate = useNavigate();
   const globeContainerRef = useRef(null);
   const [planetData, setPlanetData] = useState({
     planetName: '', //이거 사실 필요한지 모르겠음.. 차피 id 값이 행성 이름으로 나올거라
@@ -30,7 +31,8 @@ const OthersPlanet = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // 별자리 지역 조회
-  const { data, loading, error } = useFetch(`/stars/${id}/regions`);
+  const { data, loading, error } = useFetch(`/posts/user/${user_id}`);
+  const nickname = data?.data?.[0]?.nickname;
 
   // 다른 사용자 행성 조회
   const {
@@ -43,22 +45,19 @@ const OthersPlanet = () => {
   useEffect(() => {
     if (!data || loading || error) return;
 
-    setIsProcessing(true);
-
     const loadPointsData = async () => {
-      const pointsDataPromises = data.regions.map(async (region) => {
-        const coordinates = await fetchCoordinates(region.region); // 'region' 필드 사용
-
+      const pointsDataPromises = data?.data?.map(async (region) => {
+        const coordinates = await fetchCoordinates(region.region); // 지역명으로 좌표 가져오기
         if (coordinates) {
           return {
             lat: coordinates.lat,
             lng: coordinates.lng,
             name: region.region,
-            color: getFeelingColor(region.feel_color),
+            post_id: region.post_id,
+            color: getFeelingColor(region.feel_color), // star_id 기반 색상 설정
             size: '9rem',
           };
         }
-
         return null;
       });
 
@@ -67,12 +66,10 @@ const OthersPlanet = () => {
       );
 
       setPlanetData({ planetName, pointsData: resolvedPointsData });
-
-      setIsProcessing(false);
     };
 
     loadPointsData();
-  }, [data, loading, error, id]);
+  }, [data]);
 
   //반응형 관련 altitude 동적으로 조절
   useEffect(() => {
@@ -183,7 +180,13 @@ const OthersPlanet = () => {
               };
               el.onclick = () => {
                 tooltip.style.display = 'none';
-                navigate(`/posts/${d.id}`);
+                navigate(`/posts/${d.post_id}`, {
+                  state: {
+                    postId: d.post_id,
+                    postUserId: user_id,
+                    nickname: nickname,
+                  },
+                });
               };
               el.innerHTML = `
                 <div style="
