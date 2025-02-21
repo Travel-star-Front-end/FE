@@ -1,65 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { API } from '../../../apis/axios';
+import useFetch from "../../../hooks/useFetch";
 
 function ArchivedPosts() {
+  const { data } = useFetch('/mypage/storaged-posts'); 
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetchArchivedPosts();
-  }, []);
+    if (data?.data) {
+      console.log(data.data);
+      setPosts(data.data);
+    }
+  }, [data]);
 
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    return `${year}.${month}.${day}`;
-  };
+    return `${year}-${month}-${day}`;
+  };  
 
-  const fetchArchivedPosts = async () => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        console.error('토큰이 존재하지 않습니다.');
-        setPosts([]);
-        return;
-      }
-      const response = await API.get('/mypage/storaged-posts', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = response.data;
-      
-      if (result.resultType === 'success' && result.data) {
-        const postsData = Array.isArray(result.data) ? result.data : [result.data];
-
-        const mappedPosts = postsData.map((post) => ({
-          id: post.post_id,
-          date: formatDate(post.created_at),
-          title: post.title,
-        }));
-
-        setPosts(mappedPosts);
-      } else {
-        setPosts([]);
-      }
-    } catch (error) {
-      console.error('Error fetching archived posts:', error);
-      setPosts([]);
-    }
-  };
 
   const handleCancel = async (id) => {
+    console.log("id", id);
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
         console.error('토큰이 존재하지 않습니다.');
         return;
       }
-      await API.patch(`/mypage/storaged-posts/${id}`, null, {
+      const response = await API.patch(`/mypage/storaged-posts/${id}`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+
+      console.log(response);
+
     } catch (error) {
       console.error('Error removing post:', error);
     }
@@ -79,10 +56,10 @@ function ArchivedPosts() {
         <NoPostsMessage>보관 중인 글이 없습니다.</NoPostsMessage>
       ) : (
         posts.map((post) => (
-          <ListRow key={post.id}>
-            <Date>{post.date}</Date>
+          <ListRow key={post.post_id}>
+            <Date>{post.updated_at}</Date>
             <Title>{post.title}</Title>
-            <CancelButton onClick={() => handleCancel(post.id)}>
+            <CancelButton onClick={() => handleCancel(post.post_id)}>
               보관 취소
             </CancelButton>
           </ListRow>
