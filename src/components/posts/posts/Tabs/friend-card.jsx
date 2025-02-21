@@ -27,10 +27,10 @@ export const FriendCard = ({id, profileImg, name}) => {
 export const FriendApplyCard = ({id, profileImg, name}) => {
     const [accepted, setAccepted] = useState(false);
 
-    const handleDeleteFriend = async () => {
+    const handleDeleteFriend = async (id) => {
         try {
             const accessToken = localStorage.getItem("accessToken");
-            const response = await API.delete(`friends/request/${id}`, {
+            const response = await API.delete(`/friends/request/${id}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -41,21 +41,17 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
         }
     };
 
-    const handleAcceptRequest = async() => {
+    const handleAcceptRequest = async(id) => {
+        // console.log("id", id);
         try {
             const accessToken = localStorage.getItem("accessToken");
-            const response = await API.patch(`friends/request/${id}`, {}, {
+            const response = await API.patch(`/friends/request/${id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
 
-            if (response.data.resultType === "success") {
-                alert("친구 요청이 수락되었습니다!");
-                setAccepted(true);
-            } else {
-                alert("친구 요청 수락에 실패했습니다.");
-            }
+            console.log(response);
         } catch (error) {
             console.error("친구 요청 수락 오류:", error);
             alert("오류가 발생했습니다.");
@@ -66,7 +62,7 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
         <S.Container2>
             <S.FriendContnet>
                 <S.CloseBtnWrapper>
-                    <img src={closeX} alt='x' className='close-btn' onClick={handleDeleteFriend}/>
+                    <img src={closeX} alt='x' className='close-btn' onClick={() => handleDeleteFriend(id)}/>
                 </S.CloseBtnWrapper>
                 <S.ProfileWrapper>
                     {profileImg ? (
@@ -80,7 +76,7 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
             {accepted ? (
                 <S.AcceptedText>수락됨</S.AcceptedText>
             ) : (
-                <S.AccpetBtn type='button' onClick={handleAcceptRequest}>요청 수락</S.AccpetBtn>
+                <S.AccpetBtn type='button' onClick={() => handleAcceptRequest(id)}>요청 수락</S.AccpetBtn>
             )}
         </S.Container2>
     );

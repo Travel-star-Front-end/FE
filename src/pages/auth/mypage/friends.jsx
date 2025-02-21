@@ -2,49 +2,20 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ProfileImage from '../../../assets/images/ProfileImage.png';
 import { API } from '../../../apis/axios'; 
+import useFetch from "../../../hooks/useFetch";
 
 function FriendManagement() {
   const [friends, setFriends] = useState([]);
+  const { data } = useFetch("/friends/list"); 
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("토큰이 없습니다.");
-      return;
+    if (data?.data) {
+      console.log(data.data);
+      setFriends(data.data);
     }
-    fetchFriends(token);
-  }, []);
-
-  const fetchFriends = async (accessToken) => {
-    try {
-      console.log("Fetching friends with token:", accessToken);
-      
-      const response = await API.get('/friends/list', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const { resultType, data } = response.data;
-
-      if (resultType === 'success') {
-        setFriends(
-          data.map((friend) => ({
-            id: friend.requestId,
-            name: friend.friendNickname,
-            avatar: friend.friendImage || ProfileImage,
-            requestedAt: friend.requestedAt,
-          }))
-        );
-      } else {
-        setFriends([]);
-      }
-    } catch (error) {
-      console.error('Error fetching friends:', error);
-    }
-  };
-
-  const handleRemoveFriend = async (requestId) => {
+  }, [data]);
+  
+  const handleRemoveFriend = async (id) => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       console.error("토큰이 없습니다.");
@@ -52,27 +23,16 @@ function FriendManagement() {
     }
 
     try {
-      console.log("Removing friend with requestId:", requestId, "token:", token);
-      
-      const response = await API.delete(`/friends/request/${requestId}`, {
+      // console.log("id", id);
+      const response = await API.delete(`/friends/request/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (response.data.resultType === 'success') {
-        setFriends((prevFriends) => prevFriends.filter((friend) => friend.id !== requestId));
-      }
+      alert("친구 목록에서 삭제 되었습니다.")
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 404) {
-          console.warn('존재하지 않는 친구 관계입니다.', error.response.data);
-        } else if (error.response.status === 500) {
-          console.error('서버 에러가 발생하였습니다.', error.response.data);
-        }
-      } else {
-        console.error('Error removing friend:', error);
-      }
+      console.log("err", error);
     }
   };
 
@@ -84,10 +44,10 @@ function FriendManagement() {
         <NoFriendsMsg>친구 목록이 없습니다.</NoFriendsMsg>
       ) : (
         friends.map((friend) => (
-          <FriendRow key={friend.id}>
+          <FriendRow id={friend.requestId}>
             <Avatar src={friend.avatar} alt={`${friend.name} avatar`} />
-            <FriendName>{friend.name}</FriendName>
-            <RemoveButton onClick={() => handleRemoveFriend(friend.id)}>
+            <FriendName>{friend.friendNickname}</FriendName>
+            <RemoveButton onClick={() => handleRemoveFriend(friend.requestId)}>
               친구 삭제
             </RemoveButton>
           </FriendRow>
