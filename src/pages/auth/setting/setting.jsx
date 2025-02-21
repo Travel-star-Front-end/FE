@@ -173,29 +173,29 @@ const Settinginput = styled.input`
 const Settingbutton = styled.button`
   width: 100%;
   max-width: 500px;
-  padding: 1vw;
+  padding: 0.8vw;
   border: none;
   border-radius: 1rem;
   background-color: #00bcd4;
   color: white;
-  font-size: 1.1vw;
+  font-size: 1vw;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   @media (max-width: 1800px) {
-    padding: 1.7vw;
-    font-size: 1.8vw;
+    padding: 1.4vw;
+    font-size: 1.5vw;
   }
 
   @media (max-width: 1200px) {
     padding: 1.8vw;
-    font-size: 1.9vw;
+    font-size: 1.6vw;
   }
 
   @media (max-width: 768px) {
     padding: 1.9vw;
-    font-size: 2vw;
+    font-size: 1.8vw;
   }
 `;
 
