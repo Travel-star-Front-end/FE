@@ -18,6 +18,7 @@ import Modal from "./modal/modal";
 import IframePlayer from "./iframePlayer";
 import AIModal from "./modal/aiModal";
 
+
 const WriteForm = () => {
     const [selectedImages, setSelectedImages] = useState([]);
     const { locationQuery, locationResults, loading: locationLoading, error: locationError, handleLocationChange, setLocationQuery } = useLocation();
@@ -82,16 +83,38 @@ const WriteForm = () => {
     };
 
     // 이미지 선택
-    const addImage = (file) => {
+    const addImage = async (file) => {
+        console.log("선택한 파일:", file);
+    
+        const convertedFile = await (async () => {
+            if (file.type === "image/heic" || file.name.endsWith(".heic")) {
+                try {
+                    const heic2any = require("heic2any");
+                    const jpgBlob = await heic2any({
+                        blob: file,
+                        toType: "image/jpeg",
+                    });
+                    return new File([jpgBlob], file.name.replace(".heic", ".jpg"), { type: "image/jpeg" });
+                } catch (error) {
+                    console.error("HEIC 변환 실패:", error);
+                }
+            }
+            return file;
+        })();
+    
+        console.log("변환된 파일:", convertedFile);
+    
         const reader = new FileReader();
         reader.onloadend = () => {
             setSelectedImages((prevImages) => [
                 ...prevImages,
-                { name: file.name, preview: reader.result, file },
+                { name: convertedFile.name, preview: reader.result, file: convertedFile },
             ]);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(convertedFile);
     };
+    
+    
 
     // 이미지 삭제
     const handleDeleteImage = (index) => {
