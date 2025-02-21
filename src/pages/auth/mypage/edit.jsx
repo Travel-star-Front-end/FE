@@ -108,11 +108,11 @@ const Edit = ({
       if (response.status === 200 && response.data.planet_name) {
         setPlanetNameState(response.data.planet_name);
       } else {
-        setPlanetNameState("행성 이름 미지정");
+        setPlanetNameState('행성 이름 미지정');
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setPlanetNameState("행성 이름 미지정");
+        setPlanetNameState('행성 이름 미지정');
       } else {
         console.error('행성 이름 조회 중 오류 발생:', error);
       }
@@ -146,7 +146,7 @@ const Edit = ({
   };
 
   const handleFileChange = async (e) => {
-    if (isUploading) return; 
+    if (isUploading) return;
     setIsUploading(true);
     const file = e.target.files?.[0];
     if (!file) {
@@ -209,7 +209,9 @@ const Edit = ({
       if (isCodeVerified) {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         if (!passwordRegex.test(formValues.password)) {
-          alert('새 비밀번호는 8자리 이상이며 대소문자를 모두 포함해야 합니다.');
+          alert(
+            '새 비밀번호는 8자리 이상이며 대소문자를 모두 포함해야 합니다.'
+          );
           return;
         }
         if (formValues.password !== confirmPassword) {
@@ -229,7 +231,12 @@ const Edit = ({
           nickname: formValues.nickname,
           name: formValues.name,
           password: formValues.nickname,
-          birth: formValues.birthYear + '-' + formValues.birthMonth + '-' + formValues.birthDay,
+          birth:
+            formValues.birthYear +
+            '-' +
+            formValues.birthMonth +
+            '-' +
+            formValues.birthDay,
           phonenum:
             formValues.phonePart1 +
             '-' +
@@ -248,6 +255,9 @@ const Edit = ({
         console.log('User data updated:', response.data);
         setUserData(formValues);
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
       navigate('/mypage');
     } catch (error) {
       console.error('Error updating user data:', error);
@@ -257,11 +267,11 @@ const Edit = ({
   // 인증번호 발송 함수
   const handleSendCode = async () => {
     try {
-      const emailFull = formValues.emailUser + "@" + formValues.emailDomain;
-      const accessToken = localStorage.getItem("accessToken");
+      const emailFull = formValues.emailUser + '@' + formValues.emailDomain;
+      const accessToken = localStorage.getItem('accessToken');
 
       const response = await API.post(
-        "/email",
+        '/email',
         { email: emailFull },
         {
           headers: {
@@ -271,10 +281,10 @@ const Edit = ({
       );
       setServerCode(response.data.authCode);
       setIsCodeSent(true);
-      alert("인증번호가 발송되었습니다.");
+      alert('인증번호가 발송되었습니다.');
     } catch (error) {
-      console.error("Error sending verification code:", error);
-      alert("인증번호 발송에 실패했습니다.");
+      console.error('Error sending verification code:', error);
+      alert('인증번호 발송에 실패했습니다.');
     }
   };
 
@@ -282,12 +292,12 @@ const Edit = ({
   const handleVerifyCode = () => {
     if (verificationCode === serverCode) {
       setIsCodeVerified(true);
-      setFormValues((prev) => ({ ...prev, password: "" }));
-      setConfirmPassword("");
-      setVerificationCode("");
-      alert("인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.");
+      setFormValues((prev) => ({ ...prev, password: '' }));
+      setConfirmPassword('');
+      setVerificationCode('');
+      alert('인증이 완료되었습니다. 새 비밀번호를 입력해 주세요.');
     } else {
-      alert("인증번호가 올바르지 않습니다.");
+      alert('인증번호가 올바르지 않습니다.');
     }
   };
 
@@ -333,7 +343,9 @@ const Edit = ({
             <CameraIcon src={ProfileEditIcon} onClick={toggleMenu} />
             {isMenuOpen && (
               <CameraMenu>
-                <CameraMenuItem onClick={handlePhotoRegister}>사진 등록</CameraMenuItem>
+                <CameraMenuItem onClick={handlePhotoRegister}>
+                  사진 등록
+                </CameraMenuItem>
                 <CameraMenuItemDelete onClick={handlePhotoDelete}>
                   사진 삭제
                 </CameraMenuItemDelete>
@@ -384,7 +396,7 @@ const Edit = ({
           <InfoRow>
             <InfoLabel>{isCodeVerified ? '새 비밀번호' : '비밀번호'}</InfoLabel>
             <WideInput
-              type={isCodeVerified ? "password" : "text"}
+              type={isCodeVerified ? 'password' : 'text'}
               name="password"
               value={
                 isCodeVerified
@@ -435,7 +447,9 @@ const Edit = ({
               />
             )}
             {isCodeVerified && confirmPasswordError && (
-              <ConfirmPasswordMessage $isMatch={confirmPasswordError === '비밀번호가 일치합니다.'}>
+              <ConfirmPasswordMessage
+                $isMatch={confirmPasswordError === '비밀번호가 일치합니다.'}
+              >
                 {confirmPasswordError}
               </ConfirmPasswordMessage>
             )}
