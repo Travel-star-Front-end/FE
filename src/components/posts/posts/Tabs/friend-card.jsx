@@ -51,7 +51,8 @@ export const FriendApplyCard = ({id, profileImg, name}) => {
                 },
             });
 
-            console.log(response);
+            // console.log(response);
+            alert("친구 요청을 수락하셨습니다.");
         } catch (error) {
             console.error("친구 요청 수락 오류:", error);
             alert("오류가 발생했습니다.");

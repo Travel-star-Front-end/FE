@@ -45,7 +45,7 @@ function FriendManagement() {
       ) : (
         friends.map((friend) => (
           <FriendRow id={friend.requestId}>
-            <Avatar src={friend.avatar} alt={`${friend.name} avatar`} />
+            <Avatar src={friend.friendImage.file_name} alt={`${friend.name} avatar`} />
             <FriendName>{friend.friendNickname}</FriendName>
             <RemoveButton onClick={() => handleRemoveFriend(friend.requestId)}>
               친구 삭제
