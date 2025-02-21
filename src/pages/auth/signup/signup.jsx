@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Logo from '../../../assets/images/auth/signup/logo.png';
 import '@fontsource/do-hyeon';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { API } from '../../../apis/axios';
 import AgreeModal from '../../../components/auth/signup/agreeModal';
 import AgreeData from '../../../utils/signup/agreeData';
+import colors from '../../../styles/common/colors';
 
 const signUpSchema = z
   .object({
@@ -186,8 +188,9 @@ const SignUp = () => {
     }
     try {
       const response = await API.post('/check-id', { user_id: userIdValue });
+      console.log(response);
 
-      if (response.data.isAvailable) {
+      if (response.data.isDuplicate) {
         setIdCheckResult('invalid');
       } else {
         setIdCheckResult('valid');
@@ -247,7 +250,7 @@ const SignUp = () => {
     <Container>
       <InnerForm>
         <SignUpBox>
-          <Logo>여행별</Logo>
+          <LogoImg src={Logo} alt="logo" />
           <Title>회원가입</Title>
 
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -562,463 +565,260 @@ const SignUp = () => {
 export default SignUp;
 
 const Container = styled.div`
-  width: 100vw;
-  min-height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  padding: 2.5rem;
-
-  @media (max-width: 768px) {
-    height: auto;
-    padding: 2.5rem;
-  }
+  background: ${colors.white};
 `;
 
 const InnerForm = styled.div`
-  background-color: #f6f6f6;
-  width: 60%;
+  background-color: ${colors.completedGray};
+  width: 65.5vw;
+  padding: 2vw 0;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  @media (max-width: 768px) {
-    width: 90%;
-  }
-  @media (max-width: 480px) {
-    width: 60%;
-  }
 `;
 
 const SignUpBox = styled.div`
-  background-color: #f6f6f6;
-  width: 100%;
-  max-width: 75rem;
-  border-radius: 1.25rem;
-  padding: 5rem;
-
-  @media (max-width: 768px) {
-    padding: 3rem;
-  }
-  @media (max-width: 480px) {
-    padding: 3rem;
-    border-radius: 0.625rem;
-  }
+  width: 45vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const Logo = styled.div`
-  text-align: center;
-  font-size: 3rem;
-  font-family: 'Do Hyeon', sans-serif;
-  color: rgb(0, 196, 204);
-  margin-bottom: 0;
-  text-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 2rem;
-  }
+const LogoImg = styled.img`
+  width: 2.75vw;
+  height: auto;
 `;
 
 const Title = styled.h1`
-  text-align: center;
-  font-size: 3.125rem;
-  margin-bottom: 3.75rem;
-  color: #333;
-  border-bottom: 0.25rem solid rgb(53, 196, 243);
-  padding-bottom: 1.25rem;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-    margin-bottom: 2.5rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
+  font-size: 1.8vw;
+  font-weight: 600;
+  color: ${colors.sideBarGray2};
+  margin-top: 0.5vw;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-
-  @media (max-width: 768px) {
-    gap: 2rem;
-  }
-  @media (max-width: 480px) {
-    gap: 1.5rem;
-  }
+  gap: 1.5vw;
+  margin-top: 1.2vw;
+  padding-top: 1.4vw;
+  border-top: 0.06vw solid ${colors.loginPurple};
 `;
 
 const FormGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  & > label {
-    width: 15rem; /* 라벨 최소 너비 */
-  }
-
-  @media (max-width: 768px) {
-    & > label {
-      width: 10rem;
-    }
-  }
 `;
 
 const Label = styled.label`
-  width: 12.5rem;
-  flex-shrink: 0;
-  color: #333;
-  font-size: 1.875rem;
-  margin-top: 0.4rem; // 살짝 정렬용
-
-  @media (max-width: 768px) {
-    width: auto;
-    font-size: 1.5rem;
-    margin-top: 0;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
-  }
+  width: 8.2vw;
+  color: ${colors.calenderGray4};
+  font-size: 1vw;
+  font-weight: 400;
 `;
 
 const InputContainer = styled.div`
   display: flex;
+  height: 2.25vw;
   flex-direction: column;
+  position: relative;
   flex: 1;
 `;
 
 const InputWrapper = styled.div`
   display: flex;
-  gap: 1.25rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    gap: 0.625rem;
-  }
+  gap: 0.5vw;
 `;
 
 const Input = styled.input`
   flex: 1;
-  padding: 1rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  font-size: 1.75rem;
   width: 100%;
+  height: 2.25vw;
+  border: 0.05vw solid ${colors.calenderGray3};
+  border-radius: 0.025vw;
+  font-size: 0.8vw;
   box-sizing: border-box;
-  background-color: #fff;
-
-  &::placeholder {
-    color: #999;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    padding: 0.8rem 1rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
-    padding: 0.6rem 0.8rem;
-  }
+  padding: 0 0.5vw;
+  border-radius: 0.25vw;
+  color: ${colors.calenderGray3};
 `;
 
 // 아이디 중복 확인 결과 메시지
 const ValidMessage = styled.div`
-  color: green;
-  font-size: 1.5rem;
-  margin-top: 5rem;
+  color: ${colors.feeling4};
+  font-size: 0.6vw;
   position: absolute;
+  margin-top: 2.5vw;
 `;
 
 const InvalidMessage = styled.div`
-  color: red;
-  font-size: 1.5rem;
-  margin-top: 5rem;
+  color: ${colors.searchRed};
+  font-size: 0.6vw;
   position: absolute;
+  margin-top: 2.5vw;
 `;
 
 const CheckButton = styled.button`
-  padding: 1rem 2rem;
+  width: 5.8vw;
+  height: 2.25vw;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  white-space: nowrap;
+  border: 0.05vw solid ${colors.calenderGray4};
+  border-radius: 0.25vw;
   cursor: pointer;
-
-  @media (max-width: 768px) {
-    padding: 0.8rem 1.5rem;
-    font-size: 1.3rem;
-  }
-  @media (max-width: 480px) {
-    padding: 0.6rem 1rem;
-    font-size: 1.1rem;
-  }
+  font-size: 0.8vw;
+  font-weight: 400;
+  color: ${colors.calenderGray4};
 `;
 
 const Select = styled.select`
   flex: 1;
-  padding: 1rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  font-size: 1.75rem;
-  background-color: #fff;
+  height: 2.25vw;
+  border: 0.05vw solid #ddd;
+  border-radius: 0.25vw;
+  font-size: 0.8vw;
+  background-color: ${colors.white};
   cursor: pointer;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    padding: 0.8rem 1rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
-    padding: 0.6rem 0.8rem;
-  }
 `;
 
 const DateInputGroup = styled.div`
   display: flex;
-  gap: 1.25rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    gap: 0.625rem;
-  }
+  gap: 1vw;
 `;
 
 const PhoneInputGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.25rem;
   width: 100%;
-
-  @media (max-width: 768px) {
-    gap: 0.625rem;
-  }
+  gap: 1vw;
 `;
 
 const PhoneInput = styled(Input)`
-  width: calc(33.33% - 1.75rem);
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+  width: calc(33.33% - 1vw);
 `;
 
 const Dash = styled.span`
-  color: #999;
-  @media (max-width: 768px) {
-    margin: 0 0.25rem;
-  }
+  color: ${colors.calenderGray4};
+  font-size: 1vw;
+  font-weight: 400;
 `;
 
 const EmailInputGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    gap: 0.625rem;
-    flex-wrap: wrap;
-  }
+  gap: 1vw;
 `;
 
 const EmailInput = styled(Input)`
   width: 40%;
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
 `;
 
 const EmailSelect = styled.select`
   flex: 1;
-  padding: 1rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  font-size: 1.75rem;
-  background-color: #fff;
+  height: 2.25vw;
+  border: 0.05vw solid ${colors.calenderGray4};
+  border-radius: 0.25vw;
+  font-size: 0.8vw;
+  background-color: ${colors.white};
   cursor: pointer;
   width: 13%;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    padding: 0.8rem 1rem;
-    width: 100%;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
-    padding: 0.6rem 0.8rem;
-  }
 `;
 
 const AgreementSection = styled.div`
-  margin-top: 2.5rem;
+  margin-top: 1.25vw;
 `;
 
 const AgreementTitle = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 1.875rem;
-  color: #333;
-  border-bottom: 0.25rem solid rgb(53, 196, 243);
-  padding-bottom: 1.25rem;
-
-  @media (max-width: 768px) {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
-  }
+  font-size: 1vw;
+  margin-bottom: 0.9vw;
+  color: ${colors.loginP};
+  border-bottom: 0.06vw solid ${colors.loginPurple};
+  padding-bottom: 0.6vw;
 `;
 
 const AgreementRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.6vw;
   position: relative;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
 `;
 
 const AgreementText = styled.span`
-  font-size: 1.75rem;
-  color: #333;
+  font-size: 0.8vw;
+  color: ${colors.black};
   display: flex;
   align-items: center;
   cursor: pointer;
-
-  @media (max-width: 768px) {
-    font-size: 1.4rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
-  }
 `;
 
 const DropdownIcon = styled.span`
-  margin-left: 1rem;
+  margin-left: 0.5vw;
   border: solid black;
-  border-width: 0 0.25rem 0.25rem 0;
+  border-width: 0 0.0125vw 0.0125vw 0;
   display: inline-block;
-  padding: 0.375rem;
+  padding: 0.2vw;
   transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-
-  @media (max-width: 768px) {
-    margin-left: 0.5rem;
-  }
 `;
 
 const ErrorTextInline = styled.span`
-  margin-left: 1rem;
-  color: red;
-  font-size: 1.5rem;
-
-  @media (max-width: 768px) {
-    margin-left: 0.5rem;
-    font-size: 1.2rem;
-  }
+  margin-left: 0.5vw;
+  color: ${colors.searchRed};
+  font-size: 0.75vw;
 `;
 
 const RadioGroup = styled.div`
   display: flex;
-  gap: 2.5rem;
-
-  @media (max-width: 768px) {
-    gap: 1.5rem;
-  }
+  gap: 1.25vw;
 `;
 
 const RadioLabel = styled.label`
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  font-size: 1.75rem;
-  color: #333;
+  gap: 0.3vw;
+  font-size: 0.8vw;
+  color: ${colors.calenderGray4};
 
   input[type='radio'] {
     appearance: none;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid black;
+    width: 1vw;
+    height: 1vw;
+    border: 0.05vw solid black;
     border-radius: 50%;
     outline: none;
     cursor: pointer;
     margin: 0;
     vertical-align: middle;
+
     &:checked {
       background-color: #00c2ff;
     }
-
-    @media (max-width: 768px) {
-      width: 1.6rem;
-      height: 1.6rem;
-    }
-    @media (max-width: 480px) {
-      width: 1.4rem;
-      height: 1.4rem;
-    }
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.4rem;
-    gap: 0.5rem;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
   }
 `;
 
 const ErrorText = styled.div`
-  color: red;
-  font-size: 1.5rem;
-  margin-top: 4.6rem;
+  color: ${colors.searchRed};
+  font-size: 0.75vw;
   position: absolute;
-
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-    text-align: left;
-  }
-  @media (max-width: 480px) {
-    font-size: 1.1rem;
-  }
+  margin-top: 2.5vw;
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
-  padding: 1.5rem;
+  padding: 0.75vw;
   background-color: #01bcd4;
   color: white;
   border: none;
-  border-radius: 1.25rem;
-  font-size: 2rem;
+  border-radius: 0.6vw;
+  font-size: 1vw;
   cursor: pointer;
-  margin-top: 2.5rem;
+  margin-top: 1vw;
 
   &:hover {
     background-color: #00b0e6;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1.2rem;
-    font-size: 1.8rem;
-    margin-top: 2rem;
-  }
-  @media (max-width: 480px) {
-    padding: 1rem;
-    font-size: 1.4rem;
-    margin-top: 1.5rem;
   }
 `;
